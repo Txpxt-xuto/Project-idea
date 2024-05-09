@@ -22,7 +22,7 @@ input {
   display: grid;
   place-items: center;
   height: 100vh;
-  background-color: rgb(31, 31, 31);
+    background-color: rgb(31, 31, 31);
     padding: 20px;
   grid-template-rows: 100px 1fr;
 }
