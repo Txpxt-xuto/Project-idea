@@ -11,27 +11,46 @@
         <form>
             <input type="text" class="screen">
         </form>
-        <div class="buttons">
-            <button type="button" class="btn btn-yellow" data-num="*">*</button>
-            <button type="button" class="btn btn-yellow" data-num="/">/</button>
-            <button type="button" class="btn btn-yellow" data-num="+">+</button>
-            <button type="button" class="btn btn-yellow" data-num="-">-</button>
-
-            <button type="button" class="btn btn-gray" data-num="9">9</button>
-            <button type="button" class="btn btn-gray" data-num="8">8</button>
-            <button type="button" class="btn btn-gray" data-num="7">7</button>
-            <button type="button" class="btn btn-gray" data-num="6">6</button>
-            <button type="button" class="btn btn-gray" data-num="5">5</button>
-            <button type="button" class="btn btn-gray" data-num="4">4</button>
-            <button type="button" class="btn btn-gray" data-num="3">3</button>
-            <button type="button" class="btn btn-gray" data-num="2">2</button>
-            <button type="button" class="btn btn-gray" data-num="1">1</button>
-            <button type="button" class="btn btn-gray" data-num="0">0</button>
-            <button type="button" class="btn btn-gray" data-num=".">.</button>
-
-            <button type="button" class="btn btn-equal">=</button>
-            <button type="button" class="btn btn-clear">C</button>
-        </div>
+        <div class="container">
+			<div class="empty"></div>
+			
+			<div class="calculator">
+				<div class="display">
+					<span id="current-calc"></span>
+					<br>
+					<span id="result">0</span>
+				</div>
+				<div class="row">
+					<span data-key="Backspace" id="other">&#8592;</span>
+					<span data-key="?" id="other">&plusmn;</span>
+					<span data-key="%" id="other">&percnt;</span>
+					<span data-key="/" id="operator">&divide;</span>
+				</div>
+				<div class="row">
+					<span data-key="7" id="num">7</span>
+					<span data-key="8" id="num">8</span>
+					<span data-key="9" id="num">9</span>
+					<span data-key="*" id="operator">&times;</span>
+				</div>
+				<div class="row">
+					<span data-key="4" id="num">4</span>
+					<span data-key="5" id="num">5</span>
+					<span data-key="6" id="num">6</span>
+					<span data-key="-" id="operator">&minus;</span>
+				</div>
+				<div class="row">
+					<span data-key="1" id="num">1</span>
+					<span data-key="2" id="num">2</span>
+					<span data-key="3" id="num">3</span>
+					<span data-key="+" id="operator">&plus;</span>
+				</div>
+				<div class="row">
+					<span data-key="Delete" id="del">CE</span>
+					<span data-key="0" id="num">0</span>
+					<span data-key="." id="other">.</span>
+					<span data-key="Enter" id="equ">&equals;</span>
+				</div>
+			</div>
     </section>
     <script src="Calculator.js"></script>
 </body>
