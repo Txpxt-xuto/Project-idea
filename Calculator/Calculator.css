@@ -74,7 +74,7 @@ main {
 }
 
 .keypad .control {
-  background-color: rgba(245, 146, 62);
+  background-color: red;
   color: white;
   text-transform: uppercase;
 }
