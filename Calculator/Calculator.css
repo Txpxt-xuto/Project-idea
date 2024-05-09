@@ -21,7 +21,7 @@ input {
   display: grid;
   place-items: center;
   height: 100vh;
-  background-color: aliceblue;
+  background-color: rgb(31, 31, 31);
   padding: 20px;
   grid-template-rows: 100px 1fr;
 }
@@ -43,7 +43,7 @@ main {
   font-size: 2.5rem;
   padding: 8px;
   text-align: right;
-  color: hsl(198, 20%, 13%);
+  color: hsl(198, 73%, 50%);
 }
 
 .input-container input::placeholder {
@@ -85,7 +85,7 @@ main {
 }
 
 .keypad button:active {
-  background-color: rgb(0, 193, 193) !important;
+  background-color: rgb(0, 193, 68) !important;
   box-shadow: 0 10px 5px hsl(35, 11%, 61%);
 }
 
