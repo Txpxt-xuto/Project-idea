@@ -1,53 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="Calculator.css">
-    <title>Simple Calculator</title>
-</head>
-<body>
-    <section class="Calculator">
-        <div class="container">
-			<div class="empty"></div>
-			<div class="calculator">
-				<div class="display">
-					<span id="current-calc"></span>
-					<br>
-					<span id="result">0</span>
-				</div>
-				<div class="row">
-					<span data-key="Backspace" id="other">&#8592;</span>
-					<span data-key="?" id="other">&plusmn;</span>
-					<span data-key="%" id="other">&percnt;</span>
-					<span data-key="/" id="operator">&divide;</span>
-				</div>
-				<div class="row">
-					<span data-key="7" id="num">7</span>
-					<span data-key="8" id="num">8</span>
-					<span data-key="9" id="num">9</span>
-					<span data-key="*" id="operator">&times;</span>
-				</div>
-				<div class="row">
-					<span data-key="4" id="num">4</span>
-					<span data-key="5" id="num">5</span>
-					<span data-key="6" id="num">6</span>
-					<span data-key="-" id="operator">&minus;</span>
-				</div>
-				<div class="row">
-					<span data-key="1" id="num">1</span>
-					<span data-key="2" id="num">2</span>
-					<span data-key="3" id="num">3</span>
-					<span data-key="+" id="operator">&plus;</span>
-				</div>
-				<div class="row">
-					<span data-key="Delete" id="del">CE</span>
-					<span data-key="0" id="num">0</span>
-					<span data-key="." id="other">.</span>
-					<span data-key="Enter" id="equ">&equals;</span>
-				</div>
-			</div>
-    </section>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator</title>
+    <link rel="stylesheet" href="Calculator.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h3>Sum buddy</h3>
+
+      <main>
+        <div class="input-container">
+          <input type="text" id="display" value="" placeholder="0" readonly />
+          <input type="text" id="result" value="" readonly />
+        </div>
+        <div class="keypad">
+          <button class="digit" value="7">7</button>
+          <button class="digit" value="8">8</button>
+          <button class="digit" value="9">9</button>
+          <button id="delete" class="control" value="delete">Del</button>
+
+          <button class="digit" value="4">4</button>
+          <button class="digit" value="5">5</button>
+          <button class="digit" value="6">6</button>
+          <button class="digit" value="+">+</button>
+
+          <button class="digit" value="1">1</button>
+          <button class="digit" value="2">2</button>
+          <button class="digit" value="3">3</button>
+          <button class="digit" value="-">-</button>
+
+          <button class="digit" value=".">.</button>
+          <button class="digit" value="0">0</button>
+          <button class="digit" value="/">/</button>
+          <button class="digit" value="*">x</button>
+
+          <button id="reset" class="control"  value="reset">Reset</button>
+          <button id="equalto" value="=">=</button>
+        </div>
+      </main>
+    </div>
+
     <script src="Calculator.js"></script>
-</body>
+  </body>
 </html>
