@@ -74,18 +74,18 @@ main {
 }
 
 .keypad .control {
-  background-color: hsl(185, 42%, 37%);
+  background-color: rgba(245, 146, 62);
   color: white;
   text-transform: uppercase;
 }
 
 #equalto {
-  background-color: hsl(25, 98%, 40%);
+  background-color: green;
   color: white;
 }
 
 .keypad button:active {
-  background-color: aquamarine !important;
+  background-color: rgb(0, 193, 193) !important;
   box-shadow: 0 10px 5px hsl(35, 11%, 61%);
 }
 
