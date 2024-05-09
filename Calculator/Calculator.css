@@ -18,6 +18,7 @@ input {
 }
 
 .container {
+    
   display: grid;
   place-items: center;
   height: 100vh;
@@ -27,8 +28,9 @@ input {
 }
 
 main {
-  max-width: 300px;
-  align-self: start;
+    max-width: 300px;
+    align-self: start;
+    margin-top: 100px;
 }
 
 .input-container {
@@ -85,7 +87,7 @@ main {
 }
 
 .keypad button:active {
-  background-color: rgb(0, 193, 68) !important;
+  background-color: rgb(143, 143, 143) !important;
   box-shadow: 0 10px 5px hsl(35, 11%, 61%);
 }
 
