@@ -28,7 +28,7 @@ input {
 main {
     max-width: 300px;
     align-self: start;
-    margin-top: 100px;
+    margin: 150px;
 }
 
 .input-container {
