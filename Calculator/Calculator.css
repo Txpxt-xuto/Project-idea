@@ -33,65 +33,65 @@ main {
 }
 
 .input-container {
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-  border-radius: 20px;
-  overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 20px;
+    overflow: hidden;
 }
 
 .input-container input {
-  font-size: 2.5rem;
-  padding: 8px;
-  text-align: right;
-  color: hsl(198, 20%, 13%);
+    font-size: 2.5rem;
+    padding: 8px;
+    text-align: right;
+    color: hsl(198, 20%, 13%);
 }
 
 .input-container input::placeholder {
-  color: hsl(198, 20%, 13%);
+    color: hsl(198, 20%, 13%);
 }
 
 .keypad {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  place-items: center;
-  margin: 20px 0 0;
-  gap: 10px;
-  background-color: hsl(0, 5%, 81%);
-  padding: 20px;
-  border-radius: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    place-items: center;
+    margin: 20px 0 0;
+    gap: 10px;
+    background-color: hsl(0, 5%, 81%);
+    padding: 20px;
+    border-radius: 20px;
 }
 
 .keypad button {
-  background-color: white;
-  width: 100%;
-  text-align: center;
-  aspect-ratio: 1.5;
-  font-size: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 5px 5px hsl(35, 11%, 61%);
-  transition: all 0.3s ease;
-  cursor: pointer;
+    background-color: white;
+    width: 100%;
+    text-align: center;
+    aspect-ratio: 1.5;
+    font-size: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 5px 5px hsl(35, 11%, 61%);
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .keypad .control {
-  background-color: red;
-  color: white;
-  text-transform: uppercase;
+    background-color: red;
+    color: white;
+    text-transform: uppercase;
 }
 
 #equalto {
-  background-color: green;
-  color: white;
+    background-color: green;
+    color: white;
 }
 
 .keypad button:active {
-  background-color: rgb(143, 143, 143) !important;
-  box-shadow: 0 10px 5px hsl(35, 11%, 61%);
+    background-color: rgb(143, 143, 143) !important;
+    box-shadow: 0 10px 5px hsl(35, 11%, 61%);
 }
 
 #reset,
 #equalto {
-  grid-column: span 2;
-  aspect-ratio: 2.5;
+    grid-column: span 2;
+    aspect-ratio: 2.5;
 }
