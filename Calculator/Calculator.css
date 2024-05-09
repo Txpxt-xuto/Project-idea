@@ -43,7 +43,7 @@ main {
   font-size: 2.5rem;
   padding: 8px;
   text-align: right;
-  color: hsl(198, 73%, 50%);
+  color: hsl(198, 20%, 13%);
 }
 
 .input-container input::placeholder {
