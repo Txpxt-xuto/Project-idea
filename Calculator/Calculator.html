@@ -1,47 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Calculator</title>
     <link rel="stylesheet" href="Calculator.css" />
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <h3>Sum buddy</h3>
+        <h3>Sum buddy</h3>
+        <main>
+            <div class="input-container">
+                <input type="text" id="display" value="" placeholder="0" readonly />
+                <input type="text" id="result" value="" readonly />
+            </div>
+            <div class="keypad">
+                <button class="digit" value="7">7</button>
+                <button class="digit" value="8">8</button>
+                <button class="digit" value="9">9</button>
+                <button id="delete" class="control" value="delete">Del</button>
 
-      <main>
-        <div class="input-container">
-          <input type="text" id="display" value="" placeholder="0" readonly />
-          <input type="text" id="result" value="" readonly />
-        </div>
-        <div class="keypad">
-          <button class="digit" value="7">7</button>
-          <button class="digit" value="8">8</button>
-          <button class="digit" value="9">9</button>
-          <button id="delete" class="control" value="delete">Del</button>
+                <button class="digit" value="4">4</button>
+                <button class="digit" value="5">5</button>
+                <button class="digit" value="6">6</button>
+                <button class="digit" value="+">+</button>
 
-          <button class="digit" value="4">4</button>
-          <button class="digit" value="5">5</button>
-          <button class="digit" value="6">6</button>
-          <button class="digit" value="+">+</button>
+                <button class="digit" value="1">1</button>
+                <button class="digit" value="2">2</button>
+                <button class="digit" value="3">3</button>
+                <button class="digit" value="-">-</button>
 
-          <button class="digit" value="1">1</button>
-          <button class="digit" value="2">2</button>
-          <button class="digit" value="3">3</button>
-          <button class="digit" value="-">-</button>
+                <button class="digit" value=".">.</button>
+                <button class="digit" value="0">0</button>
+                <button class="digit" value="/">/</button>
+                <button class="digit" value="*">x</button>
 
-          <button class="digit" value=".">.</button>
-          <button class="digit" value="0">0</button>
-          <button class="digit" value="/">/</button>
-          <button class="digit" value="*">x</button>
-
-          <button id="reset" class="control"  value="reset">Reset</button>
-          <button id="equalto" value="=">=</button>
-        </div>
-      </main>
+                <button id="reset" class="control"  value="reset">Reset</button>
+                <button id="equalto" value="=">=</button>
+            </div>
+        </main>
     </div>
 
     <script src="Calculator.js"></script>
-  </body>
+</body>
 </html>
