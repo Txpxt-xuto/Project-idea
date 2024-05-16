@@ -124,15 +124,13 @@ int main()
                 calculateForSurface(cubeX, cubeWidth, cubeY, '+');
             }
         }
-    printf("\x1b[H");
-    for (int k = 0; k < width * height; k++) {
-      putchar(k % width ? buffer[k] : 10);
-    }
+        printf("\x1b[H");
+        for (int k = 0; k < width * height; k++) putchar(k % width ? buffer[k] : 10);
 
-    A += 0.05;
-    B += 0.05;
-    C += 0.01;
-    usleep(8000 * 2);
-}
-  return 0;
+        A += 0.05;
+        B += 0.05;
+        C += 0.01;
+        usleep(8000 * 2);
+    }
+    return 0;
 }
