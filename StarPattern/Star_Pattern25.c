@@ -50,23 +50,26 @@ float calculateZ(int i, int j, int k) {
   return k * cos(A) * cos(B) - j * sin(A) * cos(B) + i * sin(B);
 }
 
-void calculateForSurface(float cubeX, float cubeY, float cubeZ, int ch) {
-  x = calculateX(cubeX, cubeY, cubeZ);
-  y = calculateY(cubeX, cubeY, cubeZ);
-  z = calculateZ(cubeX, cubeY, cubeZ) + distanceFromCam;
+void calculateForSurface(float cubeX, float cubeY, float cubeZ, int ch) 
+{
+    x = calculateX(cubeX, cubeY, cubeZ);
+    y = calculateY(cubeX, cubeY, cubeZ);
+    z = calculateZ(cubeX, cubeY, cubeZ) + distanceFromCam;
 
-  ooz = 1 / z;
+    ooz = 1 / z;
 
-  xp = (int)(width / 2 + horizontalOffset + K1 * ooz * x * 2);
-  yp = (int)(height / 2 + K1 * ooz * y);
+    xp = (int)(width / 2 + horizontalOffset + K1 * ooz * x * 2);
+    yp = (int)(height / 2 + K1 * ooz * y);
 
-  idx = xp + yp * width;
-  if (idx >= 0 && idx < width * height) {
-    if (ooz > zBuffer[idx]) {
-      zBuffer[idx] = ooz;
-      buffer[idx] = ch;
+    idx = xp + yp * width;
+    if (idx >= 0 && idx < width * height) 
+    {
+        if (ooz > zBuffer[idx]) 
+        {
+            zBuffer[idx] = ooz;
+            buffer[idx] = ch;
+        }
     }
-  }
 }
 
 int main() {
