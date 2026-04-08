@@ -1,5 +1,5 @@
-<style>
-  :root {
+
+:root {
     --bg: #0a0a0f;
     --surface: #13131a;
     --card: #1a1a25;
@@ -246,7 +246,7 @@
     font-size: 11px; font-weight: 700; letter-spacing: 1px;
   }
   .badge-available { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
-  .badge-limited { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  .badge-limited { background: rgba(251, 47, 36, 0.164); color: #f33e35; border: 1px solid rgba(251, 82, 36, 0.3); }
 
   .car-info { padding: 18px; }
   .car-name { font-size: 17px; font-weight: 700; color: var(--text); }
@@ -454,4 +454,122 @@
     nav ul { gap: 16px; }
     .form-row { grid-template-columns: 1fr; }
   }
-</style>
+
+
+
+#FAQ * {
+  box-sizing: border-box;
+  &::before, &::after {
+    box-sizing: border-box;
+  }
+}
+
+#FAQ body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Hind', sans-serif;
+  background: #f0f0f0;
+  color: #222;
+  display: flex;
+  min-height: 100vh;
+}
+
+.container {
+    h2{
+        color :#e8c547;
+    }
+  margin: 0 auto;
+  padding: 4rem;
+  width: 48rem;
+}
+
+.accordion {
+  .accordion-item {
+    border-bottom: 1px solid #f0f0f0;
+    button[aria-expanded='true'] {
+      border-bottom: 1px solid #e8c547;
+    }
+  }
+  button {
+    position: relative;
+    display: block;
+    text-align: left;
+    width: 100%;
+    padding: 1em 0;
+    color: #f0f0f0;
+    font-size: 1.15rem;
+    font-weight: 400;
+    border: none;
+    background: none;
+    outline: none;
+    &:hover, &:focus {
+      cursor: pointer;
+      color: #e8c547;
+      &::after {
+        cursor: pointer;
+        color: #e8c547;
+        border: 1px solid #e8c547;
+      }
+    }
+    .accordion-title {
+      padding: 1em 1.5em 1em 0;
+    }
+    .icon {
+      display: inline-block;
+      position: absolute;
+      top: 18px;
+      right: 0;
+      width: 22px;
+      height: 22px;
+      border: 1px solid;
+      border-radius: 22px;
+      &::before {
+        display: block;
+        position: absolute;
+        content: '';
+        top: 9px;
+        left: 5px;
+        width: 10px;
+        height: 2px;
+        background: currentColor;
+      }
+      &::after {
+        display: block;
+        position: absolute;
+        content: '';
+        top: 5px;
+        left: 9px;
+        width: 2px;
+        height: 10px;
+        background: currentColor;
+      }
+    }
+  }
+  button[aria-expanded='true'] {
+    color: #e8c547;
+    .icon {
+      &::after {
+        width: 0;
+      }
+    }
+    + .accordion-content {
+      opacity: 1;
+      max-height: 9em;
+      transition: all 200ms linear;
+      will-change: opacity, max-height;
+    }
+  }
+  .accordion-content {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 200ms linear, max-height 200ms linear;
+    will-change: opacity, max-height;
+    p {
+      font-size: 1rem;
+      color: #ababab;
+      font-weight: 300;
+      margin: 2em 0;
+    }
+  }
+}
