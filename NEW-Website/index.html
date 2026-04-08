@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DRIVEX — เช่ารถพรีเมียม</title>
+<title>RODCHAOMAHACHAI</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="index.css">
 </head>
@@ -13,8 +13,9 @@
   <div class="logo">RODCHAO<span> MAHACHAI</span></div>
   <ul>
     <li><a href="#" onclick="showPage('home')">หน้าแรก</a></li>
-    <li><a href="about_us.html" onclick="showPage('home')">เกี่ยวกับเรา</a></li>
-    <li><a href="#" onclick="showPage('home')">ติดต่อ</a></li>
+    <li><a href="#" onclick="printallcars(); showPage('cars')">รถทั้งหมด</a></li>
+    <li><a href="about_us.html">เกี่ยวกับเรา</a></li>
+    <li><a href="#">ติดต่อ</a></li>
   </ul>
 </nav>
 
@@ -105,7 +106,7 @@
       <h2>รถว่างให้เช่า</h2>
       <div class="date-range">
         <strong id="display-dates">—</strong>
-        &nbsp;·&nbsp; <span id="display-days">—</span>
+        &nbsp; &nbsp; <span id="display-days">—</span>
       </div>
     </div>
     <div style="font-size:14px;color:var(--muted);" id="result-count">กำลังโหลด...</div>
