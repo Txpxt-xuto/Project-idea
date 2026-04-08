@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DRIVEX — เช่ารถพรีเมียม</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --card: #1a1a25;
+    --accent: #e8c547;
+    --accent2: #ff6b35;
+    --text: #f0f0f0;
+    --muted: #888;
+    --border: rgba(232,197,71,0.15);
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 48px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text); }
+  nav ul { list-style: none; display: flex; gap: 32px; }
+  nav ul a {
+    text-decoration: none; color: var(--muted);
+    font-size: 14px; font-weight: 500; letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--accent); }
+
+  /* ===== PAGES ===== */
+  .page { display: none; min-height: 100vh; padding-top: 80px; }
+  .page.active { display: block; }
+
+  /* ===== HERO ===== */
+  #page-home {
+    background: 
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(232,197,71,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, rgba(255,107,53,0.06) 0%, transparent 50%),
+      var(--bg);
+  }
+
+  .hero {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 64px; align-items: center;
+    padding: 80px 48px 40px;
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  .hero-text h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 8vw, 108px);
+    line-height: 0.9;
+    letter-spacing: 3px;
+    color: var(--text);
+  }
+  .hero-text h1 .yellow { color: var(--accent); }
+  .hero-text p {
+    margin-top: 20px; color: var(--muted);
+    font-size: 16px; line-height: 1.7; max-width: 380px;
+  }
+
+  /* ===== SEARCH FORM ===== */
+  .search-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .search-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .search-card h2 {
+    font-size: 20px; font-weight: 700; margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  .form-group { margin-bottom: 18px; }
+  .form-group label {
+    display: block; font-size: 12px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .form-group input, .form-group select {
+    width: 100%; padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text); font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(232,197,71,0.1);
+  }
+  .form-group select option { background: var(--surface); }
+
+  .btn-primary {
+    width: 100%; padding: 14px;
+    background: var(--accent);
+    color: #0a0a0f; font-family: 'Sarabun', sans-serif;
+    font-size: 16px; font-weight: 700;
+    border: none; border-radius: var(--radius);
+    cursor: pointer; letter-spacing: 1px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,197,71,0.3);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 24px; padding: 0 48px 80px;
+    max-width: 1200px; margin: 40px auto 0;
+  }
+  .stat {
+    text-align: center; padding: 24px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px; color: var(--accent); letter-spacing: 2px;
+  }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* ===== CARS LIST PAGE ===== */
+  #page-cars {
+    background: var(--bg);
+    padding: 100px 48px 60px;
+  }
+  .cars-header {
+    max-width: 1200px; margin: 0 auto 32px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .cars-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px; letter-spacing: 3px; color: var(--text);
+  }
+  .cars-header .date-range {
+    font-size: 14px; color: var(--muted);
+  }
+  .cars-header .date-range strong { color: var(--accent); }
+
+  .cars-layout {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 260px 1fr; gap: 32px;
+  }
+
+  /* Filter sidebar */
+  .filter-sidebar {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+    height: fit-content; position: sticky; top: 90px;
+  }
+  .filter-sidebar h3 {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 20px;
+  }
+  .filter-group { margin-bottom: 24px; }
+  .filter-group-title {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .filter-group-title::before {
+    content: ''; width: 3px; height: 14px;
+    background: var(--accent); border-radius: 2px;
+  }
+  .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    padding: 6px 14px; border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 13px; color: var(--muted);
+    cursor: pointer; transition: all 0.15s;
+    background: transparent; font-family: 'Sarabun', sans-serif;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.active {
+    background: var(--accent); color: #0a0a0f;
+    border-color: var(--accent); font-weight: 700;
+  }
+  .filter-divider { height: 1px; background: var(--border); margin: 4px 0 20px; }
+  .btn-reset {
+    width: 100%; padding: 10px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); font-family: 'Sarabun', sans-serif;
+    font-size: 13px; border-radius: var(--radius);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-reset:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* Car cards */
+  .cars-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+  .car-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .car-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(232,197,71,0.4);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  }
+  .car-img-wrap {
+    background: linear-gradient(135deg, #1e1e2e, #252535);
+    height: 180px; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .car-emoji {
+    font-size: 80px;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5));
+    transition: transform 0.3s;
+  }
+  .car-card:hover .car-emoji { transform: scale(1.08) rotate(-2deg); }
+  .car-badge {
+    position: absolute; top: 12px; right: 12px;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  }
+  .badge-available { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+  .badge-limited { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+
+  .car-info { padding: 18px; }
+  .car-name { font-size: 17px; font-weight: 700; color: var(--text); }
+  .car-type { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .car-specs {
+    display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap;
+  }
+  .spec {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--muted);
+    background: var(--surface); padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .car-price-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); }
+  .price span { font-family: 'Sarabun', sans-serif; font-size: 13px; font-weight: 400; color: var(--muted); }
+  .btn-select {
+    padding: 9px 20px; background: var(--accent);
+    color: #0a0a0f; border: none; border-radius: 8px;
+    font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .btn-select:hover { box-shadow: 0 4px 16px rgba(232,197,71,0.4); }
+
+  .no-results {
+    text-align: center; padding: 60px 20px;
+    color: var(--muted); grid-column: 1/-1;
+  }
+  .no-results .icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* ===== PAYMENT PAGE ===== */
+  #page-payment {
+    background: 
+      radial-gradient(ellipse 50% 60% at 20% 30%, rgba(255,107,53,0.05) 0%, transparent 60%),
+      var(--bg);
+    padding: 100px 48px 60px;
+  }
+  .payment-wrapper {
+    max-width: 960px; margin: 0 auto;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: none; border: none; color: var(--muted);
+    font-family: 'Sarabun', sans-serif; font-size: 14px;
+    cursor: pointer; margin-bottom: 32px; padding: 0;
+    transition: color 0.15s;
+  }
+  .back-btn:hover { color: var(--accent); }
+
+  .payment-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px; letter-spacing: 3px;
+  }
+  .payment-header p { color: var(--muted); font-size: 15px; margin-top: 4px; }
+
+  .payment-grid {
+    display: grid; grid-template-columns: 1fr 380px;
+    gap: 32px; margin-top: 36px;
+  }
+
+  .payment-form-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px;
+  }
+  .section-title {
+    font-size: 16px; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 22px; color: var(--text);
+  }
+  .section-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #0a0a0f;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .payment-methods {
+    display: flex; gap: 10px; margin-bottom: 24px;
+  }
+  .pay-method {
+    flex: 1; padding: 12px; border: 1px solid var(--border);
+    border-radius: var(--radius); cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: var(--surface); transition: all 0.15s;
+  }
+  .pay-method:hover { border-color: var(--accent); }
+  .pay-method.selected { border-color: var(--accent); background: rgba(232,197,71,0.08); }
+  .pay-method .pm-icon { font-size: 22px; }
+  .pay-method .pm-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .pay-method.selected .pm-label { color: var(--accent); }
+
+  .card-input-wrap { position: relative; }
+  .card-input-wrap input { padding-right: 50px; }
+  .card-icon {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 20px;
+  }
+
+  /* Order summary */
+  .order-summary {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px;
+    height: fit-content; position: sticky; top: 90px;
+  }
+  .order-summary h3 {
+    font-size: 14px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 20px;
+  }
+
+  .summary-car {
+    display: flex; gap: 14px; align-items: center;
+    background: var(--surface); border-radius: 10px;
+    padding: 14px; margin-bottom: 20px;
+  }
+  .summary-car-icon { font-size: 40px; }
+  .summary-car-name { font-size: 16px; font-weight: 700; }
+  .summary-car-type { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .summary-row {
+    display: flex; justify-content: space-between;
+    font-size: 14px; padding: 10px 0; border-bottom: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .summary-row:last-of-type { border: none; }
+  .summary-row strong { color: var(--text); }
+  .summary-total {
+    display: flex; justify-content: space-between;
+    padding-top: 16px; margin-top: 8px;
+    border-top: 2px solid var(--border);
+  }
+  .summary-total .label {
+    font-size: 15px; font-weight: 700; color: var(--text);
+  }
+  .summary-total .amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px; color: var(--accent); letter-spacing: 1px;
+  }
+
+  .security-note {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(74,222,128,0.05); border: 1px solid rgba(74,222,128,0.15);
+    border-radius: 8px; padding: 10px 14px; margin-top: 20px;
+    font-size: 12px; color: #4ade80;
+  }
+
+  /* ===== SUCCESS PAGE ===== */
+  #page-success {
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; min-height: 100vh;
+    background: var(--bg); padding: 100px 48px 60px;
+  }
+  .success-content { max-width: 480px; }
+  .success-icon {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(74,222,128,0.1); border: 2px solid rgba(74,222,128,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; margin: 0 auto 28px;
+    animation: pulse-green 2s ease-in-out infinite;
+  }
+  @keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.3); }
+    50% { box-shadow: 0 0 0 20px rgba(74,222,128,0); }
+  }
+  .success-content h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px; letter-spacing: 3px; color: var(--text);
+  }
+  .success-content p { color: var(--muted); font-size: 16px; margin-top: 10px; line-height: 1.7; }
+  .booking-ref {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px 24px; margin: 24px 0;
+  }
+  .booking-ref .ref-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .booking-ref .ref-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+    color: var(--accent); letter-spacing: 4px;
+  }
+  .btn-home {
+    display: inline-block; padding: 14px 36px;
+    background: var(--accent); color: #0a0a0f;
+    font-family: 'Sarabun', sans-serif; font-size: 16px; font-weight: 700;
+    border: none; border-radius: var(--radius);
+    cursor: pointer; letter-spacing: 1px; margin-top: 8px;
+    transition: all 0.15s;
+  }
+  .btn-home:hover { box-shadow: 0 8px 24px rgba(232,197,71,0.35); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding: 40px 24px 20px; }
+    .hero-text h1 { font-size: 72px; }
+    .stats { grid-template-columns: 1fr; padding: 0 24px 40px; }
+    .cars-layout { grid-template-columns: 1fr; }
+    .filter-sidebar { position: static; }
+    .cars-grid { grid-template-columns: 1fr; }
+    .payment-grid { grid-template-columns: 1fr; }
+    #page-cars, #page-payment { padding: 100px 24px 40px; }
+    nav { padding: 16px 24px; }
+    nav ul { gap: 16px; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">DRIVE<span>X</span></div>
+  <ul>
+    <li><a href="#" onclick="showPage('home')">หน้าแรก</a></li>
+    <li><a href="#" onclick="showPage('home')">เกี่ยวกับเรา</a></li>
+    <li><a href="#" onclick="showPage('home')">ติดต่อ</a></li>
+  </ul>
+</nav>
+
+<!-- ===== HOME PAGE ===== -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-text">
+      <h1>เช่า<br><span class="yellow">รถ</span><br>ง่ายนิดเดียว</h1>
+      <p>บริการเช่ารถคุณภาพสูง หลากหลายรุ่น พร้อมให้บริการทั่วประเทศ ราคาโปร่งใส ไม่มีค่าธรรมเนียมซ่อน</p>
+    </div>
+    <div class="search-card">
+      <h2>🔍 ค้นหารถว่าง</h2>
+      <div class="form-group">
+        <label>วันที่รับรถ</label>
+        <input type="date" id="start-date">
+      </div>
+      <div class="form-group">
+        <label>วันที่คืนรถ</label>
+        <input type="date" id="end-date">
+      </div>
+      <div class="form-group">
+        <label>สถานที่รับรถ</label>
+        <select>
+          <option>กรุงเทพมหานคร — สุวรรณภูมิ</option>
+          <option>กรุงเทพมหานคร — ดอนเมือง</option>
+          <option>เชียงใหม่</option>
+          <option>ภูเก็ต</option>
+          <option>ขอนแก่น</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="searchCars()">ค้นหารถว่าง →</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">120+</div>
+      <div class="stat-label">รถให้เลือก</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">15K+</div>
+      <div class="stat-label">ลูกค้าพึงพอใจ</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4.9★</div>
+      <div class="stat-label">คะแนนรีวิว</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARS PAGE ===== -->
+<div id="page-cars" class="page">
+  <div class="cars-header">
+    <div>
+      <h2>รถว่างให้เช่า</h2>
+      <div class="date-range">
+        <strong id="display-dates">—</strong>
+        &nbsp;·&nbsp; <span id="display-days">—</span>
+      </div>
+    </div>
+    <div style="font-size:14px;color:var(--muted);" id="result-count">กำลังโหลด...</div>
+  </div>
+
+  <div class="cars-layout">
+    <aside class="filter-sidebar">
+      <h3>⚙ ตัวกรอง</h3>
+
+      <div class="filter-group">
+        <div class="filter-group-title">จำนวนที่นั่ง</div>
+        <div class="filter-chips">
+          <button class="chip active" data-filter="seats" data-value="all" onclick="setFilter('seats','all',this)">ทั้งหมด</button>
+          <button class="chip" data-filter="seats" data-value="5" onclick="setFilter('seats','5',this)">5 ที่นั่ง</button>
+          <button class="chip" data-filter="seats" data-value="6" onclick="setFilter('seats','6',this)">6 ที่นั่ง</button>
+          <button class="chip" data-filter="seats" data-value="7" onclick="setFilter('seats','7',this)">7 ที่นั่ง</button>
+        </div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">ชนิดเชื้อเพลิง</div>
+        <div class="filter-chips">
+          <button class="chip active" data-filter="fuel" data-value="all" onclick="setFilter('fuel','all',this)">ทั้งหมด</button>
+          <button class="chip" data-filter="fuel" data-value="95" onclick="setFilter('fuel','95',this)">เบนซิน 95</button>
+          <button class="chip" data-filter="fuel" data-value="diesel" onclick="setFilter('fuel','diesel',this)">ดีเซล</button>
+        </div>
+      </div>
+
+      <div class="filter-divider"></div>
+
+      <div class="filter-group">
+        <div class="filter-group-title">ราคา / วัน</div>
+        <div class="filter-chips">
+          <button class="chip active" data-filter="price" data-value="all" onclick="setFilter('price','all',this)">ทั้งหมด</button>
+          <button class="chip" data-filter="price" data-value="low" onclick="setFilter('price','low',this)">&lt; 1,200฿</button>
+          <button class="chip" data-filter="price" data-value="mid" onclick="setFilter('price','mid',this)">1,200–2,000฿</button>
+          <button class="chip" data-filter="price" data-value="high" onclick="setFilter('price','high',this)">&gt; 2,000฿</button>
+        </div>
+      </div>
+
+      <button class="btn-reset" onclick="resetFilters()">↺ รีเซ็ตตัวกรอง</button>
+    </aside>
+
+    <div class="cars-grid" id="cars-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAYMENT PAGE ===== -->
+<div id="page-payment" class="page">
+  <div class="payment-wrapper">
+    <button class="back-btn" onclick="showPage('cars')">← กลับเลือกรถ</button>
+    <div class="payment-header">
+      <h2>ชำระเงิน</h2>
+      <p>กรอกข้อมูลให้ครบถ้วนเพื่อยืนยันการจอง</p>
+    </div>
+
+    <div class="payment-grid">
+      <div>
+        <!-- Customer Info -->
+        <div class="payment-form-card" style="margin-bottom:20px;">
+          <div class="section-title"><div class="section-num">1</div>ข้อมูลผู้เช่า</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>ชื่อ</label>
+              <input type="text" placeholder="ชื่อจริง">
+            </div>
+            <div class="form-group">
+              <label>นามสกุล</label>
+              <input type="text" placeholder="นามสกุล">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>เบอร์โทรศัพท์</label>
+              <input type="tel" placeholder="08x-xxx-xxxx">
+            </div>
+            <div class="form-group">
+              <label>อีเมล</label>
+              <input type="email" placeholder="email@example.com">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>เลขบัตรประชาชน / พาสปอร์ต</label>
+            <input type="text" placeholder="x-xxxx-xxxxx-xx-x">
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="payment-form-card">
+          <div class="section-title"><div class="section-num">2</div>วิธีชำระเงิน</div>
+
+          <div class="payment-methods">
+            <div class="pay-method selected" onclick="selectPayMethod(this,'card')">
+              <div class="pm-icon">💳</div>
+              <div class="pm-label">บัตรเครดิต</div>
+            </div>
+            <div class="pay-method" onclick="selectPayMethod(this,'qr')">
+              <div class="pm-icon">📱</div>
+              <div class="pm-label">QR พร้อมเพย์</div>
+            </div>
+            <div class="pay-method" onclick="selectPayMethod(this,'bank')">
+              <div class="pm-icon">🏦</div>
+              <div class="pm-label">โอนเงิน</div>
+            </div>
+          </div>
+
+          <div id="card-section">
+            <div class="form-group">
+              <label>หมายเลขบัตร</label>
+              <div class="card-input-wrap">
+                <input type="text" placeholder="1234  5678  9012  3456" maxlength="19" oninput="formatCard(this)">
+                <div class="card-icon">💳</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>วันหมดอายุ</label>
+                <input type="text" placeholder="MM/YY" maxlength="5">
+              </div>
+              <div class="form-group">
+                <label>CVV</label>
+                <input type="text" placeholder="•••" maxlength="3">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>ชื่อบนบัตร</label>
+              <input type="text" placeholder="ชื่อ นามสกุล (ภาษาอังกฤษ)">
+            </div>
+          </div>
+
+          <div id="qr-section" style="display:none;text-align:center;padding:24px 0;">
+            <div style="font-size:80px;margin-bottom:12px;">📲</div>
+            <p style="color:var(--muted);font-size:14px;">สแกน QR Code ด้วยแอปธนาคารเพื่อชำระเงิน</p>
+            <div style="width:160px;height:160px;background:var(--surface);border:2px dashed var(--border);border-radius:12px;margin:16px auto;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;">QR Code</div>
+          </div>
+
+          <div id="bank-section" style="display:none;">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;">
+              <p style="font-size:13px;color:var(--muted);margin-bottom:8px;">โอนเงินมาที่</p>
+              <p style="font-size:15px;font-weight:700;">ธนาคารกสิกรไทย</p>
+              <p style="font-size:20px;font-weight:700;color:var(--accent);letter-spacing:2px;margin-top:4px;">088-3-45678-9</p>
+              <p style="font-size:13px;color:var(--muted);margin-top:4px;">ชื่อบัญชี: บริษัท ไดรฟ์เอ็กซ์ จำกัด</p>
+            </div>
+          </div>
+
+          <div class="security-note">
+            🔒 ข้อมูลการชำระเงินของคุณถูกเข้ารหัสด้วย SSL 256-bit
+          </div>
+
+          <button class="btn-primary" style="margin-top:20px;" onclick="confirmPayment()">
+            ✓ ยืนยันการจองและชำระเงิน
+          </button>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <h3>สรุปการจอง</h3>
+        <div class="summary-car">
+          <div class="summary-car-icon" id="sum-icon">🚗</div>
+          <div>
+            <div class="summary-car-name" id="sum-name">—</div>
+            <div class="summary-car-type" id="sum-type">—</div>
+          </div>
+        </div>
+        <div class="summary-row">
+          <span>วันรับรถ</span>
+          <strong id="sum-start">—</strong>
+        </div>
+        <div class="summary-row">
+          <span>วันคืนรถ</span>
+          <strong id="sum-end">—</strong>
+        </div>
+        <div class="summary-row">
+          <span>จำนวนวัน</span>
+          <strong id="sum-days">—</strong>
+        </div>
+        <div class="summary-row">
+          <span>ราคา/วัน</span>
+          <strong id="sum-per-day">—</strong>
+        </div>
+        <div class="summary-row">
+          <span>ประกันภัย</span>
+          <strong>รวมแล้ว</strong>
+        </div>
+        <div class="summary-total">
+          <div class="label">รวมทั้งหมด</div>
+          <div class="amount" id="sum-total">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SUCCESS PAGE ===== -->
+<div id="page-success" class="page">
+  <div class="success-content">
+    <div class="success-icon">✓</div>
+    <h2>จองสำเร็จ!</h2>
+    <p>ขอบคุณที่ใช้บริการ DRIVEX<br>เราจะส่งรายละเอียดการจองไปยังอีเมลของคุณ</p>
+    <div class="booking-ref">
+      <div class="ref-label">หมายเลขการจอง</div>
+      <div class="ref-num" id="booking-ref-num">DRX-000000</div>
+    </div>
+    <button class="btn-home" onclick="showPage('home')">← กลับหน้าแรก</button>
+  </div>
+</div>
+
+<script>
+const CARS = [
+  { id:1, name:'Toyota Fortuner', type:'SUV 7 ที่นั่ง', seats:7, fuel:'diesel', price:2200, emoji:'🚙', available:true },
+  { id:2, name:'Honda CR-V', type:'SUV 5 ที่นั่ง', seats:5, fuel:'95', price:1800, emoji:'🚘', available:true },
+  { id:3, name:'Toyota Alphard', type:'MPV 7 ที่นั่ง', seats:7, fuel:'95', price:3500, emoji:'🚐', available:false, limited:true },
+  { id:4, name:'Isuzu MU-X', type:'PPV 7 ที่นั่ง', seats:7, fuel:'diesel', price:1900, emoji:'🛻', available:true },
+  { id:5, name:'Honda Civic', type:'Sedan 5 ที่นั่ง', seats:5, fuel:'95', price:1100, emoji:'🚗', available:true },
+  { id:6, name:'Toyota Innova', type:'MPV 7 ที่นั่ง', seats:7, fuel:'diesel', price:1600, emoji:'🚌', available:true },
+  { id:7, name:'Mazda CX-5', type:'SUV 5 ที่นั่ง', seats:5, fuel:'95', price:2000, emoji:'🏎', available:true },
+  { id:8, name:'Ford Everest', type:'SUV 7 ที่นั่ง', seats:7, fuel:'diesel', price:2400, emoji:'🚙', available:false, limited:true },
+  { id:9, name:'Nissan Serena', type:'MPV 6 ที่นั่ง', seats:6, fuel:'95', price:1700, emoji:'🚐', available:true },
+  { id:10, name:'Mitsubishi Xpander', type:'MPV 6 ที่นั่ง', seats:6, fuel:'95', price:1300, emoji:'🚗', available:true },
+];
+
+let filters = { seats: 'all', fuel: 'all', price: 'all' };
+let selectedCar = null;
+let startDate = '', endDate = '', numDays = 1;
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function searchCars() {
+  const s = document.getElementById('start-date').value;
+  const e = document.getElementById('end-date').value;
+  if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
+  if (e <= s) { alert('วันคืนรถต้องหลังวันรับรถ'); return; }
+  startDate = s; endDate = e;
+  const ms = new Date(e) - new Date(s);
+  numDays = Math.max(1, Math.ceil(ms / 86400000));
+
+  const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('display-dates').textContent = fmt(s) + ' → ' + fmt(e);
+  document.getElementById('display-days').textContent = numDays + ' วัน';
+
+  renderCars();
+  showPage('cars');
+}
+
+function renderCars() {
+  const grid = document.getElementById('cars-grid');
+  const filtered = CARS.filter(c => {
+    if (filters.seats !== 'all' && String(c.seats) !== filters.seats) return false;
+    if (filters.fuel !== 'all' && c.fuel !== filters.fuel) return false;
+    if (filters.price === 'low' && c.price >= 1200) return false;
+    if (filters.price === 'mid' && (c.price < 1200 || c.price > 2000)) return false;
+    if (filters.price === 'high' && c.price <= 2000) return false;
+    return true;
+  });
+
+  document.getElementById('result-count').textContent = `พบ ${filtered.length} คัน`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>ลองปรับตัวกรองดูใหม่</p></div>`;
+    return;
+  }
+
+  const fuelLabel = f => f === '95' ? '⛽ เบนซิน 95' : '🛢 ดีเซล';
+  const total = c => (c.price * numDays).toLocaleString();
+
+  grid.innerHTML = filtered.map(c => `
+    <div class="car-card" onclick="selectCar(${c.id})">
+      <div class="car-img-wrap">
+        <div class="car-emoji">${c.emoji}</div>
+        <div class="car-badge ${c.available ? 'badge-available' : 'badge-limited'}">
+          ${c.available ? '✓ ว่าง' : '⚡ เหลือน้อย'}
+        </div>
+      </div>
+      <div class="car-info">
+        <div class="car-name">${c.name}</div>
+        <div class="car-type">${c.type}</div>
+        <div class="car-specs">
+          <div class="spec">👥 ${c.seats} ที่นั่ง</div>
+          <div class="spec">${fuelLabel(c.fuel)}</div>
+          <div class="spec">🔄 Auto</div>
+          <div class="spec">❄️ A/C</div>
+        </div>
+        <div class="car-price-row">
+          <div>
+            <div class="price">${c.price.toLocaleString()} <span>฿/วัน</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${numDays} วัน = ${total(c)} ฿</div>
+          </div>
+          <button class="btn-select">เลือกคัน →</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setFilter(type, value, el) {
+  filters[type] = value;
+  document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderCars();
+}
+
+function resetFilters() {
+  filters = { seats: 'all', fuel: 'all', price: 'all' };
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.value === 'all');
+  });
+  renderCars();
+}
+
+function selectCar(id) {
+  selectedCar = CARS.find(c => c.id === id);
+  if (!selectedCar) return;
+
+  const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('sum-icon').textContent = selectedCar.emoji;
+  document.getElementById('sum-name').textContent = selectedCar.name;
+  document.getElementById('sum-type').textContent = selectedCar.type;
+  document.getElementById('sum-start').textContent = fmt(startDate);
+  document.getElementById('sum-end').textContent = fmt(endDate);
+  document.getElementById('sum-days').textContent = numDays + ' วัน';
+  document.getElementById('sum-per-day').textContent = selectedCar.price.toLocaleString() + ' ฿';
+  document.getElementById('sum-total').textContent = (selectedCar.price * numDays).toLocaleString() + ' ฿';
+
+  showPage('payment');
+}
+
+function selectPayMethod(el, method) {
+  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('card-section').style.display = method === 'card' ? 'block' : 'none';
+  document.getElementById('qr-section').style.display = method === 'qr' ? 'block' : 'none';
+  document.getElementById('bank-section').style.display = method === 'bank' ? 'block' : 'none';
+}
+
+function formatCard(input) {
+  let v = input.value.replace(/\D/g,'').substring(0,16);
+  input.value = v.replace(/(.{4})/g,'$1  ').trim();
+}
+
+function confirmPayment() {
+  const ref = 'DRX-' + Math.floor(100000 + Math.random() * 900000);
+  document.getElementById('booking-ref-num').textContent = ref;
+  showPage('success');
+}
+
+// Set default dates
+const today = new Date();
+const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
+const dayAfter = new Date(today); dayAfter.setDate(dayAfter.getDate()+3);
+const toISO = d => d.toISOString().split('T')[0];
+document.getElementById('start-date').value = toISO(tomorrow);
+document.getElementById('end-date').value = toISO(dayAfter);
+</script>
+</body>
+</html>
