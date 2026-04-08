@@ -10,6 +10,8 @@ const CARS = [
   { id:8, name:'Ford Everest', type:'SUV', seats:7, fuel:'diesel', price:2400, emoji:'🚙', available:false, limited:true },
   { id:9, name:'Nissan Serena', type:'MPV', seats:13, fuel:'95', price:1700, emoji:'🚐', available:true },
   { id:10, name:'Mitsubishi Xpander', type:'MPV', seats:13, fuel:'95', price:1300, emoji:'🚗', available:true },
+  { id:11, name:'Toyota Vios', type:'Sedan', seats:5, fuel:'95', price:850, emoji:'🚗', available:true },
+  { id:12, name:'Toyota Camry', type:'Sedan', seats:5, fuel:'95', price:900, emoji:'🚘', available:true },
 ];
 
 let filters = { seats: 'all', fuel: 'all', price: 'all' };
@@ -33,7 +35,7 @@ function searchCars() {
 
   const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
   document.getElementById('display-dates').textContent = fmt(s) + ' → ' + fmt(e);
-  document.getElementById('display-days').textContent = numDays + ' วัน';
+  document.getElementById('display-days').textContent =  'รวม ' + numDays + ' วัน';
 
   renderCars();
   showPage('cars');
@@ -42,6 +44,7 @@ function searchCars() {
 function renderCars() {
   const grid = document.getElementById('cars-grid');
   const filtered = CARS.filter(c => {
+    if (!c.available) return false;
     if (filters.seats !== 'all' && String(c.seats) !== filters.seats) return false;
     if (filters.fuel !== 'all' && c.fuel !== filters.fuel) return false;
     if (filters.price === 'low' && c.price >= 1200) return false;
@@ -107,7 +110,6 @@ function resetFilters() {
 function selectCar(id) {
   selectedCar = CARS.find(c => c.id === id);
   if (!selectedCar) return;
-
   const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
   document.getElementById('sum-icon').textContent = selectedCar.emoji;
   document.getElementById('sum-name').textContent = selectedCar.name;
@@ -162,3 +164,56 @@ function toggleAccordion() {
   }
 }
 items.forEach(item => item.addEventListener('click', toggleAccordion));
+
+function printallcars() {
+  document.getElementById('display-dates').textContent = '' ;
+  document.getElementById('display-days').textContent = '';
+  const grid = document.getElementById('cars-grid');
+  const filtered = CARS.filter(c => {
+    
+    if (filters.seats !== 'all' && String(c.seats) !== filters.seats) return false;
+    if (filters.fuel !== 'all' && c.fuel !== filters.fuel) return false;
+    if (filters.price === 'low' && c.price >= 1200) return false;
+    if (filters.price === 'mid' && (c.price < 1200 || c.price > 2000)) return false;
+    if (filters.price === 'high' && c.price <= 2000) return false;
+    return true;
+  });
+
+  document.getElementById('result-count').textContent = `พบ ${filtered.length} คัน`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>ลองปรับตัวกรองดูใหม่</p></div>`;
+    return;
+  }
+
+  const fuelLabel = f => f === '95' ? '⛽ เบนซิน 95' : '🛢 ดีเซล';
+  const total = c => (c.price * numDays).toLocaleString();
+
+  grid.innerHTML = filtered.map(c => `
+    <div class="car-card" onclick="selectCar(${c.id})">
+      <div class="car-img-wrap">
+        <div class="car-emoji">${c.emoji}</div>
+        <div class="car-badge ${c.available ? 'badge-available' : 'badge-limited'}">
+          ${c.available ? '✔ ว่าง' : '✖ เต็ม'}
+        </div>
+      </div>
+      <div class="car-info">
+        <div class="car-name">${c.name}</div>
+        <div class="car-type">${c.type}</div>
+        <div class="car-specs">
+          <div class="spec">👥 ${c.seats} ที่นั่ง</div>
+          <div class="spec">${fuelLabel(c.fuel)}</div>
+          <div class="spec">🔄 Auto</div>
+          <div class="spec">❄️ A/C</div>
+        </div>
+        <div class="car-price-row">
+          <div>
+            <div class="price">${c.price.toLocaleString()} <span>฿/วัน</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${numDays} วัน = ${total(c)} ฿</div>
+          </div>
+          <button class="btn-select">เลือกคัน →</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
