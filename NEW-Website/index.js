@@ -165,7 +165,7 @@ function toggleAccordion() {
 }
 items.forEach(item => item.addEventListener('click', toggleAccordion));
 
-function printallcars() {
+function showcar() {
   document.getElementById('display-dates').textContent = '' ;
   document.getElementById('display-days').textContent = '';
   const grid = document.getElementById('cars-grid');
