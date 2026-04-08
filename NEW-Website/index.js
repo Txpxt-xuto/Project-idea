@@ -1,15 +1,15 @@
 
 const CARS = [
-  { id:1, name:'Toyota Fortuner', type:'SUV 7 ที่นั่ง', seats:7, fuel:'diesel', price:2200, emoji:'🚙', available:true },
-  { id:2, name:'Honda CR-V', type:'SUV 5 ที่นั่ง', seats:5, fuel:'95', price:1800, emoji:'🚘', available:true },
-  { id:3, name:'Toyota Alphard', type:'MPV 7 ที่นั่ง', seats:7, fuel:'95', price:3500, emoji:'🚐', available:false, limited:true },
-  { id:4, name:'Isuzu MU-X', type:'PPV 7 ที่นั่ง', seats:7, fuel:'diesel', price:1900, emoji:'🛻', available:true },
-  { id:5, name:'Honda Civic', type:'Sedan 5 ที่นั่ง', seats:5, fuel:'95', price:1100, emoji:'🚗', available:true },
-  { id:6, name:'Toyota Innova', type:'MPV 7 ที่นั่ง', seats:7, fuel:'diesel', price:1600, emoji:'🚌', available:true },
-  { id:7, name:'Mazda CX-5', type:'SUV 5 ที่นั่ง', seats:5, fuel:'95', price:2000, emoji:'🏎', available:true },
-  { id:8, name:'Ford Everest', type:'SUV 7 ที่นั่ง', seats:7, fuel:'diesel', price:2400, emoji:'🚙', available:false, limited:true },
-  { id:9, name:'Nissan Serena', type:'MPV 6 ที่นั่ง', seats:6, fuel:'95', price:1700, emoji:'🚐', available:true },
-  { id:10, name:'Mitsubishi Xpander', type:'MPV 6 ที่นั่ง', seats:6, fuel:'95', price:1300, emoji:'🚗', available:true },
+  { id:1, name:'Toyota Fortuner', type:'SUV', seats:7, fuel:'diesel', price:2200, emoji:'🚙', available:true },
+  { id:2, name:'Honda CR-V', type:'SUV', seats:5, fuel:'95', price:1800, emoji:'🚘', available:true },
+  { id:3, name:'Toyota Alphard', type:'MPV', seats:13, fuel:'95', price:3500, emoji:'🚐', available:false, limited:true },
+  { id:4, name:'Isuzu MU-X', type:'PPV', seats:7, fuel:'diesel', price:1900, emoji:'🛻', available:true },
+  { id:5, name:'Honda Civic', type:'Sedan', seats:5, fuel:'95', price:1100, emoji:'🚗', available:true },
+  { id:6, name:'Toyota Innova', type:'MPV', seats:7, fuel:'diesel', price:1600, emoji:'🚌', available:true },
+  { id:7, name:'Mazda CX-5', type:'SUV', seats:5, fuel:'95', price:2000, emoji:'🏎', available:true },
+  { id:8, name:'Ford Everest', type:'SUV', seats:7, fuel:'diesel', price:2400, emoji:'🚙', available:false, limited:true },
+  { id:9, name:'Nissan Serena', type:'MPV', seats:13, fuel:'95', price:1700, emoji:'🚐', available:true },
+  { id:10, name:'Mitsubishi Xpander', type:'MPV', seats:13, fuel:'95', price:1300, emoji:'🚗', available:true },
 ];
 
 let filters = { seats: 'all', fuel: 'all', price: 'all' };
