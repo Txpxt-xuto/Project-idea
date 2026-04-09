@@ -455,8 +455,6 @@
     .form-row { grid-template-columns: 1fr; }
   }
 
-
-
 #FAQ * {
   box-sizing: border-box;
   &::before, &::after {
