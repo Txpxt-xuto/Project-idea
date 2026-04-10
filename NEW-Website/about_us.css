@@ -1,0 +1,198 @@
+:root {
+  --bg: #0a0a0f;
+  --card: #1a1a25;
+  --accent: #e8c547;
+  --text: #f0f0f0;
+  --muted: #888;
+  --border: rgba(232,197,71,0.2);
+}
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Mitr', sans-serif; 
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 48px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: px;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text); }
+  nav ul { list-style: none; display: flex; gap: 40px; }
+  nav ul a {
+    text-decoration: none; color: var(--muted);
+    font-size: 18px; font-weight: 500; letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--accent); }
+
+  /* ===== PAGES ===== */
+  .page { display: none; min-height: 100vh; padding-top: 80px; }
+  .page.active { display: block; }
+  
+body {
+  margin: 3%;
+  font-family: 'Mitr', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 40px;
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 40px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.icon {
+  font-size: 26px;
+}
+
+.card p {
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.note {
+  margin-top: 40px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(251, 47, 36, 0.164);
+  border: 1px solid rgba(251, 82, 36, 0.3);
+  color: #f33e35;
+  text-align: center;
+}
+
+.back-btn {
+  display: block;
+  margin: 40px auto 0;
+  padding: 12px 30px;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease; /* 🔥 เพิ่ม */
+  font-family: 'Mitr', sans-serif;
+  font-weight: 500; 
+  letter-spacing: 0.5px;
+}
+
+/* 🔥 Hover effect */
+.back-btn:hover {
+  transform: translateY(-2px); /* ลอยขึ้น */
+  box-shadow: 0 8px 20px rgba(232,197,71,0.3); /* เงา */
+}
+
+/* 🔥 ตอนกด */
+.back-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.pdf-btn {
+  display: block;
+  align-items: center;
+  gap: 10px;
+
+  margin: 25px auto;
+  padding: 12px 22px;
+
+  background: var(--card);
+  color: var(--text);
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  font-family: 'Mitr', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* 🔥 hover */
+.pdf-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(232,197,71,0.25);
+}
+
+/* 🔥 ตอนกด */
+.pdf-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* 🔥 ไอคอน */
+.pdf-btn::before {
+  content: '📄';
+  font-size: 18px;
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+}
