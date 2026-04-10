@@ -14,7 +14,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Sarabun', sans-serif;
+    font-family: 'Mitr', sans-serif; 
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -31,16 +31,16 @@
     border-bottom: 1px solid var(--border);
   }
   .logo {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Mitr', sans-serif;  
     font-size: 28px;
-    letter-spacing: 4px;
+    letter-spacing: px;
     color: var(--accent);
   }
   .logo span { color: var(--text); }
-  nav ul { list-style: none; display: flex; gap: 32px; }
+  nav ul { list-style: none; display: flex; gap: 40px; }
   nav ul a {
     text-decoration: none; color: var(--muted);
-    font-size: 14px; font-weight: 500; letter-spacing: 1px;
+    font-size: 18px; font-weight: 500; letter-spacing: 1px;
     transition: color 0.2s;
   }
   nav ul a:hover { color: var(--accent); }
@@ -65,8 +65,9 @@
   }
 
   .hero-text h1 {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Mitr', sans-serif; 
     font-size: clamp(64px, 8vw, 108px);
+    font-weight: 550;
     line-height: 0.9;
     letter-spacing: 3px;
     color: var(--text);
@@ -107,7 +108,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    color: var(--text); font-family: 'Sarabun', sans-serif;
+    color: var(--text); font-family: 'Mitr', sans-serif;  
     font-size: 15px;
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
@@ -121,8 +122,8 @@
   .btn-primary {
     width: 100%; padding: 14px;
     background: var(--accent);
-    color: #0a0a0f; font-family: 'Sarabun', sans-serif;
-    font-size: 16px; font-weight: 700;
+    color: #0a0a0f; font-family: 'Mitr', sans-serif;  
+    font-size: 20px; font-weight: 500;
     border: none; border-radius: var(--radius);
     cursor: pointer; letter-spacing: 1px;
     transition: transform 0.15s, box-shadow 0.15s;
@@ -144,7 +145,7 @@
     border-radius: var(--radius);
   }
   .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Mitr', sans-serif; 
     font-size: 48px; color: var(--accent); letter-spacing: 2px;
   }
   .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
@@ -159,7 +160,7 @@
     display: flex; justify-content: space-between; align-items: flex-end;
   }
   .cars-header h2 {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Mitr', sans-serif; font-weight: 500; 
     font-size: 48px; letter-spacing: 3px; color: var(--text);
   }
   .cars-header .date-range {
@@ -179,7 +180,7 @@
     height: fit-content; position: sticky; top: 90px;
   }
   .filter-sidebar h3 {
-    font-size: 13px; font-weight: 700;
+    font-size: 18px; font-weight: 600;
     letter-spacing: 2px; text-transform: uppercase;
     color: var(--muted); margin-bottom: 20px;
   }
@@ -198,7 +199,7 @@
     border: 1px solid var(--border);
     font-size: 13px; color: var(--muted);
     cursor: pointer; transition: all 0.15s;
-    background: transparent; font-family: 'Sarabun', sans-serif;
+    background: transparent; font-family: 'Mitr', sans-serif;
   }
   .chip:hover { border-color: var(--accent); color: var(--accent); }
   .chip.active {
@@ -209,7 +210,7 @@
   .btn-reset {
     width: 100%; padding: 10px;
     background: transparent; border: 1px solid var(--border);
-    color: var(--muted); font-family: 'Sarabun', sans-serif;
+    color: var(--muted); font-family: 'Mitr', sans-serif; 
     font-size: 13px; border-radius: var(--radius);
     cursor: pointer; transition: all 0.15s;
   }
@@ -249,7 +250,7 @@
   .badge-limited { background: rgba(251, 47, 36, 0.164); color: #f33e35; border: 1px solid rgba(251, 82, 36, 0.3); }
 
   .car-info { padding: 18px; }
-  .car-name { font-size: 17px; font-weight: 700; color: var(--text); }
+  .car-name { font-size: 17px; font-weight: 500; color: var(--text); }
   .car-type { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .car-specs {
     display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap;
@@ -265,12 +266,12 @@
     margin-top: 16px; padding-top: 16px;
     border-top: 1px solid var(--border);
   }
-  .price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); }
-  .price span { font-family: 'Sarabun', sans-serif; font-size: 13px; font-weight: 400; color: var(--muted); }
+  .price { font-family: 'Mitr', sans-serif; font-size: 28px; color: var(--accent); }
+  .price span {  font-family: 'Mitr', sans-serif; font-size: 13px; font-weight: 400; color: var(--muted); }
   .btn-select {
     padding: 9px 20px; background: var(--accent);
     color: #0a0a0f; border: none; border-radius: 8px;
-    font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 700;
+    font-family: 'Mitr', sans-serif; font-size: 15px; font-weight: 500;  
     cursor: pointer; transition: all 0.15s;
   }
   .btn-select:hover { box-shadow: 0 4px 16px rgba(232,197,71,0.4); }
@@ -294,7 +295,7 @@
   .back-btn {
     display: inline-flex; align-items: center; gap: 8px;
     background: none; border: none; color: var(--muted);
-    font-family: 'Sarabun', sans-serif; font-size: 14px;
+    font-family: 'Mitr', sans-serif; font-size: 14px;
     cursor: pointer; margin-bottom: 32px; padding: 0;
     transition: color 0.15s;
   }
@@ -387,7 +388,7 @@
     font-size: 15px; font-weight: 700; color: var(--text);
   }
   .summary-total .amount {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Mitr', sans-serif;
     font-size: 32px; color: var(--accent); letter-spacing: 1px;
   }
 
@@ -417,7 +418,7 @@
     50% { box-shadow: 0 0 0 20px rgba(74,222,128,0); }
   }
   .success-content h2 {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'Mitr', sans-serif; 
     font-size: 52px; letter-spacing: 3px; color: var(--text);
   }
   .success-content p { color: var(--muted); font-size: 16px; margin-top: 10px; line-height: 1.7; }
@@ -427,13 +428,13 @@
   }
   .booking-ref .ref-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
   .booking-ref .ref-num {
-    font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+    font-family: 'Mitr', sans-serif; font-size: 28px; 
     color: var(--accent); letter-spacing: 4px;
   }
   .btn-home {
     display: inline-block; padding: 14px 36px;
     background: var(--accent); color: #0a0a0f;
-    font-family: 'Sarabun', sans-serif; font-size: 16px; font-weight: 700;
+    font-family: 'Mitr', sans-serif; font-size: 16px; font-weight: 700; 
     border: none; border-radius: var(--radius);
     cursor: pointer; letter-spacing: 1px; margin-top: 8px;
     transition: all 0.15s;
@@ -465,7 +466,7 @@
 #FAQ body {
   margin: 0;
   padding: 0;
-  font-family: 'Hind', sans-serif;
+  font-family: 'Mitr', sans-serif; 
   background: #f0f0f0;
   color: #222;
   display: flex;
