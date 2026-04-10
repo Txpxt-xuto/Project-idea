@@ -18,10 +18,25 @@ let filters = { seats: 'all', fuel: 'all', price: 'all' };
 let selectedCar = null;
 let startDate = '', endDate = '', numDays = 1;
 let mode=0;
+let paymentCompleted = false;
 
 function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
+  // Guard: success page only accessible after payment
+  if (name === 'success' && !paymentCompleted) return;
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+    p.style.removeProperty('display');
+  });
+  // Keep success hidden unless payment done
+  const successEl = document.getElementById('page-success');
+  if (name !== 'success') {
+    successEl.style.setProperty('display','none','important');
+  }
+  const target = document.getElementById('page-' + name);
+  if (name === 'success') {
+    target.style.removeProperty('display');
+  }
+  target.classList.add('active');
   window.scrollTo(0, 0);
 }
 
@@ -83,7 +98,7 @@ function renderCars() {
         </div>
         <div class="car-price-row">
           <div>
-            <div class="price">${c.price.toLocaleString()} <span> ฿ / วัน</span></div>
+            <div class="price">${c.price.toLocaleString()} <span>฿ / วัน</span></div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${numDays} วัน = ${total(c)} ฿</div>
           </div>
           <button class="btn-select">เลือกคัน</button>
@@ -141,7 +156,7 @@ function formatCard(input) {
 }
 
 function confirmPayment() {
-  const ref = 'DRX-' + Math.floor(100000 + Math.random() * 900000);
+  const ref = 'RMX-' + Math.floor(100000 + Math.random() * 900000);
   document.getElementById('booking-ref-num').textContent = ref;
   showPage('success');
 }
@@ -153,6 +168,24 @@ const dayAfter = new Date(today); dayAfter.setDate(dayAfter.getDate()+3);
 const toISO = d => d.toISOString().split('T')[0];
 document.getElementById('start-date').value = toISO(tomorrow);
 document.getElementById('end-date').value = toISO(dayAfter);
+
+// Build marquee
+function buildMarquee() {
+  const track = document.getElementById('marquee-track');
+  if (!track) return;
+  // Duplicate for seamless loop
+  const items = [...CARS, ...CARS];
+  track.innerHTML = items.map(c => `
+    <div class="marquee-card">
+      <div class="marquee-car-icon">${c.emoji}</div>
+      <div>
+        <div class="marquee-car-name">${c.name}</div>
+        <div class="marquee-car-sub">${c.type}</div>
+        <div class="marquee-car-price">${c.price.toLocaleString()} <span style="font-size:13px;font-family:'Sarabun',sans-serif;font-weight:400;color:var(--muted)">฿/วัน</span></div>
+      </div>
+    </div>
+  `).join('');
+}
 
 // FAQ
 const items = document.querySelectorAll(".accordion button");
@@ -167,8 +200,8 @@ function toggleAccordion() {
     this.setAttribute('aria-expanded', 'true');
   }
 }
-items.forEach(item => item.addEventListener('click', toggleAccordion));
 
+items.forEach(item => item.addEventListener('click', toggleAccordion));
 function showcar() {
   mode=1;
   document.getElementById('display-dates').textContent = '' ;
@@ -213,10 +246,10 @@ function showcar() {
         </div>
         <div class="car-price-row">
           <div>
-            <div class="price">${c.price.toLocaleString()} <span> ฿ / วัน</span></div>
+            <div class="price">${c.price.toLocaleString()} <span>฿ / วัน</span></div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px;">${total(c)} ฿ / สัปดาห์ </div>
           </div>
-          <button class="btn-select">เลือกคัน →</button>
+          <button class="btn-select">เลือกคัน</button>
         </div>
       </div>
     </div>
