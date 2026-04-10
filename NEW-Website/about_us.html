@@ -4,8 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RODCHAOMAHACHAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="about_us.css">
 </head>
 <body>
 
@@ -18,10 +21,59 @@
     <li><a href="#">ติดต่อ</a></li>
   </ul>
 </nav>
-<p>
-    พ่อมึงตาย
-</p>
 
-<script src="index.js"></script>
+<div class="container">
+  <h1>เงื่อนไขการเช่ารถ</h1>
+  <p class="subtitle">กรุณาอ่านก่อนทำการจอง</p>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="title"><span class="icon">📄</span>เอกสารที่ต้องใช้</div>
+      <p>ใช้บัตรประชาชนหรือพาสปอร์ต และใบขับขี่ที่ยังไม่หมดอายุ</p>
+    </div>
+
+    <div class="card">
+      <div class="title"><span class="icon">💰</span>เงินมัดจำ</div>
+      <p>มีค่ามัดจำ 3,000 บาท คืนเมื่อรถอยู่ในสภาพปกติ</p>
+    </div>
+
+    <div class="card">
+      <div class="title"><span class="icon">⏰</span>ระยะเวลาเช่า</div>
+      <p>เช่าขั้นต่ำ 1 วัน คืนรถตรงเวลา มิฉะนั้นมีค่าปรับ</p>
+    </div>
+
+    <div class="card">
+      <div class="title"><span class="icon">🚫</span>ข้อห้าม</div>
+      <p>ห้ามใช้รถผิดกฎหมาย หรือให้ผู้อื่นขับโดยไม่ได้รับอนุญาต</p>
+    </div>
+
+    <div class="card">
+      <div class="title"><span class="icon">⚠️</span>อุบัติเหตุ</div>
+      <p>ต้องแจ้งทันที และดำเนินการตามประกัน</p>
+    </div>
+
+    <div class="card">
+      <div class="title"><span class="icon">📅</span>การยกเลิก</div>
+      <p>เมื่อจองแล้ว ไม่สามารถคืนเงินได้ทุกกรณี</p>
+    </div>
+
+  </div>
+
+  <button class="pdf-btn" onclick="togglePDF()">📄 ดูรายละเอียดเพิ่มเติม</button>
+
+  <div id="pdf-box" style="display:none;" class="pdf-viewer">
+    <iframe src="รถเช่ามหาชัย.pdf" width="100%" height="500px"></iframe>
+  </div>
+
+  <div class="note">
+    * โปรดอ่านเงื่อนไขอย่างละเอียดก่อนทำการจอง
+  </div>
+  
+
+  <button class="back-btn" onclick="history.back()">กลับ</span></button>
+
+</div>
+<script src="about_us.js"></script>
 </body>
 </html>
