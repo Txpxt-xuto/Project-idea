@@ -182,11 +182,11 @@ function buildMarquee() {
   const items = [...CARS, ...CARS];
   track.innerHTML = items.map(c => `
     <div class="marquee-card">
-      <div class="marquee-car-icon">${c.emoji}</div>
+      <div class="marquee-car-icon"><span style="font-size:150%;">${c.emoji}</span></div>
       <div>
-        <div class="marquee-car-name">${c.name}</div>
-        <div class="marquee-car-sub">${c.type}</div>
-        <div class="marquee-car-price">${c.price.toLocaleString()} <span style="font-size:13px;font-family:'Sarabun',sans-serif;font-weight:400;color:var(--muted)">฿/วัน</span></div>
+        <div class="marquee-car-name"><span style="font-size:15px; font-family:'Mitr',sans-serif;font-weight:500;color:var(--text)">${c.name}</span></div>
+        <div class="marquee-car-sub"><span style="font-size:13px;">${c.type}</span></div>
+        <div class="marquee-car-price">${c.price.toLocaleString()} <span style="font-size:13px;font-family:'Mitr',sans-serif;font-weight:400;color:var(--muted)">฿/วัน</span></div>
       </div>
     </div>
   `).join('');
