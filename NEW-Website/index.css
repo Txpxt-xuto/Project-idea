@@ -152,7 +152,7 @@
 
   /* ===== MARQUEE SLIDER ===== */
   .showcase-section {
-    padding: 0 0 80px;
+    padding: 50px 0 10px;
     overflow: hidden;
   }
   .showcase-label {
@@ -164,7 +164,7 @@
   .marquee-track {
     display: flex;
     width: max-content;
-    animation: marquee-scroll 32s linear infinite;
+    animation: marquee-scroll 64s linear infinite;
   }
   .marquee-track:hover { animation-play-state: paused; }
   @keyframes marquee-scroll {
