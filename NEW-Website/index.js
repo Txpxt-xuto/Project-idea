@@ -17,6 +17,7 @@ const CARS = [
 let filters = { seats: 'all', fuel: 'all', price: 'all' };
 let selectedCar = null;
 let startDate = '', endDate = '', numDays = 1;
+let mode=0;
 
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -56,7 +57,7 @@ function renderCars() {
   document.getElementById('result-count').textContent = `พบ ${filtered.length} คัน`;
 
   if (!filtered.length) {
-    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>ลองปรับตัวกรองดูใหม่</p></div>`;
+    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>กรุณาปรับตัวกรอง</p></div>`;
     return;
   }
 
@@ -82,10 +83,10 @@ function renderCars() {
         </div>
         <div class="car-price-row">
           <div>
-            <div class="price">${c.price.toLocaleString()} <span>฿/วัน</span></div>
+            <div class="price">${c.price.toLocaleString()} <span> ฿ / วัน</span></div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${numDays} วัน = ${total(c)} ฿</div>
           </div>
-          <button class="btn-select">เลือกคัน →</button>
+          <button class="btn-select">เลือกคัน</button>
         </div>
       </div>
     </div>
@@ -96,7 +97,9 @@ function setFilter(type, value, el) {
   filters[type] = value;
   document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-  renderCars();
+  if(mode==0) renderCars();
+  else showcar();
+  
 }
 
 function resetFilters() {
@@ -104,7 +107,8 @@ function resetFilters() {
   document.querySelectorAll('.chip').forEach(c => {
     c.classList.toggle('active', c.dataset.value === 'all');
   });
-  renderCars();
+  if(mode==0) renderCars();
+  else showcar();
 }
 
 function selectCar(id) {
@@ -166,6 +170,7 @@ function toggleAccordion() {
 items.forEach(item => item.addEventListener('click', toggleAccordion));
 
 function showcar() {
+  mode=1;
   document.getElementById('display-dates').textContent = '' ;
   document.getElementById('display-days').textContent = '';
   const grid = document.getElementById('cars-grid');
@@ -182,12 +187,12 @@ function showcar() {
   document.getElementById('result-count').textContent = `พบ ${filtered.length} คัน`;
 
   if (!filtered.length) {
-    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>ลองปรับตัวกรองดูใหม่</p></div>`;
+    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>กรุณาปรับตัวกรอง</p></div>`;
     return;
   }
 
   const fuelLabel = f => f === '95' ? '⛽ เบนซิน 95' : '🛢 ดีเซล';
-  const total = c => (c.price * numDays).toLocaleString();
+  const total = c => (c.price * 5 ).toLocaleString();
 
   grid.innerHTML = filtered.map(c => `
     <div class="car-card" onclick="selectCar(${c.id})">
@@ -208,8 +213,8 @@ function showcar() {
         </div>
         <div class="car-price-row">
           <div>
-            <div class="price">${c.price.toLocaleString()} <span>฿/วัน</span></div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${numDays} วัน = ${total(c)} ฿</div>
+            <div class="price">${c.price.toLocaleString()} <span> ฿ / วัน</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">${total(c)} ฿ / สัปดาห์ </div>
           </div>
           <button class="btn-select">เลือกคัน →</button>
         </div>
