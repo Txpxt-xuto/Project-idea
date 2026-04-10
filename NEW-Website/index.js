@@ -18,7 +18,11 @@ let filters = { seats: 'all', fuel: 'all', price: 'all' };
 let selectedCar = null;
 let startDate = '', endDate = '', numDays = 1;
 let mode=0;
-let paymentCompleted = false;
+
+
+window.onload = function() {
+  buildMarquee();
+};
 
 function showPage(name) {
   // Guard: success page only accessible after payment
@@ -156,6 +160,7 @@ function formatCard(input) {
 }
 
 function confirmPayment() {
+  paymentCompleted = true;
   const ref = 'RMX-' + Math.floor(100000 + Math.random() * 900000);
   document.getElementById('booking-ref-num').textContent = ref;
   showPage('success');
