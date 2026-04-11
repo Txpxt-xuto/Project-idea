@@ -5,12 +5,12 @@
             "label": "C/C++: gcc.exe build active file",
             "command": "C:/TDM-GCC-64/bin/gcc.exe",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
-            ],
+    "-g",
+    "${file}",
+    "-o",
+    "${fileDirname}\\${fileBasenameNoExtension}.exe",
+    "-lws2_32"  // <--- เพิ่มบรรทัดนี้เข้าไปครับ (ตัวแอล พิมพ์เล็ก ตามด้วย ws2_32)
+],
             "options": {
                 "cwd": "C:/TDM-GCC-64/bin"
             },
