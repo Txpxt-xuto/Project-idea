@@ -5,6 +5,7 @@ document.getElementById("form").addEventListener("submit", async (e) => {
     const msg = document.getElementById("msg");
 
     const data = {
+        namecar:    document.getElementById("namecar").value,
         firstname: document.getElementById("firstname").value,
         lastname:  document.getElementById("lastname").value,
         phone:     document.getElementById("phone").value,
