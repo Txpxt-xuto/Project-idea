@@ -74,9 +74,9 @@ static void cors_headers(int sock) {
 
 /* -------- POST /save -------- */
 static void handle_save(int sock, const char *body) {
-    char firstname[128]={0}, lastname[128]={0}, phone[64]={0};
+    char namecar[128]={0}, firstname[128]={0}, lastname[128]={0}, phone[64]={0};
     char email[128]={0}, start[32]={0}, end_[32]={0}, delivery[16]={0};
-
+    json_get(body, "namecar", namecar, sizeof(namecar));
     json_get(body, "firstname", firstname, sizeof(firstname));
     json_get(body, "lastname",  lastname,  sizeof(lastname));
     json_get(body, "phone",     phone,     sizeof(phone));
@@ -110,8 +110,8 @@ static void handle_save(int sock, const char *body) {
             "{\"success\":false,\"error\":\"cannot open file\"}\n");
         return;
     }
-    fprintf(f, "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
-            firstname, lastname, phone, email, start, end_, delivery, ts);
+    fprintf(f, "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+            namecar,firstname, lastname, phone, email, start, end_, delivery, ts);
     fclose(f);
 
     send_str(sock, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n");
