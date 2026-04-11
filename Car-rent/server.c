@@ -160,7 +160,7 @@ static void cors_headers(int sock) {
 static void handle_save(int sock, const char *body) {
     char namecar[128]={0}, firstname[128]={0}, lastname[128]={0}, phone[64]={0};
     char email[128]={0}, start[32]={0}, end[32]={0}, delivery[16]={0};
-    json_get(body, "namecar", namecar, sizeof(namecar));
+    //json_get(body, "namecar", namecar, sizeof(namecar));
     json_get(body, "firstname", firstname, sizeof(firstname));
     json_get(body, "lastname",  lastname,  sizeof(lastname));
     json_get(body, "phone",     phone,     sizeof(phone));
@@ -168,7 +168,7 @@ static void handle_save(int sock, const char *body) {
     json_get(body, "start",     start,     sizeof(start));
     json_get(body, "end",       end,      sizeof(end));
     json_get(body, "delivery",  delivery,  sizeof(delivery));
-
+/*
     int Id;
     if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
     else if(strcmp(namecar, "Toyota Vios White")==0) Id=900;
@@ -177,7 +177,7 @@ static void handle_save(int sock, const char *body) {
     else if(strcmp(namecar, "Izusu Dmax Gold")==0) Id=950;
     else if(strcmp(namecar, "Honda Accord Black")==0) Id=1000;
     else if(strcmp(namecar, "Suzuki Celerio White")==0) Id=800;
-
+*/
 
     int year1, month1, day1, year2, month2, day2, totalday1, totalday2;
     
@@ -187,7 +187,7 @@ static void handle_save(int sock, const char *body) {
     totalday1 = Count_days(day1, month1, year1);
     totalday2 = Count_days(day2, month2, year2);
 
-    setRangeOne(CAR_FILE, Id, totalday1+2, totalday2+2);
+    //setRangeOne(CAR_FILE, Id, totalday1+2, totalday2+2);
 
     if (!firstname[0] || !lastname[0] || !phone[0]) {
         send_str(sock,
