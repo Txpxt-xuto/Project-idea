@@ -56,8 +56,8 @@ function searchCars() {
   const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
   document.getElementById('display-dates').textContent = fmt(s) + ' → ' + fmt(e);
   document.getElementById('display-days').textContent =  'รวม ' + numDays + ' วัน';
-
-  renderCars();
+  
+  renderCars(); 
   showPage('cars');
 }
 
@@ -254,7 +254,7 @@ function showcar() {
             <div class="price">${c.price.toLocaleString()} <span>฿ / วัน</span></div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px;">${total(c)} ฿ / สัปดาห์ </div>
           </div>
-          <button class="btn-select">เลือกคัน</button>
+          <button class="btn-select" onclick="showPage(search)">เลือกคัน</button>
         </div>
       </div>
     </div>
