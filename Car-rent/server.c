@@ -17,150 +17,9 @@
 
 #define PORT      5000
 #define BUF_SIZE  8192
-#define CSV_FILE  "testinout.csv"
+#define CTM_FILE  "CUSTOMER.csv"
+#define CAR_FILE  "CAR.csv"
 
-/* -------- extract value from JSON -------- */
-static void json_get(const char *body, const char *key, char *out, int max) {
-    char search[64];
-    snprintf(search, sizeof(search), "\"%s\"", key);
-    const char *p = strstr(body, search);
-    if (!p) { out[0] = '\0'; return; }
-    p += strlen(search);
-    while (*p == ' ' || *p == ':') p++;
-    if (*p == '"') {
-        p++;
-        int i = 0;
-        while (*p && *p != '"' && i < max - 1) out[i++] = *p++;
-        out[i] = '\0';
-    } else {
-        /* non-string value (true/false/number) */
-        int i = 0;
-        while (*p && *p != ',' && *p != '}' && i < max - 1) out[i++] = *p++;
-        out[i] = '\0';
-    }
-}
-
-/* -------- count rows in CSV -------- */
-static int count_rows() {
-    FILE *f = fopen(CSV_FILE, "r");
-    if (!f) return 0;
-    int n = 0; char buf[512];
-    while (fgets(buf, sizeof(buf), f)) n++;
-    fclose(f);
-    return n;
-}
-
-/* -------- ensure CSV header -------- */
-static void ensure_header() {
-    FILE *f = fopen(CSV_FILE, "r");
-    if (f) { fclose(f); return; }
-    f = fopen(CSV_FILE, "w");
-    if (!f) return;
-    fprintf(f, "\xEF\xBB\xBF"); /* UTF-8 BOM */
-    fprintf(f, "รถ,ชื่อ,นามสกุล,เบอร์โทร,อีเมล,วันเริ่มเช่า,วันสิ้นสุดการเช่า,ต้องการให้ส่งรถ,วันที่บันทึก\n");
-    fclose(f);
-}
-
-/* -------- HTTP helpers -------- */
-static void send_str(int sock, const char *s) {
-    send(sock, s, (int)strlen(s), 0);
-}
-static void cors_headers(int sock) {
-    send_str(sock,
-        "Access-Control-Allow-Origin: *\r\n"
-        "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
-        "Access-Control-Allow-Headers: Content-Type\r\n");
-}
-
-/* -------- POST /save -------- */
-static void handle_save(int sock, const char *body) {
-    char namecar[128]={0}, firstname[128]={0}, lastname[128]={0}, phone[64]={0};
-    char email[128]={0}, start[32]={0}, end[32]={0}, delivery[16]={0};
-    json_get(body, "namecar", namecar, sizeof(namecar));
-    json_get(body, "firstname", firstname, sizeof(firstname));
-    json_get(body, "lastname",  lastname,  sizeof(lastname));
-    json_get(body, "phone",     phone,     sizeof(phone));
-    json_get(body, "email",     email,     sizeof(email));
-    json_get(body, "start",     start,     sizeof(start));
-    json_get(body, "end",       end,      sizeof(end));
-    json_get(body, "delivery",  delivery,  sizeof(delivery));
-
-    int Id;
-    if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
-    else if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
-    else if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
-    else if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
-    else if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
-
-
-    int year1, month1, day1, year2, month2, day2, totalday1, totalday2;
-    
-    sscanf(start, "%d-%d-%d", &year1, &month1, &day1);
-    sscanf(end, "%d-%d-%d", &year2, &month2, &day2);
-
-    int totalday1 = Count_days(day1, month1, year1);
-    int totalday2 = Count_days(day2, month2, year2);
-
-    setRangeOne("CAR.csv", Id, totalday1, totalday2);
-
-    if (!firstname[0] || !lastname[0] || !phone[0]) {
-        send_str(sock,
-            "HTTP/1.1 400 Bad Request\r\n"
-            "Content-Type: application/json\r\n");
-        cors_headers(sock);
-        send_str(sock, "\r\n{\"success\":false,\"error\":\"กรุณากรอกข้อมูลให้ครบ\"}\n");
-        return;
-    }
-
-    ensure_header();
-    int row_num = count_rows();
-
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
-    char ts[32];
-    strftime(ts, sizeof(ts), "%Y-%m-%d %H:%M", t);
-
-    FILE *f = fopen(CSV_FILE, "a");
-    if (!f) {
-        send_str(sock,
-            "HTTP/1.1 500 Internal Server Error\r\n"
-            "Content-Type: application/json\r\n\r\n"
-            "{\"success\":false,\"error\":\"cannot open file\"}\n");
-        return;
-    }
-    fprintf(f, "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
-            namecar,firstname, lastname, phone, email, start, end, delivery, ts);
-    fclose(f);
-
-    send_str(sock, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n");
-    cors_headers(sock);
-    send_str(sock, "\r\n{\"success\":true}\n");
-}
-
-/* -------- GET /export -------- */
-static void handle_export(int sock) {
-    FILE *f = fopen(CSV_FILE, "rb");
-    if (!f) {
-        send_str(sock, "HTTP/1.1 404 Not Found\r\n\r\nยังไม่มีข้อมูล\n");
-        return;
-    }
-    fseek(f, 0, SEEK_END); long size = ftell(f); rewind(f);
-
-    char header[512];
-    snprintf(header, sizeof(header),
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/csv; charset=utf-8\r\n"
-        "Content-Disposition: attachment; filename=\"customers.csv\"\r\n"
-        "Content-Length: %ld\r\n", size);
-    send_str(sock, header);
-    cors_headers(sock);
-    send_str(sock, "\r\n");
-
-    char buf[4096]; size_t n;
-    while ((n = fread(buf, 1, sizeof(buf), f)) > 0)
-        send(sock, buf, (int)n, 0);
-    fclose(f);
-}
 
 /* -------- Count Day -------- */
 
@@ -191,6 +50,7 @@ int Count_days(int d, int m, int y)
     return days;
 }
 
+/* -------- Change status for booking -------- */
 
 void setRangeOne(char *filename, int targetRow, int startCol, int endCol)
 {
@@ -243,10 +103,150 @@ void setRangeOne(char *filename, int targetRow, int startCol, int endCol)
 }
 
 
+/* -------- extract value from JSON -------- */
+static void json_get(const char *body, const char *key, char *out, int max) {
+    char search[64];
+    snprintf(search, sizeof(search), "\"%s\"", key);
+    const char *p = strstr(body, search);
+    if (!p) { out[0] = '\0'; return; }
+    p += strlen(search);
+    while (*p == ' ' || *p == ':') p++;
+    if (*p == '"') {
+        p++;
+        int i = 0;
+        while (*p && *p != '"' && i < max - 1) out[i++] = *p++;
+        out[i] = '\0';
+    } else {
+        /* non-string value (true/false/number) */
+        int i = 0;
+        while (*p && *p != ',' && *p != '}' && i < max - 1) out[i++] = *p++;
+        out[i] = '\0';
+    }
+}
+
+/* -------- count rows in CSV -------- */
+static int count_rows() {
+    FILE *f = fopen(CTM_FILE, "r");
+    if (!f) return 0;
+    int n = 0; char buf[512];
+    while (fgets(buf, sizeof(buf), f)) n++;
+    fclose(f);
+    return n;
+}
+
+/* -------- ensure CSV header -------- */
+static void ensure_header() {
+    FILE *f = fopen(CTM_FILE, "r");
+    if (f) { fclose(f); return; }
+    f = fopen(CTM_FILE, "w");
+    if (!f) return;
+    fprintf(f, "\xEF\xBB\xBF"); /* UTF-8 BOM */
+    fprintf(f, "รถ,ชื่อ,นามสกุล,เบอร์โทร,อีเมล,วันเริ่มเช่า,วันสิ้นสุดการเช่า,ต้องการให้ส่งรถ,วันที่บันทึก\n");
+    fclose(f);
+}
+
+/* -------- HTTP helpers -------- */
+static void send_str(int sock, const char *s) {
+    send(sock, s, (int)strlen(s), 0);
+}
+static void cors_headers(int sock) {
+    send_str(sock,
+        "Access-Control-Allow-Origin: *\r\n"
+        "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
+        "Access-Control-Allow-Headers: Content-Type\r\n");
+}
+
+/* -------- POST /save -------- */
+static void handle_save(int sock, const char *body) {
+    char namecar[128]={0}, firstname[128]={0}, lastname[128]={0}, phone[64]={0};
+    char email[128]={0}, start[32]={0}, end[32]={0}, delivery[16]={0};
+    json_get(body, "namecar", namecar, sizeof(namecar));
+    json_get(body, "firstname", firstname, sizeof(firstname));
+    json_get(body, "lastname",  lastname,  sizeof(lastname));
+    json_get(body, "phone",     phone,     sizeof(phone));
+    json_get(body, "email",     email,     sizeof(email));
+    json_get(body, "start",     start,     sizeof(start));
+    json_get(body, "end",       end,      sizeof(end));
+    json_get(body, "delivery",  delivery,  sizeof(delivery));
+
+    int Id;
+    if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
+    else if(strcmp(namecar, "Toyota Vios White")==0) Id=900;
+    else if(strcmp(namecar, "Toyota Vios Black")==0) Id=850;
+    else if(strcmp(namecar, "Toyota Innova White")==0) Id=2500;
+    else if(strcmp(namecar, "Izusu Dmax Gold")==0) Id=950;
+    else if(strcmp(namecar, "Honda Accord Black")==0) Id=1000;
+    else if(strcmp(namecar, "Suzuki Celerio White")==0) Id=800;
 
 
+    int year1, month1, day1, year2, month2, day2, totalday1, totalday2;
+    
+    sscanf(start, "%d-%d-%d", &year1, &month1, &day1);
+    sscanf(end, "%d-%d-%d", &year2, &month2, &day2);
 
+    totalday1 = Count_days(day1, month1, year1);
+    totalday2 = Count_days(day2, month2, year2);
 
+    setRangeOne(CAR_FILE, Id, totalday1+2, totalday2+2);
+
+    if (!firstname[0] || !lastname[0] || !phone[0]) {
+        send_str(sock,
+            "HTTP/1.1 400 Bad Request\r\n"
+            "Content-Type: application/json\r\n");
+        cors_headers(sock);
+        send_str(sock, "\r\n{\"success\":false,\"error\":\"กรุณากรอกข้อมูลให้ครบ\"}\n");
+        return;
+    }
+
+    ensure_header();
+    int row_num = count_rows();
+
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    char ts[32];
+    strftime(ts, sizeof(ts), "%Y-%m-%d %H:%M", t);
+
+    FILE *f = fopen(CTM_FILE, "a");
+    if (!f) {
+        send_str(sock,
+            "HTTP/1.1 500 Internal Server Error\r\n"
+            "Content-Type: application/json\r\n\r\n"
+            "{\"success\":false,\"error\":\"cannot open file\"}\n");
+        return;
+    }
+    fprintf(f, "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
+            namecar,firstname, lastname, phone, email, start, end, delivery, ts);
+    fclose(f);
+
+    send_str(sock, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n");
+    cors_headers(sock);
+    send_str(sock, "\r\n{\"success\":true}\n");
+}
+
+/* -------- GET /export -------- */
+static void handle_export(int sock) {
+    FILE *f = fopen(CTM_FILE, "rb");
+    if (!f) {
+        send_str(sock, "HTTP/1.1 404 Not Found\r\n\r\nยังไม่มีข้อมูล\n");
+        return;
+    }
+    fseek(f, 0, SEEK_END); long size = ftell(f); rewind(f);
+
+    char header[512];
+    snprintf(header, sizeof(header),
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/csv; charset=utf-8\r\n"
+        "Content-Disposition: attachment; filename=\"customers.csv\"\r\n"
+        "Content-Length: %ld\r\n", size);
+    send_str(sock, header);
+    cors_headers(sock);
+    send_str(sock, "\r\n");
+
+    char buf[4096]; size_t n;
+    while ((n = fread(buf, 1, sizeof(buf), f)) > 0)
+        send(sock, buf, (int)n, 0);
+    fclose(f);
+}
 
 /* ======== main ======== */
 int main(void) {
