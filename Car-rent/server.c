@@ -75,15 +75,33 @@ static void cors_headers(int sock) {
 /* -------- POST /save -------- */
 static void handle_save(int sock, const char *body) {
     char namecar[128]={0}, firstname[128]={0}, lastname[128]={0}, phone[64]={0};
-    char email[128]={0}, start[32]={0}, end_[32]={0}, delivery[16]={0};
+    char email[128]={0}, start[32]={0}, end[32]={0}, delivery[16]={0};
     json_get(body, "namecar", namecar, sizeof(namecar));
     json_get(body, "firstname", firstname, sizeof(firstname));
     json_get(body, "lastname",  lastname,  sizeof(lastname));
     json_get(body, "phone",     phone,     sizeof(phone));
     json_get(body, "email",     email,     sizeof(email));
     json_get(body, "start",     start,     sizeof(start));
-    json_get(body, "end",       end_,      sizeof(end_));
+    json_get(body, "end",       end,      sizeof(end));
     json_get(body, "delivery",  delivery,  sizeof(delivery));
+
+    int Id;
+    if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
+    else if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
+    else if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
+    else if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
+    else if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
+
+
+    int year1, month1, day1, year2, month2, day2, totalday1, totalday2;
+    
+    sscanf(start, "%d-%d-%d", &year1, &month1, &day1);
+    sscanf(end, "%d-%d-%d", &year2, &month2, &day2);
+
+    int totalday1 = Count_days(day1, month1, year1);
+    int totalday2 = Count_days(day2, month2, year2);
+
+    setRangeOne("CAR.csv", Id, totalday1, totalday2);
 
     if (!firstname[0] || !lastname[0] || !phone[0]) {
         send_str(sock,
@@ -111,7 +129,7 @@ static void handle_save(int sock, const char *body) {
         return;
     }
     fprintf(f, "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
-            namecar,firstname, lastname, phone, email, start, end_, delivery, ts);
+            namecar,firstname, lastname, phone, email, start, end, delivery, ts);
     fclose(f);
 
     send_str(sock, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n");
@@ -143,6 +161,92 @@ static void handle_export(int sock) {
         send(sock, buf, (int)n, 0);
     fclose(f);
 }
+
+/* -------- Count Day -------- */
+
+int Check_leap_year (int y)
+{
+    if((y%4==0 && y%100!=0) || y%400==0) return 1;
+    return 0;
+}
+
+int Days_in_month(int m, int y)
+{
+    int d[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+    if(m==2 && Check_leap_year(y)) return 29;
+    return d[m-1];
+}
+
+int Count_days(int d, int m, int y)
+{
+
+    int days = d;
+
+    for(int i=1;i<m;i++) days += Days_in_month(i,y);
+    for(int i=1;i<y/2026;i++)
+    {
+        days += 365;
+        if(Check_leap_year(i)) days += 1;
+    }
+    return days;
+}
+
+
+void setRangeOne(char *filename, int targetRow, int startCol, int endCol)
+{
+    FILE *fp = fopen(filename, "r");
+    FILE *temp = fopen("temp.csv", "w");
+
+    if(fp == NULL || temp == NULL)
+    {
+        printf("File error\n");
+        return;
+    }
+
+    char line[10000];
+    int currentRow = 0;
+
+    while(fgets(line, sizeof(line), fp))
+    {
+        currentRow++;
+        if(currentRow == 1)
+        {
+            fprintf(temp, "%s", line);
+            continue;
+        }
+        if(currentRow == targetRow + 1)
+        {
+            int col = 1;
+            char *token = strtok(line, ",");
+
+            while(token != NULL)
+            {
+                if(col >= startCol && col <= endCol) fprintf(temp, "1");
+                else
+                {
+                    token[strcspn(token, "\n")] = 0;
+                    fprintf(temp, "%s", token);
+                }
+                token = strtok(NULL, ",");
+                if(token != NULL) fprintf(temp, ",");
+                col++;
+            }
+            fprintf(temp, "\n");
+        }
+        else fprintf(temp, "%s", line);
+    }
+    fclose(fp);
+    fclose(temp);
+    remove(filename);
+    rename("temp.csv", filename);
+    printf("Booking Successfully!\n");
+}
+
+
+
+
+
+
 
 /* ======== main ======== */
 int main(void) {
