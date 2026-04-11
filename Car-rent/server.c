@@ -19,6 +19,7 @@
 #define BUF_SIZE  8192
 #define CTM_FILE "C:\\Users\\User\\Documents\\GitHub\\project-idea\\Car-rent\\CUSTOMER.csv"
 #define CAR_FILE "C:\\Users\\User\\Documents\\GitHub\\project-idea\\Car-rent\\CAR.csv"
+#define BKP_FILE "C:\\Users\\User\\Documents\\GitHub\\project-idea\\Car-rent\\temp.csv"
 
 
 /* -------- Count Day -------- */
@@ -55,11 +56,12 @@ int Count_days(int d, int m, int y)
 void setRangeOne(char *filename, int targetRow, int startCol, int endCol)
 {
     FILE *fp = fopen(filename, "r");
-    FILE *temp = fopen("temp.csv", "w");
+    FILE *temp = fopen(BKP_FILE, "w");
 
     if(fp == NULL || temp == NULL)
     {
-        printf("File error\n");
+        perror("File error"); // จะบอกสาเหตุว่าทำไมเปิดไม่ได้ เช่น Permission denied
+        if(fp) fclose(fp);
         return;
     }
 
@@ -69,37 +71,59 @@ void setRangeOne(char *filename, int targetRow, int startCol, int endCol)
     while(fgets(line, sizeof(line), fp))
     {
         currentRow++;
+        // แถวที่ 1 คือ Header ให้เขียนลงไปเลย
         if(currentRow == 1)
         {
             fprintf(temp, "%s", line);
             continue;
         }
-        if(currentRow == targetRow + 1)
+
+        // ถ้าเจอแถวที่ต้องการ (targetRow + 1 เพราะข้าม header)
+        if(currentRow == targetRow +1 )
         {
             int col = 1;
-            char *token = strtok(line, ",");
+            char *ptr = line;
+            char *next;
 
-            while(token != NULL)
-            {
-                if(col >= startCol && col <= endCol) fprintf(temp, "1");
-                else
-                {
-                    token[strcspn(token, "\n")] = 0;
-                    fprintf(temp, "%s", token);
+            while (ptr && *ptr != '\0') {
+                next = strchr(ptr, ','); // หา comma ตัวถัดไป
+                if (next) *next = '\0'; // ตัด string ชั่วคราว
+
+                if(col >= startCol && col <= endCol) {
+                    fprintf(temp, "1"); // เปลี่ยนค่าเป็น 1
+                } else {
+                    // ตัด \n ออกถ้าเป็นคอลัมน์สุดท้าย
+                    ptr[strcspn(ptr, "\r\n")] = 0;
+                    fprintf(temp, "%s", ptr);
                 }
-                token = strtok(NULL, ",");
-                if(token != NULL) fprintf(temp, ",");
+
+                if (next) {
+                    fprintf(temp, ",");
+                    ptr = next + 1;
+                } else {
+                    ptr = NULL;
+                }
                 col++;
             }
             fprintf(temp, "\n");
         }
-        else fprintf(temp, "%s", line);
+        else {
+            fprintf(temp, "%s", line);
+        }
     }
+
     fclose(fp);
     fclose(temp);
-    remove(filename);
-    rename("temp.csv", filename);
-    printf("Booking Successfully!\n");
+
+    // ลบไฟล์เก่าและเปลี่ยนชื่อไฟล์ใหม่
+    if (remove(filename) != 0) {
+        perror("Error deleting original file");
+    }
+    if (rename(BKP_FILE, filename) != 0) {
+        perror("Error renaming temp file");
+    } else {
+        printf("Booking status updated successfully");
+    }
 }
 
 
@@ -170,24 +194,28 @@ static void handle_save(int sock, const char *body) {
     json_get(body, "delivery",  delivery,  sizeof(delivery));
 
     int Id;
-    if(strcmp(namecar, "Toyota Altis Grey")==0) Id=990;
-    else if(strcmp(namecar, "Toyota Vios White")==0) Id=900;
-    else if(strcmp(namecar, "Toyota Vios Black")==0) Id=850;
-    else if(strcmp(namecar, "Toyota Innova White")==0) Id=2500;
-    else if(strcmp(namecar, "Izusu Dmax Gold")==0) Id=950;
-    else if(strcmp(namecar, "Honda Accord Black")==0) Id=1000;
-    else if(strcmp(namecar, "Suzuki Celerio White")==0) Id=800;
-
+    if(strcmp(namecar, "Toyota Altis Grey")==0) Id=1;
+    else if(strcmp(namecar, "Toyota Vios White")==0) Id=2;
+    else if(strcmp(namecar, "Toyota Vios Black")==0) Id=3;
+    else if(strcmp(namecar, "Toyota Innova White")==0) Id=4;
+    else if(strcmp(namecar, "Izusu Dmax Gold")==0) Id=5;
+    else if(strcmp(namecar, "Honda Accord Black")==0) Id=6;
+    else if(strcmp(namecar, "Suzuki Celerio White")==0) Id=7;
+    
+    if(Id == -1){
+        printf("ERROR: Invalid car name\n");
+        return;
+    }
 
     int year1, month1, day1, year2, month2, day2, totalday1, totalday2;
     
-    sscanf(start, "%d-%d-%d", &year1, &month1, &day1);
-    sscanf(end, "%d-%d-%d", &year2, &month2, &day2);
+    sscanf(start, "%d-%d-%dT", &year1, &month1, &day1);
+    sscanf(end, "%d-%d-%dT", &year2, &month2, &day2);
 
     totalday1 = Count_days(day1, month1, year1);
     totalday2 = Count_days(day2, month2, year2);
 
-    setRangeOne(CAR_FILE, Id, totalday1+2, totalday2+2);
+    setRangeOne(CAR_FILE, Id, totalday1+3, totalday2+3);
 
     if (!firstname[0] || !lastname[0] || !phone[0]) {
         send_str(sock,
@@ -254,11 +282,7 @@ int main(void) {
     WSADATA wsa;
     WSAStartup(MAKEWORD(2,2), &wsa);
 #endif
-    char cwd[1024];
-    _getcwd(cwd, sizeof(cwd));
-    printf("Current dir: %s\n", cwd);
-
-
+    
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     int opt = 1;
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(opt));
