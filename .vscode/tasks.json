@@ -12,7 +12,7 @@
     "-lws2_32"  // <--- เพิ่มบรรทัดนี้เข้าไปครับ (ตัวแอล พิมพ์เล็ก ตามด้วย ws2_32)
 ],
             "options": {
-                "cwd": "C:/TDM-GCC-64/bin"
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
                 "$gcc"
