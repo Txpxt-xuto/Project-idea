@@ -31,13 +31,11 @@ const API = (() => {
   }
 
   /* ─── จองรถ ─── */
-  async function book({ carNumber, startDate, endDate,
-                        firstName, lastName, phone, email,
-                        delivery = 0 }) {
+  async function book({ carId, startDate, endDate, firstName, lastName, phone, email, delivery = 0 }) {
     const r = await fetch(`${BASE}/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery })
+      body: JSON.stringify({ carId, startDate, endDate, firstName, lastName, phone, email, delivery })
     });
     return r.json();
   }
