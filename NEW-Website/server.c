@@ -182,7 +182,7 @@ static void saveCustomer(const char *carModel, int carId,
                          const char *fname, const char *lname,
                          const char *phone, const char *email,
                          const char *startDate, const char *endDate,
-                         int delivery, const char *refCode){
+                         const char *delivery, const char *refCode){
     FILE *fp=fopen(CUST_FILE,"a");
     if(!fp){ fprintf(stderr,"[ERR] cannot open %s\n",CUST_FILE); return; }
 
@@ -192,11 +192,7 @@ static void saveCustomer(const char *carModel, int carId,
     char today[20];
     strftime(today,sizeof(today),"%Y-%m-%d",t);
 
-    const char *deliveryStr = delivery ? "YES" : "NO";
-
-    fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-            carModel, fname, lname, phone, email,
-            startDate, endDate, deliveryStr, today);
+    fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s\n",carModel, fname, lname, phone, email, startDate, endDate, delivery, today);
     fclose(fp);
 }
 
@@ -436,26 +432,25 @@ static void handleAvailability(int sock, const char *url){
      "phone":"0812345678", "email":"a@gmail.com", "delivery":0 }
 */
 static void handleBook(int sock, const char *body){
-    int carNumber=0, delivery=0;
+    int carNumber=0;
     char startDate[20]="", endDate[20]="";
-    char fname[256]="", lname[256]="", phone[32]="", email[128]="";
+    char fname[256]="", lname[256]="", phone[32]="", email[128]="", delivery[30]="";
 
     /* รับทั้ง "carNumber" และ "carId" เพื่อ compatibility */
     if(!getJsonInt(body,"carNumber",&carNumber))
         getJsonInt(body,"carId",&carNumber);
-    getJsonInt(body,"delivery",&delivery);
-    getJsonStr(body,"startDate",startDate,20);
-    getJsonStr(body,"endDate",  endDate,  20);
+    getJsonStr(body,"delivery", delivery,  30);
+    getJsonStr(body,"startDate",startDate, 20);
+    getJsonStr(body,"endDate",  endDate,   20);
     /* รองรับทั้ง firstName/lastName และ first_name/last_name */
-    if(!getJsonStr(body,"firstName",fname,256))
+    if(!getJsonStr(body,"firstName",fname, 256))
         getJsonStr(body,"first_name",fname,256);
-    if(!getJsonStr(body,"lastName",lname,256))
-        getJsonStr(body,"last_name",lname,256);
-    getJsonStr(body,"phone",    phone,32);
-    getJsonStr(body,"email",    email,128);
+    if(!getJsonStr(body,"lastName",lname,  256))
+        getJsonStr(body,"last_name",lname, 256);
+    getJsonStr(body,"phone",    phone, 32);
+    getJsonStr(body,"email",    email, 128);
 
-    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s\n",
-           carNumber, startDate, endDate, fname, lname);
+    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s\n", carNumber, startDate, endDate, fname, lname);
 
     /* validate */
     if(carNumber<1||!startDate[0]||!endDate[0]||!fname[0]||!lname[0]){
