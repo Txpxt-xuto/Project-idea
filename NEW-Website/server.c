@@ -309,13 +309,41 @@ static int getJsonStr(const char *json, const char *key, char *out, int outLen){
     const char *p=strstr(json,search);
     if(!p) return 0;
     p+=strlen(search);
-    while(*p && (*p==':'||*p==' ')) p++;
+    /* skip whitespace and colon */
+    while(*p && (*p==':'||*p==' '||*p=='\t')) p++;
     if(*p!='"') return 0;
     p++;
     int i=0;
-    while(*p && *p!='"' && i<outLen-1) out[i++]=*p++;
+    /* copy bytes until closing quote, handling \uXXXX and escaped chars
+       UTF-8 bytes are > 0x7F — copy them as-is (opaque)               */
+    while(*p && i<outLen-1){
+        unsigned char ch = (unsigned char)*p;
+        if(ch == '"') break;          /* end of string */
+        if(ch == '\\'){               /* escape sequence */
+            p++;
+            ch = (unsigned char)*p;
+            switch(ch){
+                case '"':  out[i++]='"';  break;
+                case '\\': out[i++]='\\'; break;
+                case '/':  out[i++]='/';  break;
+                case 'n':  out[i++]='\n'; break;
+                case 'r':  out[i++]='\r'; break;
+                case 't':  out[i++]='\t'; break;
+                case 'u':{
+                    /* \uXXXX — copy raw bytes for now, JS already sent UTF-8 */
+                    out[i++]='?'; p+=4; /* skip 4 hex digits */
+                    break;
+                }
+                default: out[i++]=(char)ch; break;
+            }
+        } else {
+            /* UTF-8: copy all bytes of this character (may be 1-4 bytes) */
+            out[i++]=(char)ch;
+        }
+        p++;
+    }
     out[i]=0;
-    return 1;
+    return i>0 || *p=='"'; /* return 1 even for empty string */
 }
 
 static int getJsonInt(const char *json, const char *key, int *out){
@@ -410,16 +438,24 @@ static void handleAvailability(int sock, const char *url){
 static void handleBook(int sock, const char *body){
     int carNumber=0, delivery=0;
     char startDate[20]="", endDate[20]="";
-    char fname[64]="", lname[64]="", phone[32]="", email[128]="";
+    char fname[256]="", lname[256]="", phone[32]="", email[128]="";
 
-    getJsonInt(body,"carNumber",&carNumber);
+    /* รับทั้ง "carNumber" และ "carId" เพื่อ compatibility */
+    if(!getJsonInt(body,"carNumber",&carNumber))
+        getJsonInt(body,"carId",&carNumber);
     getJsonInt(body,"delivery",&delivery);
     getJsonStr(body,"startDate",startDate,20);
     getJsonStr(body,"endDate",  endDate,  20);
-    getJsonStr(body,"firstName",fname,64);
-    getJsonStr(body,"lastName", lname,64);
+    /* รองรับทั้ง firstName/lastName และ first_name/last_name */
+    if(!getJsonStr(body,"firstName",fname,256))
+        getJsonStr(body,"first_name",fname,256);
+    if(!getJsonStr(body,"lastName",lname,256))
+        getJsonStr(body,"last_name",lname,256);
     getJsonStr(body,"phone",    phone,32);
     getJsonStr(body,"email",    email,128);
+
+    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s\n",
+           carNumber, startDate, endDate, fname, lname);
 
     /* validate */
     if(carNumber<1||!startDate[0]||!endDate[0]||!fname[0]||!lname[0]){
@@ -499,7 +535,40 @@ static void handleCancel(int sock, const char *body){
 /* ══════════════════════════════════════════════════════════════
     Main server loop
    ══════════════════════════════════════════════════════════════ */
-int main(void){
+int main(int argc, char *argv[]){
+
+/* ── เปลี่ยน working directory ไปที่โฟลเดอร์ของ executable ── */
+/* เพื่อให้ fopen("CAR.csv",...) หาไฟล์เจอเสมอ               */
+#ifdef _WIN32
+    /* Windows: ตัดชื่อไฟล์ออกจาก argv[0] */
+    if(argc > 0){
+        char dir[512];
+        strncpy(dir, argv[0], sizeof(dir)-1);
+        dir[sizeof(dir)-1]=0;
+        char *last = strrchr(dir,'\\');
+        if(!last) last = strrchr(dir,'/');
+        if(last){ *last=0; SetCurrentDirectoryA(dir); }
+    }
+#else
+    /* Linux/macOS: ใช้ /proc/self/exe หรือ argv[0] */
+    {
+        char dir[512]="";
+        #ifdef __linux__
+        ssize_t len = readlink("/proc/self/exe", dir, sizeof(dir)-1);
+        if(len > 0){
+            dir[len]=0;
+            char *last = strrchr(dir,'/');
+            if(last){ *last=0; chdir(dir); }
+        } else
+        #endif
+        if(argc > 0){
+            strncpy(dir, argv[0], sizeof(dir)-1);
+            char *last = strrchr(dir,'/');
+            if(last){ *last=0; chdir(dir); }
+        }
+    }
+#endif
+    printf("[INFO] Working directory set to executable location\n");
 #ifdef _WIN32
     WSADATA wsa; WSAStartup(MAKEWORD(2,2),&wsa);
 #endif
