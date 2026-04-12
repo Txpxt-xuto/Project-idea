@@ -345,7 +345,7 @@
   .cars-header .date-range {
     font-size: 14px; color: var(--muted);
   }
-  .cars-header .date-range strong { color: var(--accent); }
+  .cars-header .date-range strong {font-weight: 500; color: var(--accent); }
 
   .cars-layout {
     max-width: 1200px; margin: 0 auto;
@@ -474,8 +474,8 @@
   .back-btn {
     display: inline-flex; align-items: center; gap: 8px;
     background: none; border: none; color: var(--muted);
-    font-family: 'Mitr', sans-serif; font-size: 14px;
-    cursor: pointer; margin-bottom: 32px; padding: 0;
+    font-family: 'Mitr', sans-serif; font-size: 18px;
+    cursor: pointer; margin-bottom: 20px; padding: 0;
     transition: color 0.15s;
   }
   .back-btn:hover { color: var(--accent); }
