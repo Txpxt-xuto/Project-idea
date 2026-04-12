@@ -591,6 +591,7 @@ int main(int argc, char *argv[]){
     listen(server,10);
     printf("[INFO] RODCHAOMAHACHAI backend running on http://localhost:%d\n",PORT);
     printf("[INFO] Place CAR.csv and CUSTOMER.csv in the same directory.\n");
+    printf("[INFO] Press Ctrl+C to stop.\n");
 
     while(1){
         struct sockaddr_in caddr;
