@@ -61,56 +61,6 @@ function searchCars() {
   showPage('cars');
 }
 
-function renderCars() {
-  const grid = document.getElementById('cars-grid');
-  const filtered = CARS.filter(c => {
-    if (!c.available) return false;
-    if (filters.seats !== 'all' && String(c.seats) !== filters.seats) return false;
-    if (filters.fuel !== 'all' && c.fuel !== filters.fuel) return false;
-    if (filters.price === 'low' && c.price >= 1200) return false;
-    if (filters.price === 'mid' && (c.price < 1200 || c.price > 2000)) return false;
-    if (filters.price === 'high' && c.price <= 2000) return false;
-    return true;
-  });
-
-  document.getElementById('result-count').textContent = `พบ ${filtered.length} คัน`;
-
-  if (!filtered.length) {
-    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>กรุณาปรับตัวกรอง</p></div>`;
-    return;
-  }
-
-  const fuelLabel = f => f === '95' ? '⛽ เบนซิน 95' : '🛢 ดีเซล';
-  const total = c => (c.price * numDays).toLocaleString();
-
-  grid.innerHTML = filtered.map(c => `
-    <div class="car-card" onclick="selectCar(${c.id})">
-      <div class="car-img-wrap">
-        <div class="car-emoji">${c.emoji}</div>
-        <div class="car-badge ${c.available ? 'badge-available' : 'badge-limited'}">
-          ${c.available ? '✔ ว่าง' : '✖ เต็ม'}
-        </div>
-      </div>
-      <div class="car-info">
-        <div class="car-name">${c.name}</div>
-        <div class="car-type">${c.type}</div>
-        <div class="car-specs">
-          <div class="spec">👥 ${c.seats} ที่นั่ง</div>
-          <div class="spec">${fuelLabel(c.fuel)}</div>
-          <div class="spec">🔄 Auto</div>
-          <div class="spec">❄️ A/C</div>
-        </div>
-        <div class="car-price-row">
-          <div>
-            <div class="price">${c.price.toLocaleString()} <span>฿ / วัน</span></div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${numDays} วัน = ${total(c)} ฿</div>
-          </div>
-          <button class="btn-select">เลือกคัน</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
 
 function setFilter(type, value, el) {
   filters[type] = value;
@@ -118,7 +68,6 @@ function setFilter(type, value, el) {
   el.classList.add('active');
   if(mode==0) renderCars();
   else showcar();
-  
 }
 
 function resetFilters() {
@@ -142,7 +91,7 @@ function selectCar(id) {
   document.getElementById('sum-days').textContent = numDays + ' วัน';
   document.getElementById('sum-per-day').textContent = selectedCar.price.toLocaleString() + ' ฿';
   document.getElementById('sum-total').textContent = (selectedCar.price * numDays + 3000).toLocaleString()  + ' ฿';
-
+  
   showPage('payment');
 }
 
@@ -253,6 +202,57 @@ function showcar() {
           <div>
             <div class="price">${c.price.toLocaleString()} <span>฿ / วัน</span></div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px;">${total(c)} ฿ / สัปดาห์ </div>
+          </div>
+          <button class="btn-select">เลือกคัน</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCars() {
+  const grid = document.getElementById('cars-grid');
+  const filtered = CARS.filter(c => {
+    if (!c.available) return false;
+    if (filters.seats !== 'all' && String(c.seats) !== filters.seats) return false;
+    if (filters.fuel !== 'all' && c.fuel !== filters.fuel) return false;
+    if (filters.price === 'low' && c.price >= 1200) return false;
+    if (filters.price === 'mid' && (c.price < 1200 || c.price > 2000)) return false;
+    if (filters.price === 'high' && c.price <= 2000) return false;
+    return true;
+  });
+
+  document.getElementById('result-count').textContent = `พบ ${filtered.length} คัน`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>กรุณาปรับตัวกรอง</p></div>`;
+    return;
+  }
+
+  const fuelLabel = f => f === '95' ? '⛽ เบนซิน 95' : '🛢 ดีเซล';
+  const total = c => (c.price * numDays).toLocaleString();
+
+  grid.innerHTML = filtered.map(c => `
+    <div class="car-card" onclick="selectCar(${c.id})">
+      <div class="car-img-wrap">
+        <div class="car-emoji">${c.emoji}</div>
+        <div class="car-badge ${c.available ? 'badge-available' : 'badge-limited'}">
+          ${c.available ? '✔ ว่าง' : '✖ เต็ม'}
+        </div>
+      </div>
+      <div class="car-info">
+        <div class="car-name">${c.name}</div>
+        <div class="car-type">${c.type}</div>
+        <div class="car-specs">
+          <div class="spec">👥 ${c.seats} ที่นั่ง</div>
+          <div class="spec">${fuelLabel(c.fuel)}</div>
+          <div class="spec">🔄 Auto</div>
+          <div class="spec">❄️ A/C</div>
+        </div>
+        <div class="car-price-row">
+          <div>
+            <div class="price">${c.price.toLocaleString()} <span>฿ / วัน</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${numDays} วัน = ${total(c)} ฿</div>
           </div>
           <button class="btn-select">เลือกคัน</button>
         </div>
