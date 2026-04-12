@@ -82,6 +82,17 @@ function resetFilters() {
 function selectCar(id) {
   selectedCar = CARS.find(c => c.id === id);
   if (!selectedCar) return;
+
+  // mode=1 (ดูรถทั้งหมด): ต้องเลือกวันก่อน
+  if (mode === 1) {
+    openDateModal();
+    return;
+  }
+
+  goToPayment();
+}
+
+function goToPayment() {
   const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
   document.getElementById('sum-icon').textContent = selectedCar.emoji;
   document.getElementById('sum-name').textContent = selectedCar.name;
@@ -90,9 +101,61 @@ function selectCar(id) {
   document.getElementById('sum-end').textContent = fmt(endDate);
   document.getElementById('sum-days').textContent = numDays + ' วัน';
   document.getElementById('sum-per-day').textContent = selectedCar.price.toLocaleString() + ' ฿';
-  document.getElementById('sum-total').textContent = (selectedCar.price * numDays + 3000).toLocaleString()  + ' ฿';
-  
+  document.getElementById('sum-total').textContent = (selectedCar.price * numDays + 3000).toLocaleString() + ' ฿';
   showPage('payment');
+}
+
+// ===== DATE MODAL (สำหรับ mode=1) =====
+function openDateModal() {
+  // ใส่ข้อมูลรถที่เลือกใน modal
+  document.getElementById('modal-car-emoji').textContent = selectedCar.emoji;
+  document.getElementById('modal-car-name').textContent = selectedCar.name;
+  document.getElementById('modal-car-type').textContent = selectedCar.type;
+  document.getElementById('modal-car-price').textContent = selectedCar.price.toLocaleString() + ' ฿ / วัน';
+
+  // ตั้ง default วันใน modal
+  const today = new Date();
+  const tmr = new Date(today); tmr.setDate(tmr.getDate() + 1);
+  const aftr = new Date(today); aftr.setDate(aftr.getDate() + 3);
+  const toISO = d => d.toISOString().split('T')[0];
+
+  document.getElementById('modal-start').value = toISO(tmr);
+  document.getElementById('modal-end').value = toISO(aftr);
+  updateModalNights();
+  document.getElementById('date-modal-overlay').classList.add('open');
+}
+
+function closeDateModal() {
+  document.getElementById('date-modal-overlay').classList.remove('open');
+}
+
+function updateModalNights() {
+  const s = document.getElementById('modal-start').value;
+  const e = document.getElementById('modal-end').value;
+  const info = document.getElementById('modal-nights-info');
+  if (s && e && e > s) {
+    const days = Math.ceil((new Date(e) - new Date(s)) / 86400000);
+    const total = (selectedCar ? selectedCar.price * days + 3000 : 0).toLocaleString();
+    info.textContent = `${days} วัน · รวม ${total} ฿ (รวมประกัน 3,000 ฿)`;
+    info.style.color = 'var(--accent)';
+  } else {
+    info.textContent = e && e <= s ? '⚠ วันคืนรถต้องหลังวันรับรถ' : '';
+    info.style.color = 'var(--accent2)';
+  }
+}
+
+function confirmDateModal() {
+  const s = document.getElementById('modal-start').value;
+  const e = document.getElementById('modal-end').value;
+  if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
+  if (e <= s) { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
+
+  startDate = s; endDate = e;
+  const ms = new Date(e) - new Date(s);
+  numDays = Math.max(1, Math.ceil(ms / 86400000));
+
+  closeDateModal();
+  goToPayment();
 }
 
 function selectPayMethod(el, method) {
