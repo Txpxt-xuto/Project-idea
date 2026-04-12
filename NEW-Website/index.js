@@ -100,8 +100,27 @@ function goToPayment() {
   document.getElementById('sum-start').textContent = fmt(startDate);
   document.getElementById('sum-end').textContent = fmt(endDate);
   document.getElementById('sum-days').textContent = numDays + ' วัน';
+  saleDay=0;
+  while(true)
+  {
+    if(numDays-30>=0) 
+    {
+      saleDay=saleDay+16;
+      numDays=numDays-30;
+    }
+    else if(numDays-7>=0) 
+    {
+      saleDay=saleDay+5;
+      numDays=numDays-7;
+    }
+    else 
+    {
+      saleDay=saleDay+numDays;
+      break;
+    }
+  }
   document.getElementById('sum-per-day').textContent = selectedCar.price.toLocaleString() + ' ฿';
-  document.getElementById('sum-total').textContent = (selectedCar.price * numDays + 3000).toLocaleString() + ' ฿';
+  document.getElementById('sum-total').textContent = (selectedCar.price * saleDay + 3000).toLocaleString() + ' ฿';
   showPage('payment');
 }
 
@@ -134,12 +153,32 @@ function updateModalNights() {
   const e = document.getElementById('modal-end').value;
   const info = document.getElementById('modal-nights-info');
   if (s && e && e > s) {
-    const days = Math.ceil((new Date(e) - new Date(s)) / 86400000);
-    const total = (selectedCar ? selectedCar.price * days + 3000 : 0).toLocaleString();
-    info.textContent = `${days} วัน · รวม ${total} ฿ (รวมประกัน 3,000 ฿)`;
+    const totaldays = Math.ceil((new Date(e) - new Date(s)) / 86400000);
+    days=totaldays;
+    saleDay=0;
+    while(true)
+    {
+      if(days-30>=0) 
+      {
+        saleDay=saleDay+16;
+        days=days-30;
+      }
+      else if(days-7>=0) 
+      {
+        saleDay=saleDay+5;
+        days=days-7;
+      }
+      else 
+      {
+        saleDay=saleDay+days;
+        break;
+      }
+    }
+    const total = (selectedCar ? selectedCar.price * saleDay + 3000 : 0).toLocaleString();
+    info.textContent = `${totaldays} วัน · รวม ${total} ฿ (รวมประกัน 3,000 ฿)`;
     info.style.color = 'var(--accent)';
   } else {
-    info.textContent = e && e <= s ? '⚠ วันคืนรถต้องหลังวันรับรถ' : '';
+    info.textContent = e && e <= s ? '⚠ วันคืนรถต้องเป็นวันหลังวันรับรถ' : '';
     info.style.color = 'var(--accent2)';
   }
 }
@@ -291,9 +330,28 @@ function renderCars() {
     grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>ไม่พบรถตามเงื่อนไข<br>กรุณาปรับตัวกรอง</p></div>`;
     return;
   }
-
+  totalDays=numDays;
+  saleDay=0;
+  while(true)
+  {
+    if(numDays-30>=0) 
+    {
+      saleDay=saleDay+16;
+      numDays=numDays-30;
+    }
+    else if(numDays-7>=0) 
+    {
+      saleDay=saleDay+5;
+      numDays=numDays-7;
+    }
+    else 
+    {
+      saleDay=saleDay+numDays;
+      break;
+    }
+  }
   const fuelLabel = f => f === '95' ? '⛽ เบนซิน 95' : '🛢 ดีเซล';
-  const total = c => (c.price * numDays).toLocaleString();
+  const total = c => (c.price * saleDay).toLocaleString();
 
   grid.innerHTML = filtered.map(c => `
     <div class="car-card" onclick="selectCar(${c.id})">
@@ -315,7 +373,7 @@ function renderCars() {
         <div class="car-price-row">
           <div>
             <div class="price">${c.price.toLocaleString()} <span>฿ / วัน</span></div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${numDays} วัน = ${total(c)} ฿</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">รวม ${totalDays} วัน = ${total(c)} ฿</div>
           </div>
           <button class="btn-select">เลือกคัน</button>
         </div>
