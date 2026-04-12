@@ -48,8 +48,8 @@
 #define BUF         65536
 #define MAX_CARS    20
 #define MAX_DAYS    370
-#define CAR_FILE    "C:\\Users\\User\\Documents\\GitHub\\project-idea\\NEW-Website\\CAR.csv"
-#define CUST_FILE   "C:\\Users\\User\\Documents\\GitHub\\project-idea\\NEW-Website\\CUSTOMER.csv"
+#define CAR_FILE    "CAR.csv"
+#define CUST_FILE   "CUSTOMER.csv"
 
 /* ─── car struct ──────────────────────────────────────────── */
 typedef struct {
