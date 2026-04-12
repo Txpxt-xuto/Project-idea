@@ -508,7 +508,7 @@ int main(void){
     if(server<0){ perror("socket"); return 1; }
 
     int opt=1;
-    setsockopt(server,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
+    setsockopt(server,SOL_SOCKET,SO_REUSEADDR, &opt,sizeof(opt));
 
     struct sockaddr_in addr;
     memset(&addr,0,sizeof(addr));
