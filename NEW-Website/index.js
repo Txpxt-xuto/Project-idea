@@ -44,7 +44,7 @@ function showPage(name) {
   window.scrollTo(0, 0);
 }
 
-function searchCars() {
+/*function searchCars() {
   const s = document.getElementById('start-date').value;
   const e = document.getElementById('end-date').value;
   if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
@@ -59,7 +59,7 @@ function searchCars() {
 
   renderCars();
   showPage('cars');
-}
+}*/
 
 
 function setFilter(type, value, el) {
@@ -171,12 +171,12 @@ function formatCard(input) {
   input.value = v.replace(/(.{4})/g,'$1  ').trim();
 }
 
-function confirmPayment() {
+/*function confirmPayment() {
   paymentCompleted = true;
   const ref = 'RMX-' + Math.floor(100000 + Math.random() * 900000);
   document.getElementById('booking-ref-num').textContent = ref;
   showPage('success');
-}
+}*/
 
 // Set default dates
 const today = new Date();
