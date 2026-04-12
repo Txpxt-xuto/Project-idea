@@ -191,7 +191,7 @@
           <div class="form-row">
             <div class="form-group">
               <label>ชื่อ</label>
-              <input type="text" placeholder="ชื่อจริง">
+              <input type="text" placeholder="ชื่อ">
             </div>
             <div class="form-group">
               <label>นามสกุล</label>
@@ -237,14 +237,14 @@
             <div class="form-group">
               <label>หมายเลขบัตร</label>
               <div class="card-input-wrap">
-                <input type="text" placeholder="1234  5678  9012  3456" maxlength="19" oninput="formatCard(this)">
+                <input type="text" placeholder="1234  5678  9012  3456" maxlength="22" oninput="formatCard(this)">
                 <div class="card-icon">💳</div>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label>วันหมดอายุ</label>
-                <input type="text" placeholder="MM/YY" maxlength="5">
+                <input type="text" placeholder="MM/YY" maxlength="5" oninput="formatMY(this)">
               </div>
               <div class="form-group">
                 <label>CVV</label>
@@ -258,9 +258,32 @@
           </div>
 
           <div id="qr-section" style="display:none;text-align:center;padding:24px 0;">
-            <div style="font-size:80px;margin-bottom:12px;">📲</div>
+            <!--<div style="font-size:80px;margin-bottom:12px;">📲</div>-->
             <p style="color:var(--muted);font-size:14px;">สแกน QR Code ด้วยแอปธนาคารเพื่อชำระเงิน</p>
             <div ><img src="QRcode.jpg" style="width:160px;height:160px;background:var(--surface);border:5px dashed var(--border);border-radius:12px;margin:16px auto;display:flex;align-items:center;justify-content:center;color:var(--muted);" alt="คำอธิบายภาพ"></div>
+            <div id="card-section">
+            <div class="form-group">
+              <label>ชื่อบัญชี</label>
+              <div class="card-input-wrap">
+                <input type="text" placeholder="•••">
+                <div class="card-icon">💳</div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>วันเดือนปี</label>
+                <input type="text" placeholder="DD/MM/YYYY" maxlength="10" oninput="formatDMY(this)">
+              </div>
+              <div class="form-group">
+                <label>เวลา</label>
+                <input type="text" placeholder="XX:XX" maxlength="5" oninput="formatEslip(this)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>รหัสอ้างอิง 4 ตัวท้าย</label>
+              <input type="text" placeholder="1234" maxlength="4">
+            </div>
+          </div>
           </div>
 
           <div id="bank-section" style="display:none;">
