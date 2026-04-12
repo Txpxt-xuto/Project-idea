@@ -48,8 +48,8 @@
 #define BUF         65536
 #define MAX_CARS    20
 #define MAX_DAYS    370
-#define CAR_FILE    "CAR.csv"
-#define CUST_FILE   "CUSTOMER.csv"
+#define CAR_FILE    "C:\\Users\\User\\Documents\\GitHub\\project-idea\\NEW-Website\\CAR.csv"
+#define CUST_FILE   "C:\\Users\\User\\Documents\\GitHub\\project-idea\\NEW-Website\\CUSTOMER.csv"
 
 /* ─── car struct ──────────────────────────────────────────── */
 typedef struct {
@@ -459,9 +459,7 @@ static void handleBook(int sock, const char *body){
     snprintf(refCode,sizeof(refCode),"RM-%06d",100000+(rand()%900000));
 
     /* บันทึก customer */
-    saveCustomer(cars[carIdx].model, cars[carIdx].id,
-                 fname, lname, phone, email,
-                 startDate, endDate, delivery, refCode);
+    saveCustomer(cars[carIdx].model, cars[carIdx].id,fname, lname, phone, email,startDate, endDate, delivery, refCode);
 
     int numDays=(e-s)+1; if(numDays<1) numDays=1;
     int total=cars[carIdx].id * numDays + 3000 + (delivery?1000:0);
@@ -474,7 +472,7 @@ static void handleBook(int sock, const char *body){
 }
 
 /* POST /cancel
-   Body: { "firstName":"สมชาย", "lastName":"ใจดี" }
+    Body: { "firstName":"สมชาย", "lastName":"ใจดี" }
 */
 static void handleCancel(int sock, const char *body){
     char fname[64]="", lname[64]="";
@@ -499,7 +497,7 @@ static void handleCancel(int sock, const char *body){
 }
 
 /* ══════════════════════════════════════════════════════════════
-   Main server loop
+    Main server loop
    ══════════════════════════════════════════════════════════════ */
 int main(void){
 #ifdef _WIN32
