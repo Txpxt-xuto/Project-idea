@@ -31,7 +31,7 @@ const API = (() => {
   }
 
   /* ─── จองรถ ─── */
-  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery = 0 }) {
+  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery }) {
     const r = await fetch(`${BASE}/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
