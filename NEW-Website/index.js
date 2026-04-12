@@ -210,6 +210,114 @@ function formatCard(input) {
   input.value = v.replace(/(.{4})/g,'$1  ').trim();
 }
 
+function formatEslip(input) {
+  // 1. ลบทุกอย่างที่ไม่ใช่ตัวเลข
+  let v = input.value.replace(/\D/g, '');
+  
+  let formatted = "";
+
+  // ตรวจสอบหลักที่ 1 (ต้องไม่เกิน 2)
+  if (v.length >= 1) {
+    let d1 = v[0];
+    if (parseInt(d1) > 2) d1 = '2'; // ถ้าเกิน 2 ให้แก้เป็น 2
+    formatted += d1;
+  }
+
+  // ตรวจสอบหลักที่ 2
+  if (v.length >= 2) {
+    let d2 = v[1];
+    // ถ้าหลักแรกเป็น 2 หลักที่สองต้องไม่เกิน 4
+    if (formatted[0] === '2') {
+      if (parseInt(d2) > 3) d2 = '3';
+    }
+    formatted += d2;
+  }
+
+  // ตรวจสอบหลักที่ 3 (หลักแรกของนาที ต้องไม่เกิน 5)
+  if (v.length >= 3) {
+    let d3 = v[2];
+    if (parseInt(d3) > 5) d3 = '5';
+    formatted += ':' + d3;
+  }
+
+  // หลักที่ 4 และ 5 (ใส่ตามปกติ)
+  if (v.length >= 4) {
+    formatted += v.substring(3, 5);
+  }
+
+  input.value = formatted;
+}
+
+function formatMY(input) {
+  // 1. ลบทุกอย่างที่ไม่ใช่ตัวเลข
+  let v = input.value.replace(/\D/g, '');
+  let out = "";
+
+  // --- จัดการ เดือน (MM) ---
+  if (v.length >= 1) {
+    let m1 = v[0];
+    if (parseInt(m1) > 1) m1 = '1'; // เดือนหลักแรกห้ามเกิน 1
+    out += m1;
+  }
+  
+  if (v.length >= 2) {
+    let m2 = v[1];
+    // ถ้าหลักแรกเป็น 1 (ต.ค. - ธ.ค.) หลักที่สองห้ามเกิน 2
+    if (out[0] === '1' && parseInt(m2) > 2) m2 = '2';
+    // เดือน 00 ไม่มีจริง ให้ปรับเป็น 01
+    if (out[0] === '0' && m2 === '0') m2 = '1';
+    out += m2 + '/';
+  }
+
+  // --- จัดการ ปี (YYYY) ---
+  if (v.length >= 3) {
+    // ดึงตัวเลขตั้งแต่หลักที่ 3 เป็นต้นไป (สูงสุด 2 ตัวสำหรับปี)
+    out += v.substring(2, 4);
+  }
+
+  input.value = out;
+}
+
+function formatDMY(input) {
+  // 1. ลบทุกอย่างที่ไม่ใช่ตัวเลข
+  let v = input.value.replace(/\D/g, '');
+  let out = "";
+
+  // --- จัดการ วัน (DD) ---
+  if (v.length >= 1) {
+    let d1 = v[0];
+    if (parseInt(d1) > 3) d1 = '3'; // วันที่หลักแรกไม่เกิน 3
+    out += d1;
+  }
+  if (v.length >= 2) {
+    let d2 = v[1];
+    if (out[0] === '3' && parseInt(d2) > 1) d2 = '1'; // ถ้าหลักแรกเป็น 3 หลักที่สองห้ามเกิน 1
+    if (out[0] === '0' && d2 === '0') d2 = '1';       // วันที่ 00 ไม่มีอยู่จริง ให้เป็น 01
+    out += d2 + '/';
+  }
+
+  // --- จัดการ เดือน (MM) ---
+  if (v.length >= 3) {
+    let m1 = v[2];
+    if (parseInt(m1) > 1) m1 = '1'; // เดือนหลักแรกไม่เกิน 1
+    out += m1;
+  }
+  if (v.length >= 4) {///////////////////////////////////////////////แก้เรื่องวัน
+    let m2 = v[3];
+    if (out[3] === '2' && out[0] === '3') m2 = '1';
+    else if (out[3] === '1' && parseInt(m2) > 2) m2 = '2'; // ถ้าหลักแรกเป็น 1 (ตุลาคม-ธันวาคม) หลักสองไม่เกิน 2
+    else if (out[3] === '0' && m2 === '0') m2 = '1';       // เดือน 00 ไม่มีอยู่จริง ให้เป็น 01
+    out += m2 + '/';
+  }
+
+  // --- จัดการ ปี (YYYY) ---
+  if (v.length >= 5) {
+    out += v.substring(4, 8); // ปีใส่ได้ 4 หลัก (5-8)
+  }
+
+  input.value = out;
+}
+
 /*function confirmPayment() {
   paymentCompleted = true;
   const ref = 'RMX-' + Math.floor(100000 + Math.random() * 900000);
