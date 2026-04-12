@@ -15,7 +15,7 @@
 <nav>
   <div class="logo">RODCHAO<span> MAHACHAI</span></div>
   <ul>
-    <li><a href="#" onclick="showPage('home')">หน้าแรก</a></li>
+    <li><a href="index.html" onclick="showPage('home')">หน้าแรก</a></li>
     <li><a href="#" onclick="showcar(); showPage('cars')">รถทั้งหมด</a></li>
     <li><a href="about_us.html">เงื่อนไข</a></li>
     <li><a href="#">ติดต่อ</a></li>
@@ -334,6 +334,37 @@
     <button class="btn-home" onclick="showPage('home')">← กลับหน้าแรก</button>
   </div>
 </div>
+
+<!-- ===== DATE MODAL ===== -->
+<div id="date-modal-overlay" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeDateModal()">✕</button>
+    <div class="modal-car-preview" id="modal-car-preview">
+      <span id="modal-car-emoji" style="font-size:48px;">🚗</span>
+      <div>
+        <div id="modal-car-name" style="font-size:18px;font-weight:600;color:var(--text);"></div>
+        <div id="modal-car-type" style="font-size:13px;color:var(--muted);"></div>
+        <div id="modal-car-price" style="font-size:14px;color:var(--accent);margin-top:4px;"></div>
+      </div>
+    </div>
+    <h3 class="modal-title">เลือกวันเช่า</h3>
+    <p class="modal-sub">กรุณาระบุวันที่รับและคืนรถก่อนดำเนินการจอง</p>
+    <div class="modal-form">
+      <div class="form-group">
+        <label>วันที่รับรถ</label>
+        <input type="date" id="modal-start" onchange="updateModalNights()">
+      </div>
+      <div class="form-group">
+        <label>วันที่คืนรถ</label>
+        <input type="date" id="modal-end" onchange="updateModalNights()">
+      </div>
+    </div>
+    <div id="modal-nights-info" class="modal-nights-info"></div>
+    <button class="btn-primary" onclick="confirmDateModal()">ยืนยันและดำเนินการจอง →</button>
+    <button class="btn-modal-cancel" onclick="closeDateModal()">ยกเลิก</button>
+  </div>
+</div>
+<script src="api.js"></script>
 <script src="index.js"></script>
 </body>
 </html>
