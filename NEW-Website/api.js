@@ -50,7 +50,17 @@ const API = (() => {
     return r.json();
   }
 
-  return { isServerAlive, checkAvailability, book, cancel };
+  /* ─── ดึงประวัติการจองของลูกค้า ─── */
+  async function myBookings(firstName, lastName) {
+    const r = await fetch(`${BASE}/mybookings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName })
+    });
+    return r.json();
+  }
+
+  return { isServerAlive, checkAvailability, book, cancel, myBookings };
 })();
 
 
@@ -168,7 +178,8 @@ async function confirmPaymentToServer() {
       lastName:  lname,
       phone,
       email,
-      delivery,total
+      delivery,
+      total
     });
 
     if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
