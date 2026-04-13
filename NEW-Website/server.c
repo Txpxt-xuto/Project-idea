@@ -432,14 +432,14 @@ static void handleAvailability(int sock, const char *url){
      "phone":"0812345678", "email":"a@gmail.com", "delivery":0 }
 */
 static void handleBook(int sock, const char *body){
-    int carNumber=0, total=0;
+    int carNumber=0, Total=0;
     char startDate[20]="", endDate[20]="";
     char fname[256]="", lname[256]="", phone[32]="", email[128]="", delivery[30]="";
 
     /* รับทั้ง "carNumber" และ "carId" เพื่อ compatibility */
     if(!getJsonInt(body,"carNumber",&carNumber))
         getJsonInt(body,"carId",&carNumber);
-        getJsonInt(body,"total",&total);
+        getJsonInt(body,"total",&Total);
     getJsonStr(body,"delivery", delivery,  30);
     getJsonStr(body,"startDate",startDate, 20);
     getJsonStr(body,"endDate",  endDate,   20);
@@ -491,15 +491,15 @@ static void handleBook(int sock, const char *body){
     snprintf(refCode,sizeof(refCode),"RM-%06d",100000+(rand()%900000));
 
     /* บันทึก customer */
-    saveCustomer(cars[carIdx].model, cars[carIdx].id,fname, lname, phone, email,startDate, endDate, delivery, refCode, total);
+    saveCustomer(cars[carIdx].model, cars[carIdx].id,fname, lname, phone, email,startDate, endDate, delivery, refCode, Total);
 
-    int numDays=(e-s)+1; if(numDays<1) numDays=1;
-    int total=cars[carIdx].id * numDays + 3000 + (delivery?1000:0);
+    int numDays=(e-s)+1; 
+    if(numDays<1) {numDays=1;}
 
     char resp[512];
     snprintf(resp,sizeof(resp),
         "{\"ok\":true,\"refCode\":\"%s\",\"totalCost\":%d,\"numDays\":%d}",
-        refCode,total,numDays);
+        refCode,Total,numDays);
     sendResponse(sock,200,resp);
 }
 
