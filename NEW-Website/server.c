@@ -528,59 +528,114 @@ static void handleCancel(int sock, const char *body){
     sendResponse(sock,200,"{\"ok\":true,\"message\":\"booking cancelled\"}");
 }
 
+/* POST /mybookings
+   Body: { "firstName":"สมชาย", "lastName":"ใจดี" }
+   Response:
+   {
+     "ok": true,
+     "bookings": [
+       { "car":"Toyota Vios White", "startDate":"2026-04-15",
+         "endDate":"2026-04-17", "delivery":"NO", "recordDate":"2026-04-10" }
+     ]
+   }
+*/
+static void handleMyBookings(int sock, const char *body){
+    char fname[256]="", lname[256]="";
+    if(!getJsonStr(body,"firstName",fname,256))
+        getJsonStr(body,"first_name",fname,256);
+    if(!getJsonStr(body,"lastName",lname,256))
+        getJsonStr(body,"last_name",lname,256);
+
+    if(!fname[0]||!lname[0]){
+        sendResponse(sock,400,"{\"ok\":false,\"error\":\"missing name\"}");
+        return;
+    }
+
+    FILE *fp=fopen(CUST_FILE,"r");
+    if(!fp){
+        sendResponse(sock,500,"{\"ok\":false,\"error\":\"cannot open customer file\"}");
+        return;
+    }
+
+    /* buffer สำหรับ JSON response  */
+    /* CSV columns: car,fname,lname,phone,email,startDate,endDate,delivery,recordDate */
+    char resbuf[16384];
+    int pos=0;
+    int found=0;
+
+    pos+=snprintf(resbuf+pos,sizeof(resbuf)-pos,"{\"ok\":true,\"bookings\":[");
+
+    char line[1024];
+    int isHeader=1;
+    while(fgets(line,sizeof(line),fp)){
+        if(isHeader){ isHeader=0; continue; }  /* skip header row */
+
+        char tmp[1024];
+        strncpy(tmp,line,sizeof(tmp)-1);
+        tmp[sizeof(tmp)-1]=0;
+
+        char *col[9];
+        int c=0;
+        char *tok=strtok(tmp,",");
+        while(tok&&c<9){
+            tok[strcspn(tok,"\r\n")]=0;
+            col[c++]=tok;
+            tok=strtok(NULL,",");
+        }
+        if(c<7) continue;
+
+        /*  col[0]=car  col[1]=fname  col[2]=lname
+            col[3]=phone col[4]=email
+            col[5]=startDate  col[6]=endDate
+            col[7]=delivery   col[8]=recordDate  */
+        if(strcmp(col[1],fname)!=0||strcmp(col[2],lname)!=0) continue;
+
+        /* escape model name for JSON (แค่ quote ตรงๆ ไม่มี nested quote) */
+        char carEsc[128]="";
+        int ei=0;
+        for(int k=0;col[0][k]&&ei<126;k++){
+            if(col[0][k]=='"') carEsc[ei++]='\\';
+            carEsc[ei++]=col[0][k];
+        }
+ 
+        pos+=snprintf(resbuf+pos,sizeof(resbuf)-pos,
+            "%s{\"car\":\"%s\",\"startDate\":\"%s\","
+            "\"endDate\":\"%s\",\"delivery\":\"%s\","
+            "\"recordDate\":\"%s\"}",
+            found?",":"",
+            carEsc,
+            c>5 ? col[5] : "",
+            c>6 ? col[6] : "",
+            c>7 ? col[7] : "",
+            c>8 ? col[8] : "");
+        found++;
+    }
+    fclose(fp);
+ 
+    pos+=snprintf(resbuf+pos,sizeof(resbuf)-pos,"]}");
+    sendResponse(sock,200,resbuf);
+}
+
 /* ══════════════════════════════════════════════════════════════
     Main server loop
    ══════════════════════════════════════════════════════════════ */
-int main(int argc, char *argv[]){
-
-/* ── เปลี่ยน working directory ไปที่โฟลเดอร์ของ executable ── */
-/* เพื่อให้ fopen("CAR.csv",...) หาไฟล์เจอเสมอ               */
-#ifdef _WIN32
-    /* Windows: ตัดชื่อไฟล์ออกจาก argv[0] */
-    if(argc > 0){
-        char dir[512];
-        strncpy(dir, argv[0], sizeof(dir)-1);
-        dir[sizeof(dir)-1]=0;
-        char *last = strrchr(dir,'\\');
-        if(!last) last = strrchr(dir,'/');
-        if(last){ *last=0; SetCurrentDirectoryA(dir); }
-    }
-#else
-    /* Linux/macOS: ใช้ /proc/self/exe หรือ argv[0] */
-    {
-        char dir[512]="";
-        #ifdef __linux__
-        ssize_t len = readlink("/proc/self/exe", dir, sizeof(dir)-1);
-        if(len > 0){
-            dir[len]=0;
-            char *last = strrchr(dir,'/');
-            if(last){ *last=0; chdir(dir); }
-        } else
-        #endif
-        if(argc > 0){
-            strncpy(dir, argv[0], sizeof(dir)-1);
-            char *last = strrchr(dir,'/');
-            if(last){ *last=0; chdir(dir); }
-        }
-    }
-#endif
-    printf("[INFO] Working directory set to executable location\n");
+int main(void){
 #ifdef _WIN32
     WSADATA wsa; WSAStartup(MAKEWORD(2,2),&wsa);
 #endif
-
+ 
     int server=socket(AF_INET,SOCK_STREAM,0);
     if(server<0){ perror("socket"); return 1; }
-
+ 
     int opt=1;
     setsockopt(server,SOL_SOCKET,SO_REUSEADDR, &opt,sizeof(opt));
-
+ 
     struct sockaddr_in addr;
     memset(&addr,0,sizeof(addr));
     addr.sin_family     =AF_INET;
     addr.sin_addr.s_addr=INADDR_ANY;
     addr.sin_port       =htons(PORT);
-
+ 
     if(bind(server,(struct sockaddr*)&addr,sizeof(addr))<0){
         perror("bind"); return 1;
     }
@@ -588,34 +643,34 @@ int main(int argc, char *argv[]){
     printf("[INFO] RODCHAOMAHACHAI backend running on http://localhost:%d\n",PORT);
     printf("[INFO] Place CAR.csv and CUSTOMER.csv in the same directory.\n");
     printf("[INFO] Press Ctrl+C to stop.\n");
-
+ 
     while(1){
         struct sockaddr_in caddr;
         socklen_t clen=sizeof(caddr);
         int client=accept(server,(struct sockaddr*)&caddr,&clen);
         if(client<0) continue;
-
+ 
         char req[BUF];
         int n=recv(client,req,BUF-1,0);
         if(n<=0){ close(client); continue; }
         req[n]=0;
-
+ 
         /* แยก method และ path */
         char method[8]="", path[256]="";
         sscanf(req,"%7s %255s",method,path);
-
+ 
         printf("[REQ] %s %s\n",method,path);
-
+ 
         /* OPTIONS preflight (CORS) */
         if(strcmp(method,"OPTIONS")==0){
             sendResponse(client,200,"{}");
             close(client); continue;
         }
-
+ 
         /* หา body (หลัง \r\n\r\n) */
         const char *bodyStart=strstr(req,"\r\n\r\n");
         const char *jsonBody = bodyStart ? bodyStart+4 : "";
-
+ 
         if(strncmp(path,"/availability",13)==0){
             handleAvailability(client, path);
         }
@@ -625,16 +680,19 @@ int main(int argc, char *argv[]){
         else if(strcmp(path,"/cancel")==0 && strcmp(method,"POST")==0){
             handleCancel(client, jsonBody);
         }
+        else if(strcmp(path,"/mybookings")==0 && strcmp(method,"POST")==0){
+            handleMyBookings(client, jsonBody);
+        }
         else if(strcmp(path,"/status")==0){
             sendResponse(client,200,"{\"ok\":true,\"service\":\"RODCHAOMAHACHAI\"}");
         }
         else{
             sendResponse(client,404,"{\"ok\":false,\"error\":\"not found\"}");
         }
-
+ 
         close(client);
     }
-
+ 
 #ifdef _WIN32
     WSACleanup();
 #endif
