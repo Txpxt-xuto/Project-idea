@@ -151,7 +151,9 @@ function closeDateModal() {
 function updateModalNights() {
   const s = document.getElementById('modal-start').value;
   const e = document.getElementById('modal-end').value;
+  const delivery = document.getElementById('modal-delivery').value;
   const info = document.getElementById('modal-nights-info');
+  let deliverycost=1000;
   if (s && e && e > s) {
     const totaldays = Math.ceil((new Date(e) - new Date(s)) / 86400000);
     days=totaldays;
@@ -174,7 +176,8 @@ function updateModalNights() {
         break;
       }
     }
-    const total = (selectedCar ? selectedCar.price * saleDay + 3000 : 0).toLocaleString();
+    if(delivery==="เดินทางมารับด้วยตนเอง (ไม่เสียค่าบริการ)") deliverycost=0;
+    const total = (selectedCar ? selectedCar.price * saleDay + 3000 + deliverycost : 0).toLocaleString();
     info.textContent = `${totaldays} วัน · รวม ${total} ฿ (รวมประกัน 3,000 ฿)`;
     info.style.color = 'var(--accent)';
   } else {
