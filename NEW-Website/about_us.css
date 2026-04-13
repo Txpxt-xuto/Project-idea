@@ -83,10 +83,26 @@ h1 {
   transition: 0.2s;
 }
 
+.cardcontect {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  width: 205%;
+  transition: 0.2s;
+}
+
+
 .card:hover {
   transform: translateY(-5px);
   border-color: var(--accent);
 }
+
+.cardcontect:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+}
+
 
 .title {
   display: flex;
@@ -195,4 +211,42 @@ h1 {
   h1 {
     font-size: 28px;
   }
+}
+
+
+
+.contact-box h3 {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transition: 0.3s;
+  margin-bottom: 15px;
+}
+
+.contact-item img {
+  width: 28px;
+  margin-right: 10px;
+}
+
+.contact-item a {
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.contact-item:hover {
+  transform: translateX(5px);
+}
+
+
+.contact-list {
+  display: flex;
+  justify-content: center; /* จัดกลาง */
+  gap: 10%;               /* ระยะห่าง */
 }
