@@ -289,11 +289,12 @@ function formatDMY(input) {
     if (parseInt(d1) > 3) d1 = '3'; // วันที่หลักแรกไม่เกิน 3
     out += d1;
   }
-  if (v.length >= 2) {
-    let d2 = v[1];
-    if (out[0] === '3' && parseInt(d2) > 1) d2 = '1'; // ถ้าหลักแรกเป็น 3 หลักที่สองห้ามเกิน 1
-    if (out[0] === '0' && d2 === '0') d2 = '1';       // วันที่ 00 ไม่มีอยู่จริง ให้เป็น 01
-    out += d2 + '/';
+  if (v.length >= 4) {
+    let m2 = v[3];
+    if (out[3] === '2' && out[0] === '3') m2 = '1';
+    else if (out[3] === '1' && parseInt(m2) > 2) m2 = '2';
+    else if (out[3] === '0' && m2 === '0') m2 = '1';
+    out += m2 + '/';
   }
 
   // --- จัดการ เดือน (MM) ---
@@ -302,11 +303,23 @@ function formatDMY(input) {
     if (parseInt(m1) > 1) m1 = '1'; // เดือนหลักแรกไม่เกิน 1
     out += m1;
   }
-  if (v.length >= 4) {///////////////////////////////////////////////แก้เรื่องวัน
+  
+  if (v.length >= 4) {
     let m2 = v[3];
-    if (out[3] === '2' && out[0] === '3') m2 = '1';
-    else if (out[3] === '1' && parseInt(m2) > 2) m2 = '2'; // ถ้าหลักแรกเป็น 1 (ตุลาคม-ธันวาคม) หลักสองไม่เกิน 2
-    else if (out[3] === '0' && m2 === '0') m2 = '1';       // เดือน 00 ไม่มีอยู่จริง ให้เป็น 01
+    let day = parseInt(out.substring(0, 2));
+    let month = parseInt(out[3] + m2);
+
+    if (out[3] === '1' && parseInt(m2) > 2) m2 = '2';
+    else if (out[3] === '0' && m2 === '0') m2 = '1';
+
+    month = parseInt(out[3] + m2);
+
+    if (day === 31) {
+      if ([2, 4, 6, 9, 11].includes(month)) {
+        m2 = '1'; // บังคับให้เป็นเดือน 01
+      }
+    }
+
     out += m2 + '/';
   }
 
