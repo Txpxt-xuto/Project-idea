@@ -31,11 +31,11 @@ const API = (() => {
   }
 
   /* ─── จองรถ ─── */
-  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery }) {
+  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery, total }) {
     const r = await fetch(`${BASE}/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery })
+      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery, total })
     });
     return r.json();
   }
@@ -134,6 +134,7 @@ async function confirmPaymentToServer() {
   /* delivery */
   const deliverySelected = document.querySelector('.pay-method.selected');
   const delivery = 0; /* ถ้าต้องการ delivery ให้ตรวจจาก checkbox เพิ่มเติม */
+  const total = 0;
 
   const btn = document.querySelector('#page-payment .btn-primary:last-of-type');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...'; }
@@ -167,7 +168,7 @@ async function confirmPaymentToServer() {
       lastName:  lname,
       phone,
       email,
-      delivery
+      delivery,total
     });
 
     if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
