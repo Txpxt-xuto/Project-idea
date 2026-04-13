@@ -7,6 +7,15 @@
 let _mbFname = '', _mbLname = '';
 let _cancelTarget = null; // { firstName, lastName, startDate, car }
  
+document.getElementById('mybookings-search-section').style.display = 'block';
+document.getElementById('mybookings-results').style.display = 'none';
+document.getElementById('mb-fname').value = '';
+document.getElementById('mb-lname').value = '';
+
+function closeCancelModal() {
+  document.getElementById('cancel-modal-overlay').classList.remove('open');
+}
+
 // emoji map จาก model ชื่อรถ
 function carEmojiFromName(name){
   const n = name.toLowerCase();
