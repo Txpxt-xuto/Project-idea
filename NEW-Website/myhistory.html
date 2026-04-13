@@ -22,7 +22,63 @@
   </ul>
 </nav>
 
-<h1>ควย</h1>
+
+<!-- ===== MY BOOKINGS PAGE ===== -->
+<div id="page-mybookings" class="page">
+  <div class="mybookings-wrapper">
+    <!-- ── Search form ── -->
+    <div id="mybookings-search-section">
+      <div class="mybookings-hero">
+        <h2 class="mybookings-title">📋 การจองของฉัน</h2>
+        <p class="mybookings-sub">กรอกชื่อ-นามสกุลที่ใช้ในการจองเพื่อดูประวัติ</p>
+      </div>
+      <div class="mybookings-form-card">
+        <div class="form-row">
+          <div class="form-group">
+            <label>ชื่อ</label>
+            <input type="text" id="mb-fname" placeholder="ชื่อจริง" onkeydown="if(event.key==='Enter') lookupBookings()">
+          </div>
+          <div class="form-group">
+            <label>นามสกุล</label>
+            <input type="text" id="mb-lname" placeholder="นามสกุล" onkeydown="if(event.key==='Enter') lookupBookings()">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="lookupBookings()">🔍 ค้นหาประวัติการจอง</button>
+      </div>
+    </div>
+
+    <!-- ── Results section (hidden until search) ── -->
+    <div id="mybookings-results" style="display:none;">
+      <div class="mybookings-results-header">
+        <div>
+          <span class="mybookings-results-name" id="mb-display-name"></span>
+          <span class="mybookings-results-count" id="mb-display-count"></span>
+        </div>
+        <button class="btn-reset" onclick="resetMyBookings()">← ค้นหาใหม่</button>
+      </div>
+      <div id="mybookings-list"></div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<!-- ===== CANCEL CONFIRM MODAL ===== -->
+<div id="cancel-modal-overlay" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeCancelModal()">✕</button>
+    <div style="text-align:center;padding:8px 0 20px;">
+      <div style="font-size:56px;margin-bottom:12px;">⚠️</div>
+      <h3 class="modal-title">ยืนยันการยกเลิก?</h3>
+      <p class="modal-sub" id="cancel-modal-desc">คุณต้องการยกเลิกการจองนี้ใช่หรือไม่?<br>
+        <span style="color:var(--accent2);font-size:13px;">การยกเลิกไม่สามารถเรียกคืนได้และไม่มีการคืนเงิน</span>
+      </p>
+    </div>
+    <button class="btn-primary" style="background:var(--accent2);margin-bottom:10px;" onclick="confirmCancelBooking()">
+      ✔ ยืนยันยกเลิกการจอง
+    </button>
+    <button class="btn-modal-cancel" onclick="closeCancelModal()">กลับ</button>
+  </div>
+</div>
 
 
 <script src="api.js"></script>
