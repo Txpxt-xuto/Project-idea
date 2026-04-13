@@ -93,6 +93,7 @@ function selectCar(id) {
 }
 
 function goToPayment() {
+  let deliverycost=1000;
   const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
   document.getElementById('sum-icon').textContent = selectedCar.emoji;
   document.getElementById('sum-name').textContent = selectedCar.name;
@@ -100,27 +101,39 @@ function goToPayment() {
   document.getElementById('sum-start').textContent = fmt(startDate);
   document.getElementById('sum-end').textContent = fmt(endDate);
   document.getElementById('sum-days').textContent = numDays + ' วัน';
-  saleDay=0;
+
+  if (mode == 0) {
+    let delivery = document.getElementById('delivery').value;
+    if (delivery === "เดินทางมารับด้วยตนเอง (ไม่เสียค่าบริการ)") {deliverycost = 0;}
+  }
+  else if (mode != 0) {
+    let delivery = document.getElementById('modal-delivery').value;
+    if (delivery === "เดินทางมารับด้วยตนเอง (ไม่เสียค่าบริการ)") {deliverycost = 0;}
+  }
+
+  let days = numDays;
+  saleDay = 0;
+
   while(true)
   {
-    if(numDays-30>=0) 
-    {
-      saleDay=saleDay+16;
-      numDays=numDays-30;
+    if (days-30>=0) {
+      saleDay+=16;
+      days-=30;
     }
-    else if(numDays-7>=0) 
-    {
-      saleDay=saleDay+5;
-      numDays=numDays-7;
+    else if (days-7>=0) {
+      saleDay+=5;
+      days-=7;
     }
-    else 
-    {
-      saleDay=saleDay+numDays;
+    else {
+      saleDay+=days;
       break;
     }
   }
+
   document.getElementById('sum-per-day').textContent = selectedCar.price.toLocaleString() + ' ฿';
-  document.getElementById('sum-total').textContent = (selectedCar.price * saleDay + 3000).toLocaleString() + ' ฿';
+  document.getElementById('sum-delivery').textContent = deliverycost + ' ฿';
+  document.getElementById('sum-total').textContent = (selectedCar.price * saleDay + 3000 + deliverycost).toLocaleString() + ' ฿';
+
   showPage('payment');
 }
 
@@ -189,9 +202,13 @@ function updateModalNights() {
 function confirmDateModal() {
   const s = document.getElementById('modal-start').value;
   const e = document.getElementById('modal-end').value;
+  const delivery = document.getElementById('modal-delivery').value;
+  let deliverycost=1000;
+
   if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
   if (e <= s) { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
-
+  if(delivery==="เดินทางมารับด้วยตนเอง (ไม่เสียค่าบริการ)") deliverycost=0;
+  
   startDate = s; endDate = e;
   const ms = new Date(e) - new Date(s);
   numDays = Math.max(1, Math.ceil(ms / 86400000));
