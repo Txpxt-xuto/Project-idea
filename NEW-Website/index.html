@@ -406,6 +406,20 @@
         <input type="date" id="modal-end" onchange="updateModalNights()">
       </div>
     </div>
+    <div class="modal-formsection">
+      <div class="form-group">
+        <label>สถานที่รับรถ</label>
+        <select id="modal-delivery" onchange="updateModalNights()">
+          <option>เดินทางมารับด้วยตนเอง</option>
+          <option>กรุงเทพมหานคร — ธนบุรี</option>
+          <option>กรุงเทพมหานคร — พระราม 2</option>
+          <option>สมุทรสาคร - เซ็นทรัลมหาชัย</option>
+          <option>สมุทรสาคร - ท่าฉลอม</option>
+          <option>สมุทรสาคร - บ้านแพ้ว</option>
+          <option>สมุทรสาคร - กระทุ่มแบน</option>
+        </select>
+      </div>
+    </div>
     <div id="modal-nights-info" class="modal-nights-info"></div>
     <button class="btn-primary" onclick="confirmDateModal()">ยืนยันและดำเนินการจอง →</button>
     <button class="btn-modal-cancel" onclick="closeDateModal()">ยกเลิก</button>
