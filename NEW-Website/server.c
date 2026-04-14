@@ -439,22 +439,26 @@ static void handleAvailability(int sock, const char *url){
 static void handleBook(int sock, const char *body){
     int carNumber=0, Total=0;
     char startDate[20]="", endDate[20]="";
-    char fname[256]="", lname[256]="", phone[32]="", email[128]="", delivery[30]="";
+    char fname[256]="", lname[256]="", phone[32]="", email[128]="", delivery[60]="";
 
+    char *dPtr = strstr(body, "\"delivery\":\"");
+    if(dPtr) sscanf(dPtr + 12, "%[^\"]", delivery);
+    char *tPtr = strstr(body, "\"total\":");
+    if(tPtr) sscanf(tPtr + 8, "%d", &Total);
+    
     /* รับทั้ง "carNumber" และ "carId" เพื่อ compatibility */
     if(!getJsonInt(body,"carNumber",&carNumber))
         getJsonInt(body,"carId",&carNumber);
-        getJsonInt(body,"total",&Total);
-    getJsonStr(body,"delivery", delivery,  30);
-    getJsonStr(body,"startDate",startDate, 20);
-    getJsonStr(body,"endDate",  endDate,   20);
+        getJsonInt(body,"total",&Total);    
+        getJsonStr(body,"startDate",startDate, 20);
+        getJsonStr(body,"endDate",  endDate,   20);
     /* รองรับทั้ง firstName/lastName และ first_name/last_name */
     if(!getJsonStr(body,"firstName",fname, 256))
         getJsonStr(body,"first_name",fname,256);
     if(!getJsonStr(body,"lastName",lname,  256))
         getJsonStr(body,"last_name",lname, 256);
-    getJsonStr(body,"phone",    phone, 32);
-    getJsonStr(body,"email",    email, 128);
+        getJsonStr(body,"phone",    phone, 32);
+        getJsonStr(body,"email",    email, 128);
     
     printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s\n", carNumber, startDate, endDate, fname, lname);
 
@@ -500,7 +504,7 @@ static void handleBook(int sock, const char *body){
 
     int numDays=(e-s)+1; 
     if(numDays<1) {numDays=1;}
-
+    
     char resp[512];
     snprintf(resp,sizeof(resp),
         "{\"ok\":true,\"refCode\":\"%s\",\"totalCost\":%d,\"numDays\":%d}",
