@@ -95,8 +95,6 @@ static void loadCars(void){
         return; 
     }
 
-    
-
     char line[20000];
     int row=0;
     numCars=0;
