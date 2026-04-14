@@ -88,7 +88,14 @@ static int dateToDayIndex(const char *s){
 /* ─── load CAR.csv ────────────────────────────────────────── */
 static void loadCars(void){
     FILE *fp=fopen(CAR_FILE,"r");
-    if(!fp){ fprintf(stderr,"[ERR] cannot open %s\n",CAR_FILE); return; }
+    if(!fp){ 
+        // เพิ่มบรรทัดนี้เพื่อ debug
+        perror("[ERR] System error message"); 
+        fprintf(stderr,"[ERR] cannot open %s. Make sure it is in the current directory.\n", CAR_FILE); 
+        return; 
+    }
+
+    
 
     char line[20000];
     int row=0;
