@@ -540,38 +540,95 @@ static void handleCancel(int sock, const char *body){
    }
 */
 void handleMyBookings(int client, const char *jsonBody) {
-    char reqF[64]="", reqL[64]="";
-    sscanf(jsonBody, "{\"firstName\":\"%[^\"]\",\"lastName\":\"%[^\"]\"}", reqF, reqL);
+    /* ── parse ชื่อ-นามสกุลจาก JSON ด้วย getJsonStr ที่รองรับ UTF-8 ── */
+    char reqF[256]="", reqL[256]="";
+    if(!getJsonStr(jsonBody,"firstName",reqF,256))
+        getJsonStr(jsonBody,"first_name",reqF,256);
+    if(!getJsonStr(jsonBody,"lastName",reqL,256))
+        getJsonStr(jsonBody,"last_name",reqL,256);
 
-    FILE *f = fopen(CUST_FILE, "r");
-    if(!f) {
-        sendResponse(client, 500, "{\"error\":\"Cannot open database\"}");
+    if(!reqF[0]||!reqL[0]){
+        sendResponse(client,400,"{\"ok\":false,\"error\":\"missing name\"}");
         return;
     }
 
-    char line[1024];
-    fgets(line, sizeof(line), f); // <--- เพิ่มบรรทัดนี้เพื่อข้าม "หัวตาราง" (Header)
-
-    char jsonRes[4096] = "[";
-    int found = 0;
-
-    // เปลี่ยนมาใช้ fgets + sscanf เพื่อความปลอดภัยกว่า fscanf
-    while(fgets(line, sizeof(line), f)) {
-        char cCar[64], cFname[64], cLname[64], cPhone[32], cEmail[64], cStart[32], cEnd[32], cDeliv[16], cDate[32], cTotal[32];
-        // ปรับการแยกแยะตามโครงสร้าง CSV จริงของคุณ
-        if(sscanf(line, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,]", cCar, cFname, cLname, cPhone, cEmail, cStart, cEnd, cDeliv, cDate, cTotal) >= 3) {
-            if(strcmp(cFname, reqF) == 0 && strcmp(cLname, reqL) == 0) {
-                if(found > 0) strcat(jsonRes, ",");
-                char item[512];
-                sprintf(item, "{\"car\":\"%s\",\"startDate\":\"%s\",\"endDate\":\"%s\"}", cCar, cStart, cEnd);
-                strcat(jsonRes, item);
-                found++;
-            }
-        }
+    FILE *f = fopen(CUST_FILE, "r");
+    if(!f) {
+        fprintf(stderr,"[ERR] cannot open %s\n", CUST_FILE);
+        sendResponse(client, 500, "{\"ok\":false,\"error\":\"Cannot open customer database\"}");
+        return;
     }
-    strcat(jsonRes, "]");
+
+    /* ── buffer JSON response ── */
+    /* CUSTOMER.csv columns (0-based):
+       0=car  1=fname  2=lname  3=phone  4=email
+       5=startDate  6=endDate  7=delivery  8=recordDate  (9=total optional) */
+    char resbuf[32768];
+    int  pos   = 0;
+    int  found = 0;
+
+    pos += snprintf(resbuf+pos, sizeof(resbuf)-pos, "{\"ok\":true,\"bookings\":[");
+
+    char line[2048];
+    int isHeader = 1;
+
+    while(fgets(line, sizeof(line), f)){
+        /* ข้าม header row (บรรทัดแรก) */
+        if(isHeader){ isHeader=0; continue; }
+        /* ข้ามบรรทัดว่าง */
+        if(line[0]=='\n'||line[0]=='\r'||line[0]=='\0') continue;
+
+        /* copy ก่อน strtok ทำลาย */
+        char tmp[2048];
+        strncpy(tmp, line, sizeof(tmp)-1);
+        tmp[sizeof(tmp)-1]=0;
+
+        /* แยก columns ด้วย strtok */
+        char *col[10];
+        int   nc = 0;
+        char *tok = strtok(tmp, ",");
+        while(tok && nc < 10){
+            tok[strcspn(tok,"\r\n")] = 0;
+            col[nc++] = tok;
+            tok = strtok(NULL, ",");
+        }
+        if(nc < 7) continue; /* ไม่ครบ columns ขั้นต่ำ */
+
+        /* col[1]=fname  col[2]=lname */
+        if(strcmp(col[1], reqF)!=0 || strcmp(col[2], reqL)!=0) continue;
+
+        /* escape double-quotes ใน car name สำหรับ JSON */
+        char carEsc[128]="";
+        int  ei = 0;
+        for(int k=0; col[0][k] && ei<126; k++){
+            if(col[0][k]=='"') carEsc[ei++]='\\';
+            carEsc[ei++] = col[0][k];
+        }
+        carEsc[ei]=0;
+
+        const char *delivery   = (nc>7) ? col[7] : "";
+        const char *recordDate = (nc>8) ? col[8] : "";
+
+        pos += snprintf(resbuf+pos, sizeof(resbuf)-pos,
+            "%s{\"car\":\"%s\","
+             "\"startDate\":\"%s\","
+             "\"endDate\":\"%s\","
+             "\"delivery\":\"%s\","
+             "\"recordDate\":\"%s\"}",
+            found ? "," : "",
+            carEsc,
+            col[5],   /* startDate */
+            col[6],   /* endDate   */
+            delivery,
+            recordDate);
+        found++;
+    }
     fclose(f);
-    sendResponse(client, 200, jsonRes);
+
+    pos += snprintf(resbuf+pos, sizeof(resbuf)-pos, "]}");
+
+    printf("[MYBOOKINGS] fname=%s lname=%s found=%d\n", reqF, reqL, found);
+    sendResponse(client, 200, resbuf);
 }
 
 /* ══════════════════════════════════════════════════════════════
