@@ -71,7 +71,7 @@ async function lookupBookings(){
     document.getElementById('mb-display-count').textContent = '';
     list.innerHTML = `<div class="mybookings-empty">
       <div class="icon">🔍</div>
-      <p>ไม่พบประวัติการจองสำหรับชื่อนี้<br>
+      <p>ไม่พบประวัติการจองสำหรับรายชื่อนี้<br>
          <small>กรุณาตรวจสอบชื่อ-นามสกุลให้ถูกต้อง</small></p></div>`;
     return;
   }
