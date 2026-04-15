@@ -79,7 +79,7 @@ async function lookupBookings(){
   document.getElementById('mb-display-count').textContent =
     `· พบ ${data.bookings.length} รายการ`;
  
-  const statusLabel = { upcoming:'⏳ รอรับรถ', active:'🟢 กำลังเช่า', past:'✔ เสร็จสิ้น' };
+  const statusLabel = { upcoming:'⏳ รอรับรถ ', active:'🟢 กำลังเช่า', past:'✔ เสร็จสิ้น' };
   const statusClass = { upcoming:'badge-upcoming', active:'badge-active', past:'badge-past' };
  
   list.innerHTML = data.bookings.map((b, idx) => {
@@ -99,7 +99,7 @@ async function lookupBookings(){
         </div>
         <div class="booking-card-meta">
           <span class="booking-meta-chip">🕐 ${days} วัน</span>
-          <span class="booking-meta-chip">${b.delivery==='YES'?'🚚 มีบริการส่ง':'📍 รับเองที่ร้าน'}</span>
+          <span class="booking-meta-chip">${b.delivery==='YES'?'🚚 มีบริการส่ง':'📍 รับด้วยตนเอง'}</span>
           <span class="booking-meta-chip">📝 จองวันที่ ${fmtDateTH(b.recordDate)}</span>
         </div>
       </div>
