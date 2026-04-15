@@ -206,8 +206,7 @@ static void saveCustomer(
     /* ทุก field ห้ามมี comma — sanitize เบื้องต้น */
     #define SAFE(s) ((s)&&(s)[0] ? (s) : "-")
 
-    fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
-        SAFE(carModel),
+    fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",SAFE(carModel),
         SAFE(fname),   SAFE(lname),
         SAFE(phone),   SAFE(email),
         SAFE(idCard),
@@ -490,8 +489,7 @@ static void handleBook(int sock, const char *body){
     getJsonStr(body,"expiry",      expiry,     12);
     getJsonStr(body,"total",       total,      20);
 
-    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s pay=%s total=%s\n",
-           carNumber, startDate, endDate, fname, lname, payMethod, total);
+    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s pay=%s total=%s\n",carNumber, startDate, endDate, fname, lname, payMethod, total);
 
     /* validate */
     if(carNumber<1||!startDate[0]||!endDate[0]||!fname[0]||!lname[0]){
@@ -529,19 +527,13 @@ static void handleBook(int sock, const char *body){
     snprintf(refCode,sizeof(refCode),"RM-%06d",100000+(rand()%900000));
 
     /* บันทึก customer พร้อม fields ใหม่ทั้งหมด */
-    saveCustomer(cars[carIdx].model,
-                 fname, lname, phone, email, idCard,
-                 startDate, endDate, location,
-                 payMethod, cardName, cardNumber,
-                 timeOrCvv, expiry, total);
+    saveCustomer(cars[carIdx].model, fname, lname, phone, email, idCard, startDate, endDate, location,payMethod, cardName, cardNumber, timeOrCvv, expiry, total);
 
     int numDays=(e-s)+1;
     if(numDays<1) numDays=1;
 
     char resp[256];
-    snprintf(resp,sizeof(resp),
-        "{\"ok\":true,\"refCode\":\"%s\",\"numDays\":%d}",
-        refCode, numDays);
+    snprintf(resp,sizeof(resp),"{\"ok\":true,\"refCode\":\"%s\",\"numDays\":%d}",refCode, numDays);
     sendResponse(sock,200,resp);
 }
 
