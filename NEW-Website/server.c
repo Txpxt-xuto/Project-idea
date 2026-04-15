@@ -451,7 +451,7 @@ static void handleBook(int sock, const char *body){
     getJsonStr(body,"phone",    phone, 32);
     getJsonStr(body,"email",    email, 128);
     
-    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s deliveryValue=%s\n", carNumber, startDate, endDate, fname, lname, deliveryValue);
+    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s\n", carNumber, startDate, endDate, fname, lname);
 
     /* validate */
     if(carNumber<1||!startDate[0]||!endDate[0]||!fname[0]||!lname[0]){
