@@ -1,4 +1,3 @@
-
 const CARS = [
   { id:1, serverNumber:1, name:'Toyota Fortuner', type:'SUV', seats:7, fuel:'diesel', price:2200, emoji:'🚙', available:true },
   { id:2, serverNumber:2, name:'Honda CR-V', type:'SUV', seats:5, fuel:'95', price:1800, emoji:'🚘', available:true },
@@ -218,10 +217,14 @@ function confirmDateModal() {
 }
 
 function selectPayMethod(el, method) {
-  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
+  document.querySelectorAll('.pay-method').forEach(m => {
+    m.classList.remove('selected');
+    m.setAttribute('data-method', m.getAttribute('data-method') || method);
+  });
   el.classList.add('selected');
+  el.setAttribute('data-method', method);
   document.getElementById('card-section').style.display = method === 'card' ? 'block' : 'none';
-  document.getElementById('qr-section').style.display = method === 'qr' ? 'block' : 'none';
+  document.getElementById('qr-section').style.display   = method === 'qr'   ? 'block' : 'none';
   document.getElementById('bank-section').style.display = method === 'bank' ? 'block' : 'none';
 }
 
