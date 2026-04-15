@@ -145,10 +145,6 @@ async function confirmPaymentToServer() {
   const deliveryValue = document.getElementById('delivery').value;
   const total = 0;
 
-  console.log(deliveryValue);
-
-
-
   const btn = document.querySelector('#page-payment .btn-primary:last-of-type');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...'; }
 
