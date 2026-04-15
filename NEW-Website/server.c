@@ -527,7 +527,7 @@ static void handleBook(int sock, const char *body){
     snprintf(refCode,sizeof(refCode),"RM-%06d",100000+(rand()%900000));
 
     /* บันทึก customer พร้อม fields ใหม่ทั้งหมด */
-    saveCustomer(cars[carIdx].model, fname, lname, phone, email, idCard, startDate, endDate, location,payMethod, cardName, cardNumber, timeOrCvv, expiry, total);
+    saveCustomer(cars[carIdx].model, fname, lname, phone, email, idCard, startDate, endDate, location, payMethod, cardName, cardNumber, timeOrCvv, expiry, total);
 
     int numDays=(e-s)+1;
     if(numDays<1) numDays=1;
