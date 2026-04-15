@@ -182,7 +182,7 @@ static void saveCustomer(const char *carModel, int carId,
                          const char *fname, const char *lname,
                          const char *phone, const char *email,
                          const char *startDate, const char *endDate,
-                         const char *delivery, const char *refCode, int total){
+                         const char *deliveryValue, const char *refCode, int total){
     FILE *fp=fopen(CUST_FILE,"a");
     if(!fp){ fprintf(stderr,"[ERR] cannot open %s\n",CUST_FILE); return; }
 
@@ -192,7 +192,7 @@ static void saveCustomer(const char *carModel, int carId,
     char today[20];
     strftime(today,sizeof(today),"%Y-%m-%d",t);
 
-    fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%d\n",carModel, fname, lname, phone, email, startDate, endDate, delivery, today, total);
+    fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%d\n",carModel, fname, lname, phone, email, startDate, endDate, deliveryValue, today, total);
     fclose(fp);
 }
 
@@ -434,13 +434,13 @@ static void handleAvailability(int sock, const char *url){
 static void handleBook(int sock, const char *body){
     int carNumber=0, Total=0;
     char startDate[20]="", endDate[20]="";
-    char fname[256]="", lname[256]="", phone[32]="", email[128]="", deliverySelected[60]="";
+    char fname[256]="", lname[256]="", phone[32]="", email[128]="", deliveryValue[60]="";
 
     /* รับทั้ง "carNumber" และ "carId" เพื่อ compatibility */
     if(!getJsonInt(body,"carNumber",&carNumber))
         getJsonInt(body,"carId",&carNumber);
         getJsonInt(body,"total",&Total);
-    getJsonStr(body,"deliverySelected", deliverySelected,  60);
+    getJsonStr(body,"deliveryValue", deliveryValue,  60);
     getJsonStr(body,"startDate",startDate, 20);
     getJsonStr(body,"endDate",  endDate,   20);
     /* รองรับทั้ง firstName/lastName และ first_name/last_name */
@@ -451,7 +451,7 @@ static void handleBook(int sock, const char *body){
     getJsonStr(body,"phone",    phone, 32);
     getJsonStr(body,"email",    email, 128);
     
-    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s deliverySelected=%s\n", carNumber, startDate, endDate, fname, lname, deliverySelected);
+    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s deliveryValue=%s\n", carNumber, startDate, endDate, fname, lname, deliveryValue);
 
     /* validate */
     if(carNumber<1||!startDate[0]||!endDate[0]||!fname[0]||!lname[0]){
@@ -491,7 +491,7 @@ static void handleBook(int sock, const char *body){
     snprintf(refCode,sizeof(refCode),"RM-%06d",100000+(rand()%900000));
 
     /* บันทึก customer */
-    saveCustomer(cars[carIdx].model, cars[carIdx].id,fname, lname, phone, email,startDate, endDate, deliverySelected, refCode, Total);
+    saveCustomer(cars[carIdx].model, cars[carIdx].id,fname, lname, phone, email,startDate, endDate, deliveryValue, refCode, Total);
 
     int numDays=(e-s)+1; 
     if(numDays<1) {numDays=1;}
