@@ -144,7 +144,7 @@ async function confirmPaymentToServer() {
   /* delivery */
   const deliveryValue = document.getElementById('delivery').value;
 
-  const totalStr = document.getElementById('sum-total').textContent;
+  const total = parseFloat(document.getElementById('sum-total').textContent.replace(/,/g, '') .replace(/฿/g, '') .trim());
 
   const btn = document.querySelector('#page-payment .btn-primary:last-of-type');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...'; }
