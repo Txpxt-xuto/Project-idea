@@ -43,24 +43,6 @@ function showPage(name) {
   window.scrollTo(0, 0);
 }
 
-/*function searchCars() {
-  const s = document.getElementById('start-date').value;
-  const e = document.getElementById('end-date').value;
-  if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
-  if (e <= s) { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
-  startDate = s; endDate = e;
-  const ms = new Date(e) - new Date(s);
-  numDays = Math.max(1, Math.ceil(ms / 86400000));
-
-  const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
-  document.getElementById('display-dates').textContent = fmt(s) + ' → ' + fmt(e);
-  document.getElementById('display-days').textContent =  'รวม ' + numDays + ' วัน';
-
-  renderCars();
-  showPage('cars');
-}*/
-
-
 function setFilter(type, value, el) {
   filters[type] = value;
   document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove('active'));
@@ -359,13 +341,6 @@ function formatDMY(input) {
 
   input.value = out;
 }
-
-/*function confirmPayment() {
-  paymentCompleted = true;
-  const ref = 'RMX-' + Math.floor(100000 + Math.random() * 900000);
-  document.getElementById('booking-ref-num').textContent = ref;
-  showPage('success');
-}*/
 
 // Set default dates
 const today = new Date();
