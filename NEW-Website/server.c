@@ -439,7 +439,6 @@ static void handleBook(int sock, const char *body){
     /* รับทั้ง "carNumber" และ "carId" เพื่อ compatibility */
     if(!getJsonInt(body,"carNumber",&carNumber))
         getJsonInt(body,"carId",&carNumber);
-        getJsonInt(body,"total",&Total);
     getJsonStr(body,"deliveryValue", deliveryValue,  60);
     getJsonStr(body,"startDate",startDate, 20);
     getJsonStr(body,"endDate",  endDate,   20);
