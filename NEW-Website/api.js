@@ -130,7 +130,7 @@ async function confirmPaymentToServer() {
   const lname  = document.querySelector('#page-payment input[placeholder="นามสกุล"]')?.value.trim()   || '';
   const phone  = document.querySelector('#page-payment input[type="tel"]')?.value.trim()              || '';
   const email  = document.querySelector('#page-payment input[type="email"]')?.value.trim()            || '';
-  const idcard = document.getElementById('idcard').value;
+  const idCard = document.getElementById('idcard').value;
 
   if (!fname || !lname || !phone || !email) {
     alert('กรุณากรอกข้อมูลผู้เช่าให้ครบถ้วน (ชื่อ นามสกุล เบอร์โทร อีเมล)');
@@ -143,8 +143,8 @@ async function confirmPaymentToServer() {
 
   /* ── 3. วิธีชำระเงิน — อ่านตาม section ที่ active ── */
   const activeMethod = document.querySelector('.pay-method.selected');
-  //const paymentMethod   = activeMethod?.getAttribute('data-method') || 'card';
-  const paymentMethod = document.querySelector('input[name="pay-method"]:checked')?.value || "-";
+  //const methodType   = activeMethod?.getAttribute('data-method') || 'card';
+  const methodType = document.querySelector('input[name="pay-method"]:checked')?.value || "-";
 
   let payMethod  = '';
   let cardName   = '';
@@ -157,31 +157,31 @@ async function confirmPaymentToServer() {
     const sec  = document.getElementById('card-section');
     cardName   = document.getElementById('card-name').value;
     expiry     = document.getElementById('card-exp').value;
-    cardCvv    = document.getElementById('card-cvv').value;
-    cardNum    = document.getElementById('card-num').value;
+    timeOrCvv  = document.getElementById('card-cvv').value;
+    cardNumber = document.getElementById('card-num').value;
   } else if (methodType === 'qr') {
     payMethod  = 'Promptpay';
     const sec  = document.getElementById('qr-section');
     cardName   = document.getElementById('card-name').value;
     expiry     = document.getElementById('card-exp').value;
-    cardCvv    = document.getElementById('card-cvv').value;
-    cardNum    = document.getElementById('card-num').value;
+    timeOrCvv  = document.getElementById('card-cvv').value;
+    cardNumber = document.getElementById('card-num').value;
   } else if (methodType === 'bank') {
     payMethod  = 'Bank-Transfer';
     const sec  = document.getElementById('bank-section');
     cardName   = document.getElementById('card-name').value;
     expiry     = document.getElementById('card-exp').value;
-    cardCvv    = document.getElementById('card-cvv').value;
-    cardNum    = document.getElementById('card-num').value;
+    timeOrCvv  = document.getElementById('card-cvv').value;
+    cardNumber = document.getElementById('card-num').value;
   }
 
-  console.log(idcard);
-  console.log(paymentMethod);
+  console.log(idCard);
+  console.log(methodType);
   console.log(payMethod);
   console.log(cardName);
   console.log(expiry);
-  console.log(cardCvv);
-  console.log(cardNum);
+  console.log(timeOrCvv);
+  console.log(cardNumber);
 
   /* ── 4. ยอดรวม ── */
   const totalText  = document.getElementById('sum-total')?.textContent || '';
