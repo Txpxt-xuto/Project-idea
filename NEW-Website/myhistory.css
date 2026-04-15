@@ -63,6 +63,33 @@ nav ul a:hover { color: var(--accent); }
 }
 .form-group input:focus { border-color: var(--accent); }
 
+.btn-modal-cancel {
+  display: block;
+  margin: 10px auto 0;
+  padding: 12px 30px;
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease; /* 🔥 เพิ่ม */
+  font-family: 'Mitr', sans-serif;
+  font-weight: 500; 
+  letter-spacing: 0.5px;
+}
+
+/* 🔥 Hover effect */
+.btn-modal-cancel:hover {
+  transform: translateY(-2px); /* ลอยขึ้น */
+  box-shadow: 0 8px 20px rgba(232,197,71,0.3); /* เงา */
+}
+
+/* 🔥 ตอนกด */
+.btn-modal-cancel:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
 .btn-primary {
   width: 100%; padding: 14px;
   background: var(--accent);
@@ -75,24 +102,45 @@ nav ul a:hover { color: var(--accent); }
 
 .btn-reset {
   padding: 8px 16px; background: transparent; 
+  margin-top: 3%;
   border: 1px solid var(--border); color: var(--muted);
   cursor: pointer; border-radius: 8px; font-family: 'Mitr', sans-serif;
 }
 
+.btn-cancel-booking {
+  display: block; margin-top: 10px; padding: 7px 16px;
+  background: transparent; border: 1px solid rgba(255,107,53,0.4);
+  color: var(--accent2); font-family: 'Mitr', sans-serif;
+  font-size: 13px; border-radius: 8px;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.btn-cancel-booking:hover {
+  background: rgba(255,107,53,0.1);
+  border-color: var(--accent2);
+}
+
 /* ===== MY BOOKINGS PAGE ===== */
+
 #page-mybookings { padding: 120px 24px 60px; }
 .mybookings-wrapper { max-width: 760px; margin: 0 auto; }
 .mybookings-hero { margin-bottom: 28px; }
-.mybookings-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--text); }
+.mybookings-title { font-family: 'Mitr', sans-serif; font-size: 48px; color: var(--text); font-weight: 500; }
 .mybookings-sub { color: var(--muted); margin-top: 6px; }
 
 .mybookings-form-card {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 20px; padding: 28px; position: relative;
 }
+
 .mybookings-form-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 5px;
   background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 20px 20px 0 0;
+}
+
+.mybookings-form-card label{
+  font-size: 18px; font-weight: 500;
 }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 10px; }
 
@@ -106,6 +154,13 @@ nav ul a:hover { color: var(--accent); }
 .booking-card-info { flex: 1; }
 .booking-card-carname { font-size: 18px; font-weight: 600; color: var(--text); }
 .booking-card-dates { color: var(--accent); font-size: 14px; margin-top: 4px; }
+
+.booking-status-badge {
+  display: block; padding: 7px 16px; 
+  position: relative; text-align: center;
+  border-radius: 20px; font-size: 13px; font-weight: 500;
+  letter-spacing: 0.5px; 
+}
 
 /* Status Badges */
 .booking-status-badge {
@@ -159,18 +214,15 @@ nav ul a:hover { color: var(--accent); }
 
 /* 3. ปุ่มปิด (X) มุมขวาบน */
 .modal-close {
-  position: absolute; 
-  top: 16px; 
-  right: 16px;
-  background: none; 
-  border: none;
-  color: var(--muted); 
-  font-size: 20px; 
-  cursor: pointer;
-  transition: color 0.2s;
+  position: absolute; top: 10px; right: 10px;
+  background: none; border: none;
+  color: var(--muted); font-size: 18px; cursor: pointer;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
 }
 .modal-close:hover {
-  color: var(--accent2); /* เปลี่ยนเป็นสีส้มเมื่อชี้ */
+  background: rgba(255,255,255,0.08); color: var(--accent2); /* เปลี่ยนเป็นสีส้มเมื่อชี้ */
 }
 
 /* 4. ข้อความภายใน Modal */
