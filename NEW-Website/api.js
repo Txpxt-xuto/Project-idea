@@ -148,7 +148,7 @@ async function confirmPaymentToServer() {
   const totalValue = parseFloat(totalText.replace(/,/g, '').replace(/฿/g, '').trim());
   let total=totalValue;
 
-  console.log(total)
+  console.log(total);
 
   const btn = document.querySelector('#page-payment .btn-primary:last-of-type');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...'; }
