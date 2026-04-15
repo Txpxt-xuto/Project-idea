@@ -178,21 +178,48 @@ static void cancelCar(int carIdx, int startDay, int endDay){
 }
 
 /* ─── append to CUSTOMER.csv ──────────────────────────────── */
-static void saveCustomer(const char *carModel, int carId,
-                         const char *fname, const char *lname,
-                         const char *phone, const char *email,
-                         const char *startDate, const char *endDate,
-                         const char *deliveryValue, const char *refCode, const char *total){
+/* CSV columns (ตรงกับ header):
+   รถยนต์,ชื่อ,นามสกุล,เบอร์โทร,อีเมล,เลขประจำตัวประชาชน,
+   วันเริ่มต้นการเช่า,วันสิ้นสุดการเช่า,สถานที่,วันที่บันทึก,
+   วิธีการชำระ,ชื่อบนบัตรหรือชื่อบัญชี,หมายเลขบัตรหรือรหัสอ้างอิง,
+   เวลาหรือ cvv,วันเดือนปีหรือวันหมดอายุ,จำนวนเงิน            */
+static void saveCustomer(
+        const char *carModel,
+        const char *fname,    const char *lname,
+        const char *phone,    const char *email,
+        const char *idCard,
+        const char *startDate,const char *endDate,
+        const char *location,
+        const char *payMethod,
+        const char *cardName, const char *cardNumber,
+        const char *timeOrCvv,const char *expiry,
+        const char *total){
+
     FILE *fp=fopen(CUST_FILE,"a");
     if(!fp){ fprintf(stderr,"[ERR] cannot open %s\n",CUST_FILE); return; }
 
-    /* วันที่บันทึกวันนี้ */
     time_t now=time(NULL);
     struct tm *t=localtime(&now);
     char today[20];
     strftime(today,sizeof(today),"%Y-%m-%d",t);
 
-    fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",carModel, fname, lname, phone, email, startDate, endDate, deliveryValue, today, total);
+    /* ทุก field ห้ามมี comma — sanitize เบื้องต้น */
+    #define SAFE(s) ((s)&&(s)[0] ? (s) : "-")
+
+    fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+        SAFE(carModel),
+        SAFE(fname),   SAFE(lname),
+        SAFE(phone),   SAFE(email),
+        SAFE(idCard),
+        SAFE(startDate),SAFE(endDate),
+        SAFE(location),
+        today,
+        SAFE(payMethod),
+        SAFE(cardName), SAFE(cardNumber),
+        SAFE(timeOrCvv),SAFE(expiry),
+        SAFE(total));
+    #undef SAFE
+
     fclose(fp);
 }
 
@@ -433,25 +460,38 @@ static void handleAvailability(int sock, const char *url){
 */
 static void handleBook(int sock, const char *body){
     int carNumber=0;
-    char startDate[20]="", endDate[20]="";
-    char fname[256]="", lname[256]="", phone[32]="", email[128]="", deliveryValue[60]="", total[10]="";
+    char startDate[20]="",  endDate[20]="";
+    char fname[256]="",     lname[256]="",   phone[32]="",    email[128]="";
+    char idCard[32]="",     location[80]="", payMethod[20]="";
+    char cardName[128]="",  cardNumber[32]="";
+    char timeOrCvv[16]="",  expiry[12]="",   total[20]="";
 
-    /* รับทั้ง "carNumber" และ "carId" เพื่อ compatibility */
+    /* carNumber / carId */
     if(!getJsonInt(body,"carNumber",&carNumber))
         getJsonInt(body,"carId",&carNumber);
-        getJsonStr(body,"total",total,10);
-    getJsonStr(body,"deliveryValue", deliveryValue,  60);
-    getJsonStr(body,"startDate",startDate, 20);
-    getJsonStr(body,"endDate",  endDate,   20);
-    /* รองรับทั้ง firstName/lastName และ first_name/last_name */
-    if(!getJsonStr(body,"firstName",fname, 256))
-        getJsonStr(body,"first_name",fname,256);
-    if(!getJsonStr(body,"lastName",lname,  256))
-        getJsonStr(body,"last_name",lname, 256);
-    getJsonStr(body,"phone",    phone, 32);
-    getJsonStr(body,"email",    email, 128);
 
-    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s money=%s\n", carNumber, startDate, endDate, fname, lname, total);
+    /* dates & location */
+    getJsonStr(body,"startDate",   startDate,  20);
+    getJsonStr(body,"endDate",     endDate,    20);
+    getJsonStr(body,"deliveryValue",location,  80);
+
+    /* customer */
+    if(!getJsonStr(body,"firstName",fname,256)) getJsonStr(body,"first_name",fname,256);
+    if(!getJsonStr(body,"lastName", lname,256)) getJsonStr(body,"last_name", lname,256);
+    getJsonStr(body,"phone",   phone,   32);
+    getJsonStr(body,"email",   email,   128);
+    getJsonStr(body,"idCard",  idCard,  32);
+
+    /* payment */
+    getJsonStr(body,"payMethod",   payMethod,  20);
+    getJsonStr(body,"cardName",    cardName,   128);
+    getJsonStr(body,"cardNumber",  cardNumber, 32);
+    getJsonStr(body,"timeOrCvv",   timeOrCvv,  16);
+    getJsonStr(body,"expiry",      expiry,     12);
+    getJsonStr(body,"total",       total,      20);
+
+    printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s pay=%s total=%s\n",
+           carNumber, startDate, endDate, fname, lname, payMethod, total);
 
     /* validate */
     if(carNumber<1||!startDate[0]||!endDate[0]||!fname[0]||!lname[0]){
@@ -482,24 +522,26 @@ static void handleBook(int sock, const char *body){
         return;
     }
 
-    /* จอง */
     bookCar(carIdx,s,e);
 
-    /* สร้าง ref code */
     srand((unsigned)time(NULL));
     char refCode[16];
     snprintf(refCode,sizeof(refCode),"RM-%06d",100000+(rand()%900000));
 
-    /* บันทึก customer */
-    saveCustomer(cars[carIdx].model, cars[carIdx].id,fname, lname, phone, email,startDate, endDate, deliveryValue, refCode, total);
+    /* บันทึก customer พร้อม fields ใหม่ทั้งหมด */
+    saveCustomer(cars[carIdx].model,
+                 fname, lname, phone, email, idCard,
+                 startDate, endDate, location,
+                 payMethod, cardName, cardNumber,
+                 timeOrCvv, expiry, total);
 
-    int numDays=(e-s)+1; 
-    if(numDays<1) {numDays=1;}
+    int numDays=(e-s)+1;
+    if(numDays<1) numDays=1;
 
-    char resp[512];
+    char resp[256];
     snprintf(resp,sizeof(resp),
-        "{\"ok\":true,\"refCode\":\"%s\",\"totalCost\":%d,\"numDays\":%d}",
-        refCode,total,numDays);
+        "{\"ok\":true,\"refCode\":\"%s\",\"numDays\":%d}",
+        refCode, numDays);
     sendResponse(sock,200,resp);
 }
 
@@ -560,9 +602,10 @@ void handleMyBookings(int client, const char *jsonBody) {
     }
 
     /* ── buffer JSON response ── */
-    /* CUSTOMER.csv columns (0-based):
-       0=car  1=fname  2=lname  3=phone  4=email
-       5=startDate  6=endDate  7=delivery  8=recordDate  (9=total optional) */
+    /* NEW CUSTOMER.csv columns (0-based, 16 total):
+       0=car       1=fname      2=lname      3=phone      4=email
+       5=idCard    6=startDate  7=endDate    8=location   9=recordDate
+       10=payMethod 11=cardName 12=cardNumber 13=timeOrCvv 14=expiry 15=total */
     char resbuf[32768];
     int  pos   = 0;
     int  found = 0;
@@ -573,31 +616,26 @@ void handleMyBookings(int client, const char *jsonBody) {
     int isHeader = 1;
 
     while(fgets(line, sizeof(line), f)){
-        /* ข้าม header row (บรรทัดแรก) */
         if(isHeader){ isHeader=0; continue; }
-        /* ข้ามบรรทัดว่าง */
         if(line[0]=='\n'||line[0]=='\r'||line[0]=='\0') continue;
 
-        /* copy ก่อน strtok ทำลาย */
         char tmp[2048];
         strncpy(tmp, line, sizeof(tmp)-1);
         tmp[sizeof(tmp)-1]=0;
 
-        /* แยก columns ด้วย strtok */
-        char *col[10];
+        char *col[16];
         int   nc = 0;
         char *tok = strtok(tmp, ",");
-        while(tok && nc < 10){
+        while(tok && nc < 16){
             tok[strcspn(tok,"\r\n")] = 0;
             col[nc++] = tok;
             tok = strtok(NULL, ",");
         }
-        if(nc < 7) continue; /* ไม่ครบ columns ขั้นต่ำ */
+        if(nc < 8) continue;
 
-        /* col[1]=fname  col[2]=lname */
         if(strcmp(col[1], reqF)!=0 || strcmp(col[2], reqL)!=0) continue;
 
-        /* escape double-quotes ใน car name สำหรับ JSON */
+        /* escape double-quotes in car name */
         char carEsc[128]="";
         int  ei = 0;
         for(int k=0; col[0][k] && ei<126; k++){
@@ -606,27 +644,29 @@ void handleMyBookings(int client, const char *jsonBody) {
         }
         carEsc[ei]=0;
 
-        const char *delivery   = (nc>7) ? col[7] : "";
-        const char *recordDate = (nc>8) ? col[8] : "";
+        /* new column layout */
+        const char *startDate  = (nc>6)  ? col[6]  : "";
+        const char *endDate    = (nc>7)  ? col[7]  : "";
+        const char *location   = (nc>8)  ? col[8]  : "";
+        const char *recordDate = (nc>9)  ? col[9]  : "";
+        const char *payMethod  = (nc>10) ? col[10] : "";
+        const char *total      = (nc>15) ? col[15] : "";
 
         pos += snprintf(resbuf+pos, sizeof(resbuf)-pos,
             "%s{\"car\":\"%s\","
              "\"startDate\":\"%s\","
              "\"endDate\":\"%s\","
              "\"delivery\":\"%s\","
-             "\"recordDate\":\"%s\"}",
+             "\"recordDate\":\"%s\","
+             "\"payMethod\":\"%s\","
+             "\"total\":\"%s\"}",
             found ? "," : "",
-            carEsc,
-            col[5],   /* startDate */
-            col[6],   /* endDate   */
-            delivery,
-            recordDate);
+            carEsc, startDate, endDate, location, recordDate, payMethod, total);
         found++;
     }
     fclose(f);
 
     pos += snprintf(resbuf+pos, sizeof(resbuf)-pos, "]}");
-
     printf("[MYBOOKINGS] fname=%s lname=%s found=%d\n", reqF, reqL, found);
     sendResponse(client, 200, resbuf);
 }
