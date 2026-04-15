@@ -65,13 +65,13 @@ async function lookupBookings(){
  
   const data = await API.myBookings(fname, lname);
  
-  document.getElementById('mb-display-name').textContent = `${fname} ${lname}`;
+  document.getElementById('mb-display-name').textContent = `Name : ` + `${fname} ${lname}`;
  
   if(!data.ok || !data.bookings || data.bookings.length === 0){
     document.getElementById('mb-display-count').textContent = '';
     list.innerHTML = `<div class="mybookings-empty">
-      <div class="icon">🔍</div>
-      <p>ไม่พบประวัติการจองสำหรับรายชื่อนี้<br>
+      <div class="icon" style="text-align: center">🔍</div>
+      <p style="text-align: center">ไม่พบประวัติการจองสำหรับรายชื่อนี้<br>
          <small>กรุณาตรวจสอบชื่อ-นามสกุลให้ถูกต้อง</small></p></div>`;
     return;
   }
