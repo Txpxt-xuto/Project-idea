@@ -31,11 +31,11 @@ const API = (() => {
   }
 
   /* ─── จองรถ ─── */
-  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, deliveryValue, total }) {
+  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, deliveryValue }) {
     const r = await fetch(`${BASE}/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, deliveryValue, total })
+      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, deliveryValue })
     });
     return r.json();
   }
@@ -143,7 +143,6 @@ async function confirmPaymentToServer() {
 
   /* delivery */
   const deliveryValue = document.getElementById('delivery').value;
-  const total = 0;
 
   const btn = document.querySelector('#page-payment .btn-primary:last-of-type');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...'; }
@@ -177,8 +176,7 @@ async function confirmPaymentToServer() {
       lastName:  lname,
       phone,
       email,
-      deliveryValue,
-      total
+      deliveryValue
     });
 
     if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
