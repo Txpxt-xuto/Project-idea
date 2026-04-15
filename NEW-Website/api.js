@@ -31,11 +31,11 @@ const API = (() => {
   }
 
   /* ─── จองรถ ─── */
-  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery, total }) {
+  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, deliverySelected, total }) {
     const r = await fetch(`${BASE}/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, delivery, total })
+      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, deliverySelected, total })
     });
     return r.json();
   }
@@ -178,7 +178,7 @@ async function confirmPaymentToServer() {
       lastName:  lname,
       phone,
       email,
-      delivery,
+      deliverySelected,
       total
     });
 
