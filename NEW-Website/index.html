@@ -210,7 +210,7 @@
           </div>
           <div class="form-group">
             <label>เลขบัตรประชาชน / พาสปอร์ต</label>
-            <input type="text" placeholder="x-xxxx-xxxxx-xx-x" maxlength="13">
+            <input id="idcard" type="text" placeholder="x-xxxx-xxxxx-xx-x" maxlength="13">
           </div>
         </div>
 
@@ -237,23 +237,23 @@
             <div class="form-group">
               <label>หมายเลขบัตร</label>
               <div class="card-input-wrap">
-                <input type="text" placeholder="1234  5678  9012  3456" maxlength="22" oninput="formatCard(this)">
+                <input id="card-num" type="text" placeholder="1234  5678  9012  3456" maxlength="22" oninput="formatCard(this)">
                 <div class="card-icon">💳</div>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label>วันหมดอายุ</label>
-                <input type="text" placeholder="MM/YY" maxlength="5" oninput="formatMY(this)">
+                <input id="card-exp" type="text" placeholder="MM/YY" maxlength="5" oninput="formatMY(this)">
               </div>
               <div class="form-group">
                 <label>CVV</label>
-                <input type="text" placeholder="•••" maxlength="4">
+                <input id="card-cvv" type="text" placeholder="•••" maxlength="4">
               </div>
             </div>
             <div class="form-group">
               <label>ชื่อบนบัตร</label>
-              <input type="text" placeholder="ชื่อ นามสกุล (ภาษาอังกฤษ)">
+              <input id="card-name" type="text" placeholder="ชื่อ นามสกุล (ภาษาอังกฤษ)">
             </div>
           </div>
 
@@ -265,23 +265,23 @@
               <div class="form-group">
                 <label style="text-align:left">ชื่อบัญชี</label>
                 <div class="card-input-wrap">
-                  <input type="text" placeholder="ชื่อ นามสกุล">
+                  <input id="card-name" type="text" placeholder="ชื่อ นามสกุล">
                   <div div class="card-icon">🔥</div>
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group">
                   <label style="text-align:left">วันเดือนปี</label>
-                  <input type="text" placeholder="DD/MM/YYYY" maxlength="10" oninput="formatDMY(this)">
+                  <input id="card-exp" type="text" placeholder="DD/MM/YYYY" maxlength="10" oninput="formatDMY(this)">
                 </div>
                 <div class="form-group">
                   <label style="text-align:left">เวลา</label>
-                  <input type="text" placeholder="XX:XX" maxlength="5" oninput="formatEslip(this)">
+                  <input id="card-cvv" type="text" placeholder="XX:XX" maxlength="5" oninput="formatEslip(this)">
                 </div>
               </div>
               <div class="form-group">
                 <label style="text-align:left">รหัสอ้างอิง 4 ตัวท้าย</label>
-                <input type="text" placeholder="1234" maxlength="4">
+                <input id="card-num" type="text" placeholder="1234" maxlength="4">
               </div>
             </div>
           </div>
