@@ -152,21 +152,21 @@ async function confirmPaymentToServer() {
   let expiry     = '';
 
   if (methodType === 'card') {
-    payMethod  = 'บัตรเครดิต';
+    payMethod  = 'Credit-Card';
     const sec  = document.getElementById('card-section');
     cardNumber = sec?.querySelector('input[placeholder*="1234"]')?.value.replace(/\s/g,'') || '';
     expiry     = sec?.querySelector('input[placeholder="MM/YY"]')?.value || '';
     timeOrCvv  = sec?.querySelector('input[placeholder="•••"]')?.value || '';
     cardName   = sec?.querySelector('input[placeholder*="ภาษาอังกฤษ"]')?.value.trim() || '';
   } else if (methodType === 'qr') {
-    payMethod  = 'พร้อมเพย์';
+    payMethod  = 'Promptpay';
     const sec  = document.getElementById('qr-section');
     cardName   = sec?.querySelector('input[placeholder="ชื่อ นามสกุล"]')?.value.trim() || '';
     expiry     = sec?.querySelector('input[placeholder="DD/MM/YYYY"]')?.value || '';
     timeOrCvv  = sec?.querySelector('input[placeholder="XX:XX"]')?.value || '';
     cardNumber = sec?.querySelector('input[placeholder="1234"]')?.value || '';
   } else if (methodType === 'bank') {
-    payMethod  = 'โอนเงิน';
+    payMethod  = 'Bank-Transfer';
     const sec  = document.getElementById('bank-section');
     cardName   = sec?.querySelector('input[placeholder="ชื่อ นามสกุล"]')?.value.trim() || '';
     expiry     = sec?.querySelector('input[placeholder="DD/MM/YYYY"]')?.value || '';
