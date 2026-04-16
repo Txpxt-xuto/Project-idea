@@ -89,10 +89,11 @@ async function searchCarsFromServer() {
   const s = document.getElementById('start-date').value;
   const e = document.getElementById('end-date').value;
   if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
-  if (e <= s)   { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
+  if (e < s)   { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
 
   startDate = s; endDate = e;
-  const ms = new Date(e) - new Date(s);
+  let ms = new Date(e) - new Date(s);
+  if(ms == 0) { ms+=1; }
   numDays = Math.max(1, Math.ceil(ms / 86400000));
 
   const fmt = d => new Date(d).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
