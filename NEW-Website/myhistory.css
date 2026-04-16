@@ -49,7 +49,7 @@ nav ul a:hover { color: var(--accent); }
 /* ===== FORM COMPONENTS ===== */
 .form-group { margin-bottom: 18px; }
 .form-group label {
-  display: block; font-size: 12px; font-weight: 600;
+  display: block; font-size: 12px; font-weight: 500;
   letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--muted); margin-bottom: 8px;
 }
@@ -102,7 +102,7 @@ nav ul a:hover { color: var(--accent); }
 
 .btn-reset {
   padding: 8px 16px; background: transparent; 
-  margin-top: 3%;
+  margin-top: 3%; margin-bottom: 3%;
   border: 1px solid var(--border); color: var(--muted);
   cursor: pointer; border-radius: 8px; font-family: 'Mitr', sans-serif;
 }
@@ -147,7 +147,13 @@ nav ul a:hover { color: var(--accent); }
 }
 
 .mybookings-form-card label{
-  font-size: 18px; font-weight: 500;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.mybookings-empty {
+  margin-top: 5%;
+  text-align: center;
 }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 10px; }
 
@@ -263,7 +269,7 @@ nav ul a:hover { color: var(--accent); }
     width: 28px; height: 28px; border-radius: 50%;
     background: var(--accent); color: #0a0a0f;
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 800;
+    font-size: 13px; font-weight: 500;
   }
 .admin-stats-bar {
   display: flex; flex-wrap: wrap; gap: 12px;
@@ -284,7 +290,7 @@ nav ul a:hover { color: var(--accent); }
 .chip-upcoming .asc-num { color: #fbbf24; }
 .chip-active   .asc-num { color: #4ade80; }
 .chip-past     .asc-num { color: var(--muted); }
-.chip-revenue  .asc-num { color: var(--accent2); font-size: 26px; }
+.chip-revenue  .asc-num { color: var(--accent2); font-size: 32px; }
 .chip-revenue { border-color: rgba(255,107,53,0.25); }
  
 /* ===== ADMIN FILTER BAR ===== */
@@ -324,7 +330,7 @@ nav ul a:hover { color: var(--accent); }
 }
 .admin-table th {
   padding: 12px 14px; text-align: left;
-  font-size: 11px; font-weight: 700;
+  font-size: 11px; font-weight: 500;
   letter-spacing: 1.2px; text-transform: uppercase;
   color: var(--muted); white-space: nowrap;
 }
@@ -343,8 +349,8 @@ nav ul a:hover { color: var(--accent); }
   font-size: 11px; color: var(--muted);
   font-weight: 700; text-align: center;
 }
-.admin-car { font-weight: 600; color: var(--text); white-space: nowrap; }
-.admin-customer-name { font-weight: 600; color: var(--text); }
+.admin-car { font-weight: 500; color: var(--text); white-space: nowrap; }
+.admin-customer-name { font-weight: 500; color: var(--text); }
 .admin-contact { white-space: nowrap; }
 .admin-total {
   font-family: 'Bebas Neue', sans-serif;
