@@ -61,7 +61,7 @@ async function lookupBookings(){
   }
 
   /* ── ADMIN MODE ── */
-  if(fname === 'admin' && lname === 'ME'){
+  if(fname === 'admin' && lname === 'ME'){ //ตั้งชื่อแอดมินตามที่จะใช้
     _isAdmin = true;
     document.getElementById('mb-display-name').innerHTML =
       `<span style="color:var(--accent2)">🔑 Admin Dashboard</span>`;
