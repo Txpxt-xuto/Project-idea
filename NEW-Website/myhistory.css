@@ -53,7 +53,7 @@ nav ul a:hover { color: var(--accent); }
   letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--muted); margin-bottom: 8px;
 }
-.form-group input {
+.form-group input, .form-group select  {
   width: 100%; padding: 12px 16px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -61,7 +61,7 @@ nav ul a:hover { color: var(--accent); }
   color: var(--text); font-family: 'Mitr', sans-serif;  
   outline: none;
 }
-.form-group input:focus { border-color: var(--accent); }
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
 .form-group select option { background: var(--surface); color: var(--text);}
 .btn-modal-cancel {
   display: block;
