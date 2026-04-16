@@ -663,6 +663,167 @@ void handleMyBookings(int client, const char *jsonBody) {
     sendResponse(client, 200, resbuf);
 }
 
+static void handleAllBookings(int sock, const char *url) {
+ 
+    /* ── parse query params ── */
+    char qCar[64]="", qFrom[20]="", qTo[20]="", qStatus[16]="", qMethod[32]="", qLoc[80]="";
+    getParam(url, "car",      qCar,    64);
+    getParam(url, "dateFrom", qFrom,   20);
+    getParam(url, "dateTo",   qTo,     20);
+    getParam(url, "status",   qStatus, 16);
+    getParam(url, "method",   qMethod, 32);
+    getParam(url, "location", qLoc,    80);
+ 
+    /* URL-decode '+' → space for Thai text (basic) */
+    for(char *p=qCar;  *p; p++) if(*p=='+') *p=' ';
+    for(char *p=qMethod;*p;p++) if(*p=='+') *p=' ';
+    for(char *p=qLoc;  *p; p++) if(*p=='+') *p=' ';
+ 
+    FILE *f = fopen(CUST_FILE, "r");
+    if(!f){
+        fprintf(stderr,"[ERR] cannot open %s\n", CUST_FILE);
+        sendResponse(sock,500,"{\"ok\":false,\"error\":\"Cannot open customer database\"}");
+        return;
+    }
+ 
+    /* ── read ALL data rows into memory ── */
+    /* NEW column layout (16 cols):
+       0=car  1=fname  2=lname  3=phone  4=email  5=idCard
+       6=startDate  7=endDate  8=location  9=recordDate
+       10=payMethod  11=cardName  12=cardNumber  13=timeOrCvv  14=expiry  15=total */
+    #define MAX_ROWS 2000
+    #define MAX_COL  16
+ 
+    /* store lines as flat char arrays */
+    typedef struct { char col[MAX_COL][256]; int nc; } Row;
+    Row *rows = (Row*)malloc(sizeof(Row) * MAX_ROWS);
+    if(!rows){ fclose(f); sendResponse(sock,500,"{\"ok\":false,\"error\":\"OOM\"}"); return; }
+ 
+    char line[2048];
+    int totalRows = 0;
+    int isHeader  = 1;
+ 
+    while(fgets(line, sizeof(line), f) && totalRows < MAX_ROWS){
+        if(isHeader){ isHeader=0; continue; }
+        if(line[0]=='\n'||line[0]=='\r'||line[0]=='\0') continue;
+ 
+        char tmp[2048];
+        strncpy(tmp, line, sizeof(tmp)-1); tmp[sizeof(tmp)-1]=0;
+ 
+        Row *r = &rows[totalRows];
+        r->nc  = 0;
+        char *tok = strtok(tmp, ",");
+        while(tok && r->nc < MAX_COL){
+            tok[strcspn(tok,"\r\n")] = 0;
+            strncpy(r->col[r->nc], tok, 255);
+            r->col[r->nc][255] = 0;
+            r->nc++;
+            tok = strtok(NULL, ",");
+        }
+        if(r->nc >= 8) totalRows++;
+    }
+    fclose(f);
+ 
+    /* ── helper: today string ── */
+    time_t nowt = time(NULL);
+    struct tm *nowtm = localtime(&nowt);
+    char todayStr[20];
+    strftime(todayStr, sizeof(todayStr), "%Y-%m-%d", nowtm);
+ 
+    /* ── compute status for a row ── */
+    /* returns: "upcoming" "active" "past" */
+    /* We compare strings lexicographically (YYYY-MM-DD sorts correctly) */
+ 
+    /* ── build JSON — iterate REVERSE order (newest first) ── */
+    char *resbuf = (char*)malloc(1024*1024); /* 1MB */
+    if(!resbuf){ free(rows); sendResponse(sock,500,"{\"ok\":false,\"error\":\"OOM\"}"); return; }
+ 
+    int pos   = 0;
+    int found = 0;
+    int total_revenue = 0;
+ 
+    pos += snprintf(resbuf+pos, 1024*1024-pos, "{\"ok\":true,\"bookings\":[");
+ 
+    for(int i = totalRows-1; i >= 0; i--){
+        Row *r = &rows[i];
+        char *car        = r->col[0];
+        char *fname      = r->col[1];
+        char *lname      = r->col[2];
+        char *phone      = r->col[3];
+        char *email      = r->col[4];
+        char *startDate  = (r->nc>6) ? r->col[6] : "";
+        char *endDate    = (r->nc>7) ? r->col[7] : "";
+        char *location   = (r->nc>8) ? r->col[8] : "";
+        char *recordDate = (r->nc>9) ? r->col[9] : "";
+        char *payMethod  = (r->nc>10)? r->col[10]: "";
+        char *totalStr   = (r->nc>15)? r->col[15]: "0";
+ 
+        /* ── compute row status ── */
+        char rowStatus[12] = "past";
+        if(startDate[0] && endDate[0]){
+            if(strcmp(todayStr, startDate) < 0)       strcpy(rowStatus,"upcoming");
+            else if(strcmp(todayStr, endDate) <= 0)   strcpy(rowStatus,"active");
+        }
+ 
+        /* ── apply filters ── */
+        /* car filter (case-insensitive substring) */
+        if(qCar[0]){
+            char carLower[64]="", qLower[64]="";
+            for(int k=0;car[k]&&k<63;k++)    carLower[k] = (char)tolower((unsigned char)car[k]);
+            for(int k=0;qCar[k]&&k<63;k++)   qLower[k]   = (char)tolower((unsigned char)qCar[k]);
+            if(!strstr(carLower,qLower)) continue;
+        }
+        /* date range filter on startDate */
+        if(qFrom[0] && startDate[0] && strcmp(startDate, qFrom) < 0) continue;
+        if(qTo[0]   && startDate[0] && strcmp(startDate, qTo)   > 0) continue;
+        /* status filter */
+        if(qStatus[0] && strcmp(rowStatus, qStatus)!=0) continue;
+        /* payment method filter */
+        if(qMethod[0] && strcmp(payMethod, qMethod)!=0) continue;
+        /* location filter (substring) */
+        if(qLoc[0] && !strstr(location, qLoc)) continue;
+ 
+        /* ── escape fields for JSON ── */
+        char carEsc[256]=""; int ei=0;
+        for(int k=0;car[k]&&ei<254;k++){ if(car[k]=='"') carEsc[ei++]='\\'; carEsc[ei++]=car[k]; }
+ 
+        /* accumulate revenue */
+        total_revenue += atoi(totalStr);
+ 
+        pos += snprintf(resbuf+pos, 1024*1024-pos,
+            "%s{"
+            "\"car\":\"%s\","
+            "\"fname\":\"%s\","
+            "\"lname\":\"%s\","
+            "\"phone\":\"%s\","
+            "\"email\":\"%s\","
+            "\"startDate\":\"%s\","
+            "\"endDate\":\"%s\","
+            "\"location\":\"%s\","
+            "\"recordDate\":\"%s\","
+            "\"payMethod\":\"%s\","
+            "\"total\":\"%s\","
+            "\"status\":\"%s\""
+            "}",
+            found ? "," : "",
+            carEsc, fname, lname, phone, email,
+            startDate, endDate, location, recordDate,
+            payMethod, totalStr, rowStatus);
+        found++;
+    }
+ 
+    pos += snprintf(resbuf+pos, 1024*1024-pos,
+        "],\"totalRows\":%d,\"totalRevenue\":%d}", found, total_revenue);
+ 
+    free(rows);
+    printf("[ADMIN] allbookings found=%d\n", found);
+    sendResponse(sock, 200, resbuf);
+    free(resbuf);
+    #undef MAX_ROWS
+    #undef MAX_COL
+}
+
+
 /* ══════════════════════════════════════════════════════════════
     Main server loop
    ══════════════════════════════════════════════════════════════ */
@@ -729,6 +890,9 @@ int main(void){
         }
         else if(strcmp(path,"/mybookings")==0 && strcmp(method,"POST")==0){
             handleMyBookings(client, jsonBody);
+        }
+        else if(strncmp(path,"/allbookings",12)==0 && strcmp(method,"GET")==0){
+            handleAllBookings(client, path);
         }
         else if(strcmp(path,"/status")==0){
             sendResponse(client,200,"{\"ok\":true,\"service\":\"RODCHAOMAHACHAI\"}");
