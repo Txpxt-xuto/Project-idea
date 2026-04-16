@@ -176,7 +176,7 @@ function injectAdminUI(){
       </div>
       <div class="admin-filter-actions">
         <button class="btn-reset" onclick="resetAdminFilters()">↺ รีเซ็ต</button>
-        <button class="btn-primary" style="padding:9px 22px;font-size:14px;" onclick="exportAdminCSV()">⬇ Export CSV</button>
+        <button class="btn-csv" onclick="exportAdminCSV()">Export CSV</button>
       </div>`;
     document.getElementById('mybookings-results').insertBefore(el, document.getElementById('mybookings-list'));
   }
