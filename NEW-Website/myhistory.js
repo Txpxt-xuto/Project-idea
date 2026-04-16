@@ -18,9 +18,9 @@ function carEmojiFromName(name){
   if(n.includes('fortuner')||n.includes('everest')||n.includes('mu-x')||n.includes('hilux')) return '🚙';
   if(n.includes('alphard')||n.includes('innova')||n.includes('serena')||n.includes('xpander')) return '🚐';
   if(n.includes('d-max')||n.includes('dmax')) return '🛻';
-  if(n.includes('cx-5')||n.includes('mazda')) return '🏎';
+  if(n.includes('cx-5')||n.includes('mazda')) return '🏎️';
   if(n.includes('cr-v')) return '🚘';
-  return '🚗';
+  return '🚕';
 }
 
 function fmtDateTH(s){
@@ -223,7 +223,7 @@ function renderAdminTable(bookings){
       <thead><tr>
         <th>ลำดับ</th><th>รุ่นรถ</th><th>ลูกค้า</th><th>เบอร์ / อีเมล</th>
         <th>วันเช่า</th><th>สถานที่</th><th>วันที่จอง</th>
-        <th>ชำระ</th><th>ยอดรวม</th><th>สถานะ</th>
+        <th>วิธีชำระ</th><th>ยอดรวม</th><th>สถานะ</th>
       </tr></thead>
       <tbody>
         ${bookings.map((b,i) => `
@@ -338,9 +338,9 @@ function resetMyBookings(){
 function openCancelModal(car,startDate,endDate){
   _cancelTarget={car,startDate,endDate};
   document.getElementById('cancel-modal-desc').innerHTML=
-    `คุณต้องการยกเลิกการจอง <strong>${car}</strong><br>
+    `คุณต้องการยกเลิกการจอง <strong style="font-weight: 500; color: #ff6b35">${car}</strong><br>
      วันที่ ${fmtDateTH(startDate)} → ${fmtDateTH(endDate)} ใช่หรือไม่?<br>
-     <span style="color:var(--accent2);font-size:13px;">การยกเลิกไม่สามารถเรียกคืนได้และไม่มีการคืนเงิน</span>`;
+     <span style="color: #ff3535;font-size:13px;">การยกเลิกไม่สามารถเรียกคืนการจองได้และไม่มีการคืนเงิน</span>`;
   document.getElementById('cancel-modal-overlay').classList.add('open');
 }
 function closeCancelModal(){
