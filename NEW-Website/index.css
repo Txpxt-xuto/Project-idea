@@ -20,6 +20,9 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+  input::-webkit-calendar-picker-indicator {
+  filter: invert(100%); /* Turns a dark icon white */
+}
 
   /* ===== NAV ===== */
   nav {
