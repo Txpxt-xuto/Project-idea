@@ -221,7 +221,7 @@ function renderAdminTable(bookings){
   <div class="admin-table-wrap">
     <table class="admin-table">
       <thead><tr>
-        <th>#</th><th>รุ่นรถ</th><th>ลูกค้า</th><th>เบอร์ / อีเมล</th>
+        <th>ลำดับ</th><th>รุ่นรถ</th><th>ลูกค้า</th><th>เบอร์ / อีเมล</th>
         <th>วันเช่า</th><th>สถานที่</th><th>วันที่จอง</th>
         <th>ชำระ</th><th>ยอดรวม</th><th>สถานะ</th>
       </tr></thead>
