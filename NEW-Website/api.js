@@ -73,7 +73,7 @@ const API = (() => {
     return r.json();
   }
 
-  return { isServerAlive, checkAvailability, book, cancel, myBookings };
+  return { isServerAlive, checkAvailability, book, cancel, myBookings, allBookings };
 })();
 
 
