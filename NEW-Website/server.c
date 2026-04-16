@@ -179,10 +179,10 @@ static void cancelCar(int carIdx, int startDay, int endDay){
 
 /* ─── append to CUSTOMER.csv ──────────────────────────────── */
 /* CSV columns (ตรงกับ header):
-   รถยนต์,ชื่อ,นามสกุล,เบอร์โทร,อีเมล,เลขประจำตัวประชาชน,
-   วันเริ่มต้นการเช่า,วันสิ้นสุดการเช่า,สถานที่,วันที่บันทึก,
-   วิธีการชำระ,ชื่อบนบัตรหรือชื่อบัญชี,หมายเลขบัตรหรือรหัสอ้างอิง,
-   เวลาหรือ cvv,วันเดือนปีหรือวันหมดอายุ,จำนวนเงิน            */
+    รถยนต์,ชื่อ,นามสกุล,เบอร์โทร,อีเมล,เลขประจำตัวประชาชน,
+    วันเริ่มต้นการเช่า,วันสิ้นสุดการเช่า,สถานที่,วันที่บันทึก,
+    วิธีการชำระ,ชื่อบนบัตรหรือชื่อบัญชี,หมายเลขบัตรหรือรหัสอ้างอิง,
+    เวลาหรือ cvv,วันเดือนปีหรือวันหมดอายุ,จำนวนเงิน            */
 static void saveCustomer(
         const char *carModel,
         const char *fname,    const char *lname,
@@ -286,14 +286,14 @@ static int deleteCustomer(const char *fname,const char *lname,
 }
 
 /* ══════════════════════════════════════════════════════════════
-   HTTP helpers
+                        HTTP helpers
    ══════════════════════════════════════════════════════════════ */
 
 static void sendResponse(int sock, int code, const char *body){
-    const char *status = code==200 ? "200 OK"
-                       : code==400 ? "400 Bad Request"
-                       : code==404 ? "404 Not Found"
-                       :             "500 Internal Server Error";
+    const char *status =  code==200 ? "200 OK"
+                        : code==400 ? "400 Bad Request"
+                        : code==404 ? "404 Not Found"
+                        :             "500 Internal Server Error";
     char header[512];
     int hlen=snprintf(header,sizeof(header),
         "HTTP/1.1 %s\r\n"
@@ -402,21 +402,21 @@ static void dayIndexToDate(int dayIdx, char *out){
 }
 
 /* ══════════════════════════════════════════════════════════════
-   Handlers
+                        Handlers
    ══════════════════════════════════════════════════════════════ */
 
-/* GET /availability?start=YYYY-MM-DD&end=YYYY-MM-DD
-   Response:
-   {
-     "ok": true,
-     "startDay": 10,
-     "endDay":   12,
-     "cars": [
-       { "number":1, "id":990, "model":"Toyota Altis Grey",
-         "available": true },
-       ...
-     ]
-   }
+/*  GET /availability?start=YYYY-MM-DD&end=YYYY-MM-DD
+    Response:
+    {
+        "ok": true,
+        "startDay": 10,
+        "endDay":   12,
+        "cars": [
+        { "number":1, "id":990, "model":"Toyota Altis Grey",
+            "available": true },
+        ...
+        ]
+    }
 */
 static void handleAvailability(int sock, const char *url){
     char startStr[20]="", endStr[20]="";
@@ -451,11 +451,11 @@ static void handleAvailability(int sock, const char *url){
     sendResponse(sock,200,body);
 }
 
-/* POST /book
-   Body JSON:
-   { "carNumber":1, "startDate":"2026-04-15", "endDate":"2026-04-17",
-     "firstName":"สมชาย", "lastName":"ใจดี",
-     "phone":"0812345678", "email":"a@gmail.com", "delivery":"สมุทรสาคร-เซ็นทรัลมหาชัย" }
+/*  POST /book
+    Body JSON:
+    { "carNumber":1, "startDate":"2026-04-15", "endDate":"2026-04-17",
+        "firstName":"สมชาย", "lastName":"ใจดี",
+        "phone":"0812345678", "email":"a@gmail.com", "delivery":"สมุทรสาคร-เซ็นทรัลมหาชัย" }
 */
 static void handleBook(int sock, const char *body){
     int carNumber=0;
@@ -563,15 +563,15 @@ static void handleCancel(int sock, const char *body){
 }
 
 /* POST /mybookings
-   Body: { "firstName":"สมชาย", "lastName":"ใจดี" }
-   Response:
-   {
-     "ok": true,
-     "bookings": [
-       { "car":"Toyota Vios White", "startDate":"2026-04-15",
-         "endDate":"2026-04-17", "delivery":"NO", "recordDate":"2026-04-10" }
-     ]
-   }
+    Body: { "firstName":"สมชาย", "lastName":"ใจดี" }
+    Response:
+    {
+        "ok": true,
+        "bookings": [
+        { "car":"Toyota Vios White", "startDate":"2026-04-15",
+        "endDate":"2026-04-17", "delivery":"NO", "recordDate":"2026-04-10" }
+        ]
+    }
 */
 void handleMyBookings(int client, const char *jsonBody) {
     /* ── parse ชื่อ-นามสกุลจาก JSON ด้วย getJsonStr ที่รองรับ UTF-8 ── */
@@ -595,9 +595,9 @@ void handleMyBookings(int client, const char *jsonBody) {
 
     /* ── buffer JSON response ── */
     /* NEW CUSTOMER.csv columns (0-based, 16 total):
-       0=car       1=fname      2=lname      3=phone      4=email
-       5=idCard    6=startDate  7=endDate    8=location   9=recordDate
-       10=payMethod 11=cardName 12=cardNumber 13=timeOrCvv 14=expiry 15=total */
+        0=car       1=fname      2=lname      3=phone      4=email
+        5=idCard    6=startDate  7=endDate    8=location   9=recordDate
+        10=payMethod 11=cardName 12=cardNumber 13=timeOrCvv 14=expiry 15=total */
     char resbuf[32768];
     int  pos   = 0;
     int  found = 0;
@@ -646,12 +646,12 @@ void handleMyBookings(int client, const char *jsonBody) {
 
         pos += snprintf(resbuf+pos, sizeof(resbuf)-pos,
             "%s{\"car\":\"%s\","
-             "\"startDate\":\"%s\","
-             "\"endDate\":\"%s\","
-             "\"delivery\":\"%s\","
-             "\"recordDate\":\"%s\","
-             "\"payMethod\":\"%s\","
-             "\"total\":\"%s\"}",
+            "\"startDate\":\"%s\","
+            "\"endDate\":\"%s\","
+            "\"delivery\":\"%s\","
+            "\"recordDate\":\"%s\","
+            "\"payMethod\":\"%s\","
+            "\"total\":\"%s\"}",
             found ? "," : "",
             carEsc, startDate, endDate, location, recordDate, payMethod, total);
         found++;
@@ -664,7 +664,7 @@ void handleMyBookings(int client, const char *jsonBody) {
 }
 
 static void handleAllBookings(int sock, const char *url) {
- 
+
     /* ── parse query params ── */
     char qCar[64]="", qFrom[20]="", qTo[20]="", qStatus[16]="", qMethod[32]="", qLoc[80]="";
     getParam(url, "car",      qCar,    64);
@@ -673,43 +673,43 @@ static void handleAllBookings(int sock, const char *url) {
     getParam(url, "status",   qStatus, 16);
     getParam(url, "method",   qMethod, 32);
     getParam(url, "location", qLoc,    80);
- 
+
     /* URL-decode '+' → space for Thai text (basic) */
     for(char *p=qCar;  *p; p++) if(*p=='+') *p=' ';
     for(char *p=qMethod;*p;p++) if(*p=='+') *p=' ';
     for(char *p=qLoc;  *p; p++) if(*p=='+') *p=' ';
- 
+
     FILE *f = fopen(CUST_FILE, "r");
     if(!f){
         fprintf(stderr,"[ERR] cannot open %s\n", CUST_FILE);
         sendResponse(sock,500,"{\"ok\":false,\"error\":\"Cannot open customer database\"}");
         return;
     }
- 
+    
     /* ── read ALL data rows into memory ── */
     /* NEW column layout (16 cols):
-       0=car  1=fname  2=lname  3=phone  4=email  5=idCard
-       6=startDate  7=endDate  8=location  9=recordDate
-       10=payMethod  11=cardName  12=cardNumber  13=timeOrCvv  14=expiry  15=total */
+        0=car  1=fname  2=lname  3=phone  4=email  5=idCard
+        6=startDate  7=endDate  8=location  9=recordDate
+        10=payMethod  11=cardName  12=cardNumber  13=timeOrCvv  14=expiry  15=total */
     #define MAX_ROWS 2000
     #define MAX_COL  16
- 
+
     /* store lines as flat char arrays */
     typedef struct { char col[MAX_COL][256]; int nc; } Row;
     Row *rows = (Row*)malloc(sizeof(Row) * MAX_ROWS);
     if(!rows){ fclose(f); sendResponse(sock,500,"{\"ok\":false,\"error\":\"OOM\"}"); return; }
- 
+
     char line[2048];
     int totalRows = 0;
     int isHeader  = 1;
- 
+
     while(fgets(line, sizeof(line), f) && totalRows < MAX_ROWS){
         if(isHeader){ isHeader=0; continue; }
         if(line[0]=='\n'||line[0]=='\r'||line[0]=='\0') continue;
- 
+
         char tmp[2048];
         strncpy(tmp, line, sizeof(tmp)-1); tmp[sizeof(tmp)-1]=0;
- 
+
         Row *r = &rows[totalRows];
         r->nc  = 0;
         char *tok = strtok(tmp, ",");
@@ -723,27 +723,27 @@ static void handleAllBookings(int sock, const char *url) {
         if(r->nc >= 8) totalRows++;
     }
     fclose(f);
- 
+
     /* ── helper: today string ── */
     time_t nowt = time(NULL);
     struct tm *nowtm = localtime(&nowt);
     char todayStr[20];
     strftime(todayStr, sizeof(todayStr), "%Y-%m-%d", nowtm);
- 
+
     /* ── compute status for a row ── */
     /* returns: "upcoming" "active" "past" */
     /* We compare strings lexicographically (YYYY-MM-DD sorts correctly) */
- 
+
     /* ── build JSON — iterate REVERSE order (newest first) ── */
     char *resbuf = (char*)malloc(1024*1024); /* 1MB */
     if(!resbuf){ free(rows); sendResponse(sock,500,"{\"ok\":false,\"error\":\"OOM\"}"); return; }
- 
+
     int pos   = 0;
     int found = 0;
     int total_revenue = 0;
- 
+
     pos += snprintf(resbuf+pos, 1024*1024-pos, "{\"ok\":true,\"bookings\":[");
- 
+
     for(int i = totalRows-1; i >= 0; i--){
         Row *r = &rows[i];
         char *car        = r->col[0];
@@ -757,14 +757,14 @@ static void handleAllBookings(int sock, const char *url) {
         char *recordDate = (r->nc>9) ? r->col[9] : "";
         char *payMethod  = (r->nc>10)? r->col[10]: "";
         char *totalStr   = (r->nc>15)? r->col[15]: "0";
- 
+
         /* ── compute row status ── */
         char rowStatus[12] = "past";
         if(startDate[0] && endDate[0]){
             if(strcmp(todayStr, startDate) < 0)       strcpy(rowStatus,"upcoming");
             else if(strcmp(todayStr, endDate) <= 0)   strcpy(rowStatus,"active");
         }
- 
+
         /* ── apply filters ── */
         /* car filter (case-insensitive substring) */
         if(qCar[0]){
@@ -782,14 +782,14 @@ static void handleAllBookings(int sock, const char *url) {
         if(qMethod[0] && strcmp(payMethod, qMethod)!=0) continue;
         /* location filter (substring) */
         if(qLoc[0] && !strstr(location, qLoc)) continue;
- 
+
         /* ── escape fields for JSON ── */
         char carEsc[256]=""; int ei=0;
         for(int k=0;car[k]&&ei<254;k++){ if(car[k]=='"') carEsc[ei++]='\\'; carEsc[ei++]=car[k]; }
- 
+
         /* accumulate revenue */
         total_revenue += atoi(totalStr);
- 
+
         pos += snprintf(resbuf+pos, 1024*1024-pos,
             "%s{"
             "\"car\":\"%s\","
@@ -811,10 +811,9 @@ static void handleAllBookings(int sock, const char *url) {
             payMethod, totalStr, rowStatus);
         found++;
     }
- 
-    pos += snprintf(resbuf+pos, 1024*1024-pos,
-        "],\"totalRows\":%d,\"totalRevenue\":%d}", found, total_revenue);
- 
+
+    pos += snprintf(resbuf+pos, 1024*1024-pos,"],\"totalRows\":%d,\"totalRevenue\":%d}", found, total_revenue);
+
     free(rows);
     printf("[ADMIN] allbookings found=%d\n", found);
     sendResponse(sock, 200, resbuf);
@@ -825,25 +824,25 @@ static void handleAllBookings(int sock, const char *url) {
 
 
 /* ══════════════════════════════════════════════════════════════
-    Main server loop
+                        Main server loop
    ══════════════════════════════════════════════════════════════ */
 int main(void){
 #ifdef _WIN32
     WSADATA wsa; WSAStartup(MAKEWORD(2,2),&wsa);
 #endif
- 
+
     int server=socket(AF_INET,SOCK_STREAM,0);
     if(server<0){ perror("socket"); return 1; }
- 
+
     int opt=1;
     setsockopt(server,SOL_SOCKET,SO_REUSEADDR, &opt,sizeof(opt));
- 
+
     struct sockaddr_in addr;
     memset(&addr,0,sizeof(addr));
     addr.sin_family     =AF_INET;
     addr.sin_addr.s_addr=INADDR_ANY;
     addr.sin_port       =htons(PORT);
- 
+
     if(bind(server,(struct sockaddr*)&addr,sizeof(addr))<0){
         perror("bind"); return 1;
     }
@@ -851,34 +850,34 @@ int main(void){
     printf("[INFO] RODCHAOMAHACHAI backend running on http://localhost:%d\n",PORT);
     printf("[INFO] Place CAR.csv and CUSTOMER.csv in the same directory.\n");
     printf("[INFO] Press Ctrl+C to stop.\n");
- 
+
     while(1){
         struct sockaddr_in caddr;
         socklen_t clen=sizeof(caddr);
         int client=accept(server,(struct sockaddr*)&caddr,&clen);
         if(client<0) continue;
- 
+
         char req[BUF];
         int n=recv(client,req,BUF-1,0);
         if(n<=0){ close(client); continue; }
         req[n]=0;
- 
+
         /* แยก method และ path */
         char method[8]="", path[256]="";
         sscanf(req,"%7s %255s",method,path);
- 
+
         printf("[REQ] %s %s\n",method,path);
- 
+
         /* OPTIONS preflight (CORS) */
         if(strcmp(method,"OPTIONS")==0){
             sendResponse(client,200,"{}");
             close(client); continue;
         }
- 
+
         /* หา body (หลัง \r\n\r\n) */
         const char *bodyStart=strstr(req,"\r\n\r\n");
         const char *jsonBody = bodyStart ? bodyStart+4 : "";
- 
+
         if(strncmp(path,"/availability",13)==0){
             handleAvailability(client, path);
         }
@@ -900,10 +899,10 @@ int main(void){
         else{
             sendResponse(client,404,"{\"ok\":false,\"error\":\"not found\"}");
         }
- 
+
         close(client);
     }
- 
+
 #ifdef _WIN32
     WSACleanup();
 #endif
