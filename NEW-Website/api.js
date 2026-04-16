@@ -31,11 +31,11 @@ const API = (() => {
   }
 
   /* ─── จองรถ ─── */
-  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, deliveryValue, total }) {
+  async function book({ carNumber, startDate, endDate, firstName, lastName, phone, email, idCard, deliveryValue, payMethod, cardName, cardNumber, timeOrCvv, expiry, total }) {
     const r = await fetch(`${BASE}/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, deliveryValue, total })
+      body: JSON.stringify({ carNumber, startDate, endDate, firstName, lastName, phone, email, idCard, deliveryValue, payMethod, cardName, cardNumber, timeOrCvv, expiry, total})
     });
     return r.json();
   }
@@ -57,6 +57,19 @@ const API = (() => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ firstName, lastName })
     });
+    return r.json();
+  }
+
+  /* ─── ดึงการจองทั้งหมด (admin) ─── */
+  async function allBookings({ car='', dateFrom='', dateTo='', status='', method='', location='' } = {}) {
+    const params = new URLSearchParams();
+    if(car)      params.set('car',      car);
+    if(dateFrom) params.set('dateFrom', dateFrom);
+    if(dateTo)   params.set('dateTo',   dateTo);
+    if(status)   params.set('status',   status);
+    if(method)   params.set('method',   method);
+    if(location) params.set('location', location);
+    const r = await fetch(`${BASE}/allbookings?${params.toString()}`);
     return r.json();
   }
 
