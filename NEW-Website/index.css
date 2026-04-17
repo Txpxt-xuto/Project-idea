@@ -23,7 +23,7 @@
   filter: invert(100%); /* Turns a dark icon white */
 }
 
-  /* Nav styles → nav.css */
+  /* Nav styles อยู่ใน nav.css */
 
 /* ===== PAGES ===== */
   .page { display: none; min-height: 100vh; padding-top: 80px; }
