@@ -7,6 +7,19 @@
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Base nav ── */
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --card: #1a1a25;
+  --accent: #e8c547;
+  --accent2: #ff6b35;
+  --text: #f0f0f0;
+  --muted: #888;
+  --border: rgba(232,197,71,0.15);
+  --radius: 12px;
+}
+
 nav {
     width: 100%;
     position: fixed; top: 0; left: 0; right: 0; z-index: 200;
@@ -20,7 +33,7 @@ nav {
 
 .logo {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 26px; letter-spacing: 2px;
+  font-size: 35px; letter-spacing: 2px;
   color: var(--accent); text-decoration: none;
   flex-shrink: 0;
 }
@@ -33,7 +46,7 @@ nav ul {
 }
 nav ul li a {
   text-decoration: none; color: var(--muted);
-  font-size: 15px; font-weight: 500; letter-spacing: 0.5px;
+  font-size: 20px; font-weight: 500; letter-spacing: 0.5px;
   transition: color 0.2s;
   white-space: nowrap;
 }
@@ -52,6 +65,7 @@ nav ul li a.active { color: var(--accent); }
 }
 .nav-hamburger:hover { background: rgba(232,197,71,0.1); }
 .nav-hamburger span {
+  margin-left: 12.5%;
   display: block; width: 24px; height: 2px;
   background: var(--text); border-radius: 2px;
   transition: transform 0.3s, opacity 0.3s, background 0.2s;
@@ -60,7 +74,7 @@ nav ul li a.active { color: var(--accent); }
 
 /* Hamburger → X animation */
 .nav-hamburger.open span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(7px) rotate(45deg); 
   background: var(--accent);
 }
 .nav-hamburger.open span:nth-child(2) {
@@ -129,7 +143,8 @@ nav ul li a.active { color: var(--accent); }
 @media (max-width: 767px) {
   nav { padding: 0 20px; height: 56px; }
   nav > ul { display: none; }           /* hide inline menu */
-  .nav-hamburger { display: flex; }
+  .logo {font-size: 25px; letter-spacing: 2px;}
+  .nav-hamburger { display: flex; margin-right: 48%;}
   .nav-drawer { display: block; top: 56px; }
   .nav-scrim { top: 56px; }
 }
