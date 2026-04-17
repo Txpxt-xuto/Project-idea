@@ -244,9 +244,52 @@ h1 {
   transform: translateX(5px);
 }
 
-
 .contact-list {
   display: flex;
   justify-content: center; /* จัดกลาง */
   gap: 10%;               /* ระยะห่าง */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — about_us.css
+   ═══════════════════════════════════════════════════════════ */
+ 
+@media (max-width: 767px) {
+  .container { padding: 72px 16px 40px; }
+  nav { padding: 0 20px; height: 56px; }
+}
+ 
+/* ══ TABLET  600–899 ══ */
+@media (max-width: 899px) {
+  nav { padding: 0 24px; height: 64px; }
+  .container { padding: 80px 20px 40px; max-width: 100%; }
+  h1 { font-size: 32px; }
+  .grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+  /* contact card spans full width */
+  .cardcontect { width: 100%; }
+}
+ 
+/* ══ PHONE  < 600 ══ */
+@media (max-width: 599px) {
+  body { margin: 0; }
+  .container { padding: 68px 14px 40px; }
+  h1 { font-size: 26px; }
+  .subtitle { font-size: 13px; }
+  .grid { grid-template-columns: 1fr; gap: 12px; }
+  .cardcontect { width: 100%; }
+  .card, .cardcontect { padding: 18px; }
+  .title { font-size: 15px; }
+  .icon { font-size: 22px; }
+ 
+  /* Contact list stacked on phone */
+  .contact-list { flex-direction: column; align-items: flex-start; gap: 0; }
+  .contact-item { margin-bottom: 10px; }
+ 
+  .back-btn { width: 100%; text-align: center; padding: 12px; }
+  .pdf-btn { width: 100%; text-align: center; }
+}
+ 
+/* ══ TINY  < 380 ══ */
+@media (max-width: 379px) {
+  h1 { font-size: 22px; }
 }
