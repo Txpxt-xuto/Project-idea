@@ -381,3 +381,83 @@ nav ul a:hover { color: var(--accent); }
 @media (max-width: 600px) {
   .admin-filter-grid { grid-template-columns: 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — myhistory.css
+   ═══════════════════════════════════════════════════════════ */
+ 
+@media (max-width: 767px) {
+  /* Mobile nav height */
+  #page-mybookings { padding: 72px 16px 48px; }
+}
+ 
+/* ══ TABLET  600–899 ══ */
+@media (max-width: 899px) {
+  #page-mybookings { padding: 90px 20px 48px; }
+  .mybookings-wrapper { max-width: 100%; }
+  .mybookings-title { font-size: 36px; }
+ 
+  /* Results header */
+  .mybookings-results-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+ 
+  /* Booking card */
+  .booking-card { flex-wrap: wrap; gap: 12px; padding: 16px; }
+  .booking-card-actions { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+ 
+  /* Admin */
+  .admin-filter-grid { grid-template-columns: 1fr 1fr; }
+  .admin-filter-actions { justify-content: stretch; }
+  .admin-filter-actions button { flex: 1; }
+  .admin-stats-bar { gap: 8px; }
+  .admin-stat-chip { min-width: 80px; padding: 10px 10px; }
+  .asc-num { font-size: 26px; }
+  .asc-label { font-size: 11px; }
+}
+ 
+/* ══ PHONE  < 600 ══ */
+@media (max-width: 599px) {
+  #page-mybookings { padding: 68px 14px 40px; }
+  .mybookings-title { font-size: 28px; }
+  .mybookings-sub { font-size: 13px; }
+  .mybookings-form-card { padding: 20px 14px; }
+  .mybookings-form-card label { font-size: 14px; }
+  .form-row { grid-template-columns: 1fr; gap: 12px; }
+ 
+  /* Booking card */
+  .booking-card { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; }
+  .booking-card-icon { font-size: 32px; }
+  .booking-card-carname { font-size: 15px; }
+  .booking-card-actions {
+    width: 100%; display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 8px;
+  }
+  .btn-cancel-booking { width: 100%; text-align: center; }
+ 
+  /* Admin filters */
+  .admin-filter-grid { grid-template-columns: 1fr; gap: 10px; }
+  .admin-stats-bar { grid-template-columns: repeat(3,1fr); display: grid; gap: 8px; }
+  .admin-stat-chip { min-width: unset; }
+  .chip-revenue { grid-column: 1 / -1; }
+  .asc-num { font-size: 22px; }
+ 
+  /* Admin table — horizontal scroll */
+  .admin-table-wrap { font-size: 12px; }
+  .admin-table th, .admin-table td { padding: 8px 10px; }
+  .admin-table th { font-size: 10px; }
+  .admin-total { font-size: 14px; }
+ 
+  /* Modal */
+  .modal-box { padding: 20px 14px; }
+  .modal-title { font-size: 18px; }
+ 
+  /* Btn row */
+  .admin-filter-actions { flex-direction: column; gap: 8px; }
+  .admin-filter-actions button { width: 100%; }
+}
+ 
+/* ══ TINY  < 380 ══ */
+@media (max-width: 379px) {
+  .mybookings-title { font-size: 24px; }
+  .admin-stats-bar { grid-template-columns: repeat(2,1fr); }
+  .chip-revenue { grid-column: 1 / -1; }
+}
