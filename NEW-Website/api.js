@@ -193,13 +193,6 @@ async function confirmPaymentToServer() {
   cardNumber = sec.querySelector('#card-num')?.value || '-';
 }
 
-  console.log(idCard);
-  console.log(methodType);
-  console.log(payMethod);
-  console.log(cardName);
-  console.log(expiry);
-  console.log(timeOrCvv);
-  console.log(cardNumber);
 
   /* ── 4. ยอดรวม ── */
   const totalText  = document.getElementById('sum-total')?.textContent || '';
