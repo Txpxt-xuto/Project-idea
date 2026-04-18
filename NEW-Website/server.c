@@ -73,16 +73,29 @@ static int daysInMonth(int m,int y){
 }
 /* แปลง YYYY-MM-DD → day index เทียบกับ 1 ม.ค. ปีเดียวกัน */
 static int dateToDayIndex(const char *s){
+    if(!s || !s[0]) return -1;
+
+    char tmp[64];
+    strcpy(tmp, s);
+
+    // 🔥 ลบ newline / carriage return
+    tmp[strcspn(tmp, "\r\n")] = 0;
+
     int y,m,d;
-    if(sscanf(s,"%d-%d-%d",&y,&m,&d)!=3) return -1;
+    if(sscanf(tmp,"%d-%d-%d",&y,&m,&d)!=3){
+        printf("PARSE FAIL: [%s]\n", tmp);
+        return -1;
+    }
+
     int idx=d;
     for(int i=1;i<m;i++) idx+=daysInMonth(i,y);
-    /* ถ้าข้ามปีจาก base year (2026) */
+
     int base=2026;
     for(int i=base;i<y;i++){
         idx+=isLeap(i)?366:365;
     }
-    return idx;   /* 1-based day-of-year (with multi-year support) */
+
+    return idx;
 }
 
 /* ─── load CAR.csv ────────────────────────────────────────── */
@@ -252,6 +265,7 @@ static int deleteCustomer(const char *fname,const char *lname,
                 char *ln2  =strtok(NULL,",");
                 char *ph2  =strtok(NULL,",");
                 char *em2  =strtok(NULL,",");
+                char *idcard  =strtok(NULL,",");
                 char *sd   =strtok(NULL,",");
                 char *ed   =strtok(NULL,",");
                 if(sd&&ed){
@@ -265,7 +279,7 @@ static int deleteCustomer(const char *fname,const char *lname,
                     m2[strcspn(m2,"\n")]=0;
                     *outCarIdx=-1;
                     for(int i=0;i<numCars;i++){
-                        if(strcmp(cars[i].model,m2)==0){ *outCarIdx=i; break; }
+                        if(strcmp(cars[i].model,m2)==0){ *outCarIdx=i+1; break; }
                     }
                 }
             }
@@ -553,13 +567,16 @@ static void handleCancel(int sock, const char *body){
 
     int carIdx=-1, s=-1, e=-1;
     int found=deleteCustomer(fname,lname,&carIdx,&s,&e);
+    printf("%d %d %d\n",carIdx,s,e);
     if(!found){
         sendResponse(sock,200,"{\"ok\":false,\"error\":\"customer not found\"}");
         return;
     }
-    if(carIdx>=0&&s>0&&e>0) cancelCar(carIdx,s,e);
-
-    sendResponse(sock,200,"{\"ok\":true,\"message\":\"booking cancelled\"}");
+    if(carIdx>=0&&s>0&&e>0) 
+    {
+        cancelCar(carIdx,s,e);
+        sendResponse(sock,200,"{\"ok\":true,\"message\":\"booking cancelled\"}");
+    }
 }
 
 /* POST /mybookings
