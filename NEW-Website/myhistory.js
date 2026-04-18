@@ -13,15 +13,31 @@ document.getElementById('mb-fname').value = '';
 document.getElementById('mb-lname').value = '';
 
 /* ── helpers ── */
-function carEmojiFromName(name){
+function carImageFromName(name){
+  if(typeof CARS !== 'undefined'){
+    const found = CARS.find(c => c.name === name || name.includes(c.name.split(' ')[0]));
+    if(found && found.image) return found.image;
+  }
+  // fallback — เปลี่ยน URL ตรงนี้ตามแต่ละคัน
+  const map = {
+    'fortuner':'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'cr-v':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'alphard': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'mu-x':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'civic':   'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'innova':  'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'cx-5':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'everest': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'serena':  'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'xpander': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'vios':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'camry':   'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+  };
   const n = name.toLowerCase();
-  if(n.includes('fortuner')||n.includes('everest')||n.includes('mu-x')||n.includes('hilux')) return '🚙';
-  if(n.includes('alphard')||n.includes('innova')||n.includes('serena')||n.includes('xpander')) return '🚐';
-  if(n.includes('d-max')||n.includes('dmax')) return '🛻';
-  if(n.includes('cx-5')||n.includes('mazda')) return '🏎️';
-  if(n.includes('cr-v')) return '🚘';
-  return '🚕';
+  for(const [key,url] of Object.entries(map)) if(n.includes(key)) return url;
+  return 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png';
 }
+function carEmojiFromName(name){ return '🚗'; }
 
 function fmtDateTH(s){
   if(!s || s==='-') return '—';
@@ -94,13 +110,13 @@ function renderUserBookings(bookings){
 
   list.innerHTML = bookings.map((b, idx) => {
     const status    = bookingStatus(b.startDate, b.endDate);
-    const emoji     = carEmojiFromName(b.car);
+    const carImg   = carImageFromName(b.car);
     const days      = Math.max(1, Math.ceil(
       (new Date(b.endDate+'T00:00:00') - new Date(b.startDate+'T00:00:00')) / 86400000));
     const canCancel = (status === 'upcoming');
     return `
     <div class="booking-card" style="animation-delay:${idx*0.06}s">
-      <div class="booking-card-icon">${emoji}</div>
+      <div class="booking-card-icon"><img src="${carImg}" alt="${b.car}" class="booking-car-img"></div>
       <div class="booking-card-info">
         <div class="booking-card-carname">${b.car}</div>
         <div class="booking-card-dates">📅 ${fmtDateTH(b.startDate)} → ${fmtDateTH(b.endDate)}</div>
@@ -229,7 +245,7 @@ function renderAdminTable(bookings){
         ${bookings.map((b,i) => `
         <tr class="admin-row ${b.status}" style="animation-delay:${Math.min(i,30)*0.03}s">
           <td class="admin-row-num">${i+1}</td>
-          <td><span class="admin-car">${carEmojiFromName(b.car)} ${b.car}</span></td>
+          <td><span class="admin-car"><img src="${carImageFromName(b.car)}" alt="${b.car}" class="admin-car-img"> ${b.car}</span></td>
           <td><div class="admin-customer-name">${b.fname} ${b.lname}</div></td>
           <td class="admin-contact">
             <div>${b.phone||'-'}</div>
