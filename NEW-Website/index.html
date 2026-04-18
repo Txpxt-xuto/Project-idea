@@ -368,16 +368,27 @@
 </div>
 
 <!-- ===== SUCCESS PAGE ===== -->
-<div id="page-success" class="page">
+<div id="page-success" class="page" style="display:none !important;">
   <div class="success-content">
     <div class="success-icon">✔</div>
     <h2>จองสำเร็จ!</h2>
     <p>ขอบคุณที่ใช้บริการ RODCHAOMAHACHAI<br>เราจะส่งรายละเอียดการจองไปยังอีเมลของคุณ</p>
+ 
+    <!-- ข้อมูลรถที่จอง -->
+    <div class="success-car-info" id="success-car-info" style="display:none;">
+      <img id="success-car-img" src="" alt="" class="success-car-img">
+      <div>
+        <div id="success-car-name" class="success-car-name"></div>
+        <div id="success-car-dates" class="success-car-dates"></div>
+      </div>
+    </div>
+ 
     <div class="booking-ref">
-      <div class="ref-label">หมายเลขการจอง</div>
+      <div class="ref-label">หมายเลขการจอง — กรุณาจดไว้ก่อนปิดหน้านี้</div>
       <div class="ref-num" id="booking-ref-num">RM-000000</div>
     </div>
-    <button class="btn-home" onclick="showPage('home')">← กลับหน้าแรก</button>
+ 
+    <button class="btn-home" onclick="goBackHome()">กลับสู่หน้าหลัก</button>
   </div>
 </div>
 
