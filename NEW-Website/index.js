@@ -16,7 +16,8 @@ const CARS = [
 let filters = { seats: 'all', fuel: 'all', price: 'all' };
 let selectedCar = null;
 let startDate = '', endDate = '', numDays = 1;
-let mode=0;
+let mode = 0;
+let paymentCompleted = false;  /* guard สำหรับ page-success */
 
 
 window.onload = function() {
@@ -24,23 +25,36 @@ window.onload = function() {
 };
 
 function showPage(name) {
-  // Guard: success page only accessible after payment
+  /* Guard: หน้า success เข้าได้เฉพาะหลังชำระเงินจริงเท่านั้น */
   if (name === 'success' && !paymentCompleted) return;
+
+  /* ซ่อนทุกหน้าก่อน */
   document.querySelectorAll('.page').forEach(p => {
     p.classList.remove('active');
-    p.style.removeProperty('display');
+    p.style.setProperty('display', 'none', 'important');
   });
-  // Keep success hidden unless payment done
-  const successEl = document.getElementById('page-success');
-  if (name !== 'success') {
-    successEl.style.setProperty('display','none','important');
-  }
+
   const target = document.getElementById('page-' + name);
-  if (name === 'success') {
-    target.style.removeProperty('display');
-  }
+  if (!target) return;
+
+  /* เปิดหน้าที่ต้องการ */
+  target.style.removeProperty('display');
   target.classList.add('active');
   window.scrollTo(0, 0);
+}
+
+/* กดปุ่มกลับหน้าหลักจากหน้า success — reset state ทั้งหมด */
+function goBackHome() {
+  paymentCompleted = false;
+  selectedCar = null;
+  startDate = ''; endDate = ''; numDays = 1;
+  mode = 0;
+  /* ซ่อน success ก่อนแล้วค่อยแสดงหน้าหลัก */
+  document.getElementById('page-success').style.setProperty('display','none','important');
+  document.getElementById('page-success').classList.remove('active');
+  showPage('home');
+  /* reset car availability กลับเป็น default */
+  CARS.forEach(c => { c.available = true; });
 }
 
 function setFilter(type, value, el) {
