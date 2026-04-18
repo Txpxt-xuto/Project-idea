@@ -25,11 +25,16 @@ window.onload = function() {
 };
 
 function showPage(name) {
-  /* Guard: หน้า success เข้าได้เฉพาะหลังชำระเงินจริงเท่านั้น */
+  /* ── guard 1: success เปิดได้เฉพาะหลังชำระเงิน ── */
   if (name === 'success' && !paymentCompleted) return;
 
-  /* ซ่อนทุกหน้าก่อน */
+  /* ── guard 2: ถ้ากำลังแสดง success อยู่ ห้ามปิดจากที่ไหนก็ตาม
+     ปิดได้เฉพาะ goBackHome() เท่านั้น ── */
+  if (paymentCompleted && name !== 'success') return;
+
+  /* ซ่อนทุกหน้า — ยกเว้น page-success ไม่แตะเลย */
   document.querySelectorAll('.page').forEach(p => {
+    if (p.id === 'page-success') return;
     p.classList.remove('active');
     p.style.setProperty('display', 'none', 'important');
   });
@@ -37,8 +42,9 @@ function showPage(name) {
   const target = document.getElementById('page-' + name);
   if (!target) return;
 
-  /* เปิดหน้าที่ต้องการ */
-  target.style.removeProperty('display');
+  if (name === 'success') {
+    target.style.removeProperty('display');  /* ลบ display:none !important ที่ตั้งไว้ตอนโหลด */
+  }
   target.classList.add('active');
   window.scrollTo(0, 0);
 }
@@ -55,6 +61,20 @@ function goBackHome() {
   showPage('home');
   /* reset car availability กลับเป็น default */
   CARS.forEach(c => { c.available = true; });
+}
+
+/* ป้องกันการออกจากหน้า success ผ่าน link ภายนอก */
+function safeNavExternal(url) {
+  if (paymentCompleted) {
+    const confirmed = confirm(
+      'คุณยังอยู่ที่หน้าจองสำเร็จ\n' +
+      'กรุณาจดหมายเลขการจองไว้ก่อน\n\n' +
+      'กด OK เพื่อออกจากหน้านี้'
+    );
+    if (!confirmed) return;
+    goBackHome();
+  }
+  window.location.href = url;
 }
 
 function setFilter(type, value, el) {
