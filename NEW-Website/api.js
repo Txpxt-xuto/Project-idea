@@ -193,7 +193,6 @@ if (methodType === 'card' || !methodType) {
   cardNumber = sec.querySelector('#card-num')?.value || '-';
 }
 
-
   /* ── 4. ยอดรวม ── */
   const totalText  = document.getElementById('sum-total')?.textContent || '';
   const total      = totalText.replace(/,/g,'').replace(/฿/g,'').trim();
@@ -208,6 +207,7 @@ if (methodType === 'card' || !methodType) {
       console.warn('[API] C server offline — local confirm only');
       const ref = 'RM-' + Math.floor(100000 + Math.random() * 900000);
       document.getElementById('booking-ref-num').textContent = ref;
+      _showSuccessCarInfo();
       paymentCompleted = true;
       showPage('success');
       if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
@@ -238,6 +238,8 @@ if (methodType === 'card' || !methodType) {
     }
 
     document.getElementById('booking-ref-num').textContent = result.refCode;
+    /* แสดงข้อมูลรถบนหน้า success */
+    _showSuccessCarInfo();
     paymentCompleted = true;
     showPage('success');
 
@@ -246,6 +248,23 @@ if (methodType === 'card' || !methodType) {
     if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
     alert('ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่');
   }
+}
+
+/* populate ข้อมูลรถบน success page */
+function _showSuccessCarInfo() {
+  if (!selectedCar) return;
+  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('th-TH',
+    { day:'numeric', month:'short', year:'numeric' });
+
+  const imgEl   = document.getElementById('success-car-img');
+  const nameEl  = document.getElementById('success-car-name');
+  const dateEl  = document.getElementById('success-car-dates');
+  const infoBox = document.getElementById('success-car-info');
+
+  if (imgEl)   { imgEl.src = selectedCar.image || ''; imgEl.alt = selectedCar.name; }
+  if (nameEl)  nameEl.textContent = selectedCar.name;
+  if (dateEl)  dateEl.textContent = `📅 ${fmt(startDate)} → ${fmt(endDate)}  (${numDays} วัน)`;
+  if (infoBox) infoBox.style.display = 'flex';
 }
 
 /* แสดง banner แจ้งสถานะ server เมื่อโหลดหน้า */
