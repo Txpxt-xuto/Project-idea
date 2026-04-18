@@ -24,7 +24,7 @@ function carImageFromName(name){
     'cr-v':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'alphard': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'mu-x':    'https://img1.pic.in.th/images/IMG_6897.png',
-    'civic':   'https://img1.pic.in.th/images/IMG_68992ed37f79227158cd.png',
+    'civic':   'https://img1.pic.in.th/images/IMG_6901.png',
     'innova':  'https://img2.pic.in.th/IMG_6879.webp',
     'cx-5':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'everest': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
