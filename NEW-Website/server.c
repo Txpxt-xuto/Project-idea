@@ -248,7 +248,6 @@ static int deleteCustomer(const char *fname,const char *lname,
     while(fgets(lines[count],512,fp) && count<499){
         char tmp[512];
         strcpy(tmp,lines[count]);
-        /* col: carModel,fname,lname,phone,email,startDate,endDate,delivery,recordDate */
         char *model=strtok(tmp,",");
         char *fn   =strtok(NULL,",");
         char *ln   =strtok(NULL,",");
@@ -279,7 +278,7 @@ static int deleteCustomer(const char *fname,const char *lname,
                     m2[strcspn(m2,"\n")]=0;
                     *outCarIdx=-1;
                     for(int i=0;i<numCars;i++){
-                        if(strcmp(cars[i].model,m2)==0){ *outCarIdx=i+1; break; }
+                        if(strcmp(cars[i].model,m2)==0){ *outCarIdx=i; break; }
                     }
                 }
             }
