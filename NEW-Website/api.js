@@ -165,14 +165,14 @@ async function confirmPaymentToServer() {
   let timeOrCvv  = '';
   let expiry     = '';
 
-  if (methodType === 'card') {
+if (methodType === 'card' || !methodType) {
   payMethod = 'Credit-Card';
   const sec = document.getElementById('card-section');
 
   cardName   = sec.querySelector('#card-name')?.value || '-';
   expiry     = sec.querySelector('#card-exp')?.value || '-';
   timeOrCvv  = sec.querySelector('#card-cvv')?.value || '-';
-  cardNumber = sec.querySelector('#card-num')?.value || '-';
+  cardNumber = sec.querySelector('#card-num')?.value.replace(/\s+/g, '') || '-';
 
 } else if (methodType === 'qr') {
   payMethod = 'Promptpay';
