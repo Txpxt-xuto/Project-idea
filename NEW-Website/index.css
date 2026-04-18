@@ -590,28 +590,60 @@
     50% { box-shadow: 0 0 0 20px rgba(74,222,128,0); }
   }
   .success-content h2 {
-    font-family: 'Mitr', sans-serif; 
+    font-family: 'Mitr', sans-serif;
     font-size: 52px; letter-spacing: 3px; color: var(--text); font-weight: 600;
   }
   .success-content p { color: var(--muted); font-size: 16px; margin-top: 10px; line-height: 1.7; }
-  .booking-ref {
+
+  /* ── car info strip ── */
+  .success-car-info {
+    display: flex; align-items: center; gap: 14px;
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px 24px; margin: 24px 0;
+    border-radius: 14px; padding: 14px 18px;
+    margin: 20px 0 4px; text-align: left;
+  }
+  .success-car-img {
+    width: 88px; height: 62px;
+    object-fit: cover; border-radius: 8px; flex-shrink: 0;
+    background: #1e1e2e;
+  }
+  .success-car-name {
+    font-size: 16px; font-weight: 600; color: var(--text);
+  }
+  .success-car-dates {
+    font-size: 13px; color: var(--accent); margin-top: 4px;
+  }
+
+  .booking-ref {
+    background: var(--card); border: 1px solid rgba(232,197,71,0.3);
+    border-radius: 12px; padding: 16px 24px; margin: 16px 0 20px;
+    position: relative; overflow: hidden;
+  }
+  .booking-ref::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .booking-ref .ref-label {
+    font-size: 11px; color: var(--accent2);
+    font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
   }
   .booking-ref .ref-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-  .booking-ref .ref-num {
-    font-family: 'Mitr', sans-serif; font-size: 28px; 
-    color: var(--accent); letter-spacing: 4px;
-  }
+
   .btn-home {
     display: inline-block; padding: 14px 36px;
+    padding: 14px 36px;
     background: var(--accent); color: #0a0a0f;
-    font-family: 'Mitr', sans-serif; font-size: 16px; font-weight: 600; 
+    font-family: 'Mitr', sans-serif; font-size: 16px; font-weight: 600;
     border: none; border-radius: var(--radius);
     cursor: pointer; letter-spacing: 1px; margin-top: 8px;
     transition: all 0.15s;
   }
-  .btn-home:hover { box-shadow: 0 8px 24px rgba(232,197,71,0.35); }
+  .btn-home:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,197,71,0.35);
+  }
+  .btn-home:active { transform: translateY(0); }
 
 /* ===== DATE MODAL ===== */
 .modal-overlay {
