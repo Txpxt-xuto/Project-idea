@@ -165,9 +165,9 @@ async function confirmPaymentToServer() {
   let timeOrCvv  = '';
   let expiry     = '';
 
-if (methodType === 'card' || !methodType) {
+if (methodType === 'credit' || !methodType) {
   payMethod = 'Credit-Card';
-  const sec = document.getElementById('card-section');
+  const sec = document.getElementById('credit-section');
 
   cardName   = sec.querySelector('#card-name')?.value || '-';
   expiry     = sec.querySelector('#card-exp')?.value || '-';
