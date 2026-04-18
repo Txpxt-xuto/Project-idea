@@ -1,16 +1,16 @@
 const CARS = [
-  { id:1, serverNumber:1, name:'Toyota Fortuner', type:'SUV', seats:7, fuel:'diesel', price:2200, emoji:'🚚', available:true },
-  { id:2, serverNumber:2, name:'Honda CR-V', type:'SUV', seats:5, fuel:'95', price:1800, emoji:'🚓', available:true },
-  { id:3, serverNumber:3, name:'Toyota Alphard', type:'MPV', seats:13, fuel:'95', price:3500, emoji:'🚐', available:false, limited:true },
-  { id:4, serverNumber:4, name:'Isuzu MU-X', type:'PPV', seats:7, fuel:'diesel', price:1900, emoji:'🚍', available:true },
-  { id:5, serverNumber:5, name:'Honda Civic', type:'Sedan', seats:5, fuel:'95', price:1100, emoji:'🚗', available:true },
-  { id:6, serverNumber:6, name:'Toyota Innova', type:'MPV', seats:7, fuel:'diesel', price:1600, emoji:'🚌', available:true },
-  { id:7, serverNumber:7, name:'Mazda CX-5', type:'SUV', seats:5, fuel:'95', price:2000, emoji:'🏎️', available:true },
-  { id:8, serverNumber:8, name:'Ford Everest', type:'SUV', seats:7, fuel:'diesel', price:2400, emoji:'🚙', available:false, limited:true },
-  { id:9, serverNumber:9, name:'Nissan Serena', type:'MPV', seats:13, fuel:'95', price:1700, emoji:'🚎', available:true },
-  { id:10, serverNumber:10, name:'Mitsubishi Xpander', type:'MPV', seats:13, fuel:'95', price:1300, emoji:'🚖', available:true },
-  { id:11, serverNumber:11, name:'Toyota Vios', type:'Sedan', seats:5, fuel:'95', price:850, emoji:'🚕', available:true },
-  { id:12, serverNumber:12, name:'Toyota Camry', type:'Sedan', seats:5, fuel:'95', price:900, emoji:'🚘', available:true },
+  { id:1,  serverNumber:1,  name:'Toyota Fortuner',      type:'SUV',   seats:7,  fuel:'diesel', price:2200, emoji:'🚚', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:2,  serverNumber:2,  name:'Honda CR-V',            type:'SUV',   seats:5,  fuel:'95',     price:1800, emoji:'🚓', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:3,  serverNumber:3,  name:'Toyota Alphard',        type:'MPV',   seats:13, fuel:'95',     price:3500, emoji:'🚐', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:false, limited:true },
+  { id:4,  serverNumber:4,  name:'Isuzu MU-X',            type:'PPV',   seats:7,  fuel:'diesel', price:1900, emoji:'🚍', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:5,  serverNumber:5,  name:'Honda Civic',           type:'Sedan', seats:5,  fuel:'95',     price:1100, emoji:'🚗', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:6,  serverNumber:6,  name:'Toyota Innova',         type:'MPV',   seats:7,  fuel:'diesel', price:1600, emoji:'🚌', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:7,  serverNumber:7,  name:'Mazda CX-5',            type:'SUV',   seats:5,  fuel:'95',     price:2000, emoji:'🏎️', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:8,  serverNumber:8,  name:'Ford Everest',          type:'SUV',   seats:7,  fuel:'diesel', price:2400, emoji:'🚙', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:false, limited:true },
+  { id:9,  serverNumber:9,  name:'Nissan Serena',         type:'MPV',   seats:13, fuel:'95',     price:1700, emoji:'🚎', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:10, serverNumber:10, name:'Mitsubishi Xpander',    type:'MPV',   seats:13, fuel:'95',     price:1300, emoji:'🚖', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:11, serverNumber:11, name:'Toyota Vios',           type:'Sedan', seats:5,  fuel:'95',     price:850,  emoji:'🚕', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
+  { id:12, serverNumber:12, name:'Toyota Camry',          type:'Sedan', seats:5,  fuel:'95',     price:900,  emoji:'🚘', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
 ];
 
 let filters = { seats: 'all', fuel: 'all', price: 'all' };
@@ -76,7 +76,7 @@ function selectCar(id) {
 function goToPayment() {
   let deliverycost=1000;
   const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
-  document.getElementById('sum-icon').textContent = selectedCar.emoji;
+  document.getElementById('sum-icon').innerHTML = `<img src="${selectedCar.image}" alt="${selectedCar.name}" style="width:60px;height:48px;object-fit:contain;border-radius:8px;">`;
   document.getElementById('sum-name').textContent = selectedCar.name;
   document.getElementById('sum-type').textContent = selectedCar.type;
   document.getElementById('sum-start').textContent = fmt(startDate);
@@ -121,7 +121,7 @@ function goToPayment() {
 // ===== DATE MODAL (สำหรับ mode=1) =====
 function openDateModal() {
   // ใส่ข้อมูลรถที่เลือกใน modal
-  document.getElementById('modal-car-emoji').textContent = selectedCar.emoji;
+  document.getElementById('modal-car-emoji').innerHTML = `<img src="${selectedCar.image}" alt="${selectedCar.name}" style="width:64px;height:52px;object-fit:contain;border-radius:8px;">`;
   document.getElementById('modal-car-name').textContent = selectedCar.name;
   document.getElementById('modal-car-type').textContent = selectedCar.type;
   document.getElementById('modal-car-price').textContent = selectedCar.price.toLocaleString() + ' ฿ / วัน';
@@ -358,7 +358,7 @@ function buildMarquee() {
   const items = [...CARS, ...CARS];
   track.innerHTML = items.map(c => `
     <div class="marquee-card">
-      <div class="marquee-car-icon"><span style="font-size:150%;">${c.emoji}</span></div>
+      <div class="marquee-car-icon"><img src="${c.image}" alt="${c.name}" class="marquee-car-img"></div>
       <div>
         <div class="marquee-car-name"><span style="font-size:15px; font-family:'Mitr',sans-serif;font-weight:500;color:var(--text)">${c.name}</span></div>
         <div class="marquee-car-sub"><span style="font-size:13px;">${c.type}</span></div>
@@ -411,7 +411,7 @@ function showcar() {
   grid.innerHTML = filtered.map(c => `
     <div class="car-card" onclick="selectCar(${c.id})">
       <div class="car-img-wrap">
-        <div class="car-emoji">${c.emoji}</div>
+        <img src="${c.image}" alt="${c.name}" class="car-photo">
         <div class="car-badge ${c.available ? 'badge-available' : 'badge-limited'}">
           ${c.available ? '✔ ว่าง' : '✖ เต็ม'}
         </div>
@@ -481,7 +481,7 @@ function renderCars() {
   grid.innerHTML = filtered.map(c => `
     <div class="car-card" onclick="selectCar(${c.id})">
       <div class="car-img-wrap">
-        <div class="car-emoji">${c.emoji}</div>
+        <img src="${c.image}" alt="${c.name}" class="car-photo">
         <div class="car-badge ${c.available ? 'badge-available' : 'badge-limited'}">
           ${c.available ? '✔ ว่าง' : '✖ เต็ม'}
         </div>
