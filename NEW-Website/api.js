@@ -157,8 +157,7 @@ async function confirmPaymentToServer() {
 
   /* ── 3. วิธีชำระเงิน — อ่านตาม section ที่ active ── */
   const activeMethod = document.querySelector('.pay-method.selected');
-  //const methodType   = activeMethod?.getAttribute('data-method') || 'card';
-  const methodType = document.querySelector('input[name="pay-method"]:checked')?.value || "-";
+  const methodType = activeMethod?.getAttribute('data-method');
 
   let payMethod  = '';
   let cardName   = '';
@@ -167,27 +166,32 @@ async function confirmPaymentToServer() {
   let expiry     = '';
 
   if (methodType === 'card') {
-    payMethod  = 'Credit-Card';
-    const sec  = document.getElementById('card-section');
-    cardName   = document.getElementById('card-name').value;
-    expiry     = document.getElementById('card-exp').value;
-    timeOrCvv  = document.getElementById('card-cvv').value;
-    cardNumber = document.getElementById('card-num').value;
-  } else if (methodType === 'qr') {
-    payMethod  = 'Promptpay';
-    const sec  = document.getElementById('qr-section');
-    cardName   = document.getElementById('card-name').value;
-    expiry     = document.getElementById('card-exp').value;
-    timeOrCvv  = document.getElementById('card-cvv').value;
-    cardNumber = document.getElementById('card-num').value;
-  } else if (methodType === 'bank') {
-    payMethod  = 'Bank-Transfer';
-    const sec  = document.getElementById('bank-section');
-    cardName   = document.getElementById('card-name').value;
-    expiry     = document.getElementById('card-exp').value;
-    timeOrCvv  = document.getElementById('card-cvv').value;
-    cardNumber = document.getElementById('card-num').value;
-  }
+  payMethod = 'Credit-Card';
+  const sec = document.getElementById('card-section');
+
+  cardName   = sec.querySelector('#card-name')?.value || '-';
+  expiry     = sec.querySelector('#card-exp')?.value || '-';
+  timeOrCvv  = sec.querySelector('#card-cvv')?.value || '-';
+  cardNumber = sec.querySelector('#card-num')?.value || '-';
+
+} else if (methodType === 'qr') {
+  payMethod = 'Promptpay';
+  const sec = document.getElementById('qr-section');
+
+  cardName   = sec.querySelector('#card-name')?.value || '-';
+  expiry     = sec.querySelector('#card-exp')?.value || '-';
+  timeOrCvv  = sec.querySelector('#card-cvv')?.value || '-';
+  cardNumber = sec.querySelector('#card-num')?.value || '-';
+
+} else if (methodType === 'bank') {
+  payMethod = 'Bank-Transfer';
+  const sec = document.getElementById('bank-section');
+
+  cardName   = sec.querySelector('#card-name')?.value || '-';
+  expiry     = sec.querySelector('#card-exp')?.value || '-';
+  timeOrCvv  = sec.querySelector('#card-cvv')?.value || '-';
+  cardNumber = sec.querySelector('#card-num')?.value || '-';
+}
 
   console.log(idCard);
   console.log(methodType);
