@@ -3,7 +3,7 @@ const CARS = [
   { id:2,  serverNumber:2,  name:'Honda CR-V',            type:'SUV',   seats:5,  fuel:'95',     price:1800, emoji:'🚓', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
   { id:3,  serverNumber:3,  name:'Toyota Alphard',        type:'MPV',   seats:13, fuel:'95',     price:3500, emoji:'🚐', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:false, limited:true },
   { id:4,  serverNumber:4,  name:'Isuzu MU-X',            type:'PPV',   seats:7,  fuel:'diesel', price:1900, emoji:'🚍', image:'https://img1.pic.in.th/images/IMG_6897.png', available:true },
-  { id:5,  serverNumber:5,  name:'Honda Civic',           type:'Sedan', seats:5,  fuel:'95',     price:1100, emoji:'🚗', image:'https://img1.pic.in.th/images/IMG_68992ed37f79227158cd.png', available:true },
+  { id:5,  serverNumber:5,  name:'Honda Civic',           type:'Sedan', seats:5,  fuel:'95',     price:1100, emoji:'🚗', image:'https://img1.pic.in.th/images/IMG_6901.png', available:true },
   { id:6,  serverNumber:6,  name:'Toyota Innova',         type:'MPV',   seats:7,  fuel:'diesel', price:1600, emoji:'🚌', image:'https://img2.pic.in.th/IMG_6879.webp', available:true },
   { id:7,  serverNumber:7,  name:'Mazda CX-5',            type:'SUV',   seats:5,  fuel:'95',     price:2000, emoji:'🏎️', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
   { id:8,  serverNumber:8,  name:'Ford Everest',          type:'SUV',   seats:7,  fuel:'diesel', price:2400, emoji:'🚙', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:false, limited:true },
