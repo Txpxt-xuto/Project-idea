@@ -20,18 +20,18 @@ function carImageFromName(name){
   }
   // fallback — เปลี่ยน URL ตรงนี้ตามแต่ละคัน
   const map = {
-    'fortuner':'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'fortuner':'https://img2.pic.in.th/IMG_6890c21ea56e7b207fbb.png',
     'cr-v':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'alphard': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
-    'mu-x':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
-    'civic':   'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
-    'innova':  'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'mu-x':    'https://img1.pic.in.th/images/IMG_6897.png',
+    'civic':   'https://img1.pic.in.th/images/IMG_68992ed37f79227158cd.png',
+    'innova':  'https://img2.pic.in.th/IMG_6879.webp',
     'cx-5':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'everest': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'serena':  'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'xpander': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'vios':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
-    'camry':   'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'camry':   'https://img1.pic.in.th/images/IMG_6891.png',
   };
   const n = name.toLowerCase();
   for(const [key,url] of Object.entries(map)) if(n.includes(key)) return url;
