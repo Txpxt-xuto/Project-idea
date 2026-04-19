@@ -22,20 +22,33 @@ let paymentCompleted = false;  /* guard สำหรับ page-success */
 
 window.onload = function() {
   buildMarquee();
+
+  /* intercept ทุก <a href> ที่จะ reload หน้า
+     ถ้า success กำลังแสดงอยู่ให้บล็อกการออกจนกว่าจะกด goBackHome() */
+  document.addEventListener('click', function(e) {
+    if (!paymentCompleted) return;  /* ไม่ได้อยู่หน้า success → ปล่อยผ่าน */
+
+    const anchor = e.target.closest('a');
+    if (!anchor) return;
+
+    const href = anchor.getAttribute('href');
+    /* บล็อกเฉพาะ link ที่จะออกจากหน้า (ไม่ใช่ # หรือ onclick-only) */
+    if (href && href !== '#' && !href.startsWith('javascript')) {
+      e.preventDefault();
+      alert('กรุณาจดหมายเลขการจองไว้ก่อน\nแล้วกดปุ่ม "กลับสู่หน้าหลัก" เพื่อออกจากหน้านี้');
+    }
+  }, true); /* useCapture=true เพื่อดักก่อน onclick */
 };
 
 function showPage(name) {
-  /* Guard 1: เข้า success ได้เฉพาะหลังชำระเงิน */
+  /* Guard 1: success เปิดได้เฉพาะหลังชำระเงิน */
   if (name === 'success' && !paymentCompleted) return;
 
-  /* Guard 2: ถ้า success กำลังแสดงอยู่ ห้าม navigate ออก
-     goBackHome() จะ reset paymentCompleted=false ก่อนแล้วค่อยเรียก showPage('home') */
+  /* Guard 2: ถ้า success แสดงอยู่ ห้าม navigate ออก
+     จะออกได้เฉพาะ goBackHome() ที่ reset paymentCompleted=false ก่อน */
   if (paymentCompleted && name !== 'success') return;
 
-  const successEl = document.getElementById('page-success');
-
-  /* ซ่อนทุกหน้า ยกเว้น page-success — ห้ามแตะเลย
-     เพราะมัน inline !important อยู่ จะจัดการเองแยกต่างหาก */
+  /* ซ่อนทุกหน้า — ข้าม page-success ไม่แตะเลย */
   document.querySelectorAll('.page').forEach(p => {
     if (p.id === 'page-success') return;
     p.classList.remove('active');
@@ -43,11 +56,11 @@ function showPage(name) {
   });
 
   if (name === 'success') {
-    /* forcefully ลบ inline style แล้วแสดง — ต้องใช้ removeAttribute ด้วย
-       เพราะ inline style attribute จาก HTML ไม่หายด้วย style.removeProperty เสมอไป */
-    successEl.removeAttribute('style');
-    successEl.style.display = 'flex';
-    successEl.classList.add('active');
+    /* ลบ inline attribute ที่ HTML ตั้งไว้ แล้วค่อย display */
+    const el = document.getElementById('page-success');
+    el.removeAttribute('style');
+    el.style.display = 'flex';
+    el.classList.add('active');
   } else {
     const target = document.getElementById('page-' + name);
     if (!target) return;
@@ -60,32 +73,28 @@ function showPage(name) {
 
 /* กดปุ่มกลับหน้าหลักจากหน้า success — reset state ทั้งหมด */
 function goBackHome() {
-  // 1. ปลดล็อคสถานะก่อน เพื่อให้ Guard 2 ใน showPage ไม่บล็อก
+  /* ต้อง reset paymentCompleted ก่อน showPage เสมอ
+     เพราะ Guard 2 ใน showPage จะบล็อกถ้า paymentCompleted=true */
   paymentCompleted = false;
 
-  // 2. บังคับซ่อนหน้า success ด้วยมือ (คืน inline style กลับ)
+  /* ซ่อน success ด้วยมือ */
   const successEl = document.getElementById('page-success');
   if (successEl) {
     successEl.classList.remove('active');
     successEl.style.display = 'none';
   }
 
-  // 3. ล้างข้อมูลการจองเดิม
   selectedCar = null;
   startDate = ''; endDate = '';
   numDays = 1; mode = 0;
+  filters = { seats:'all', fuel:'all', price:'all' };
+  CARS.forEach(c => { c.available = true; });
 
-  // 4. ล้างค่า input วันที่
   ['modal-start','modal-end','start-date','end-date'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
 
-  // 5. reset ตัวกรองและ availability
-  filters = { seats:'all', fuel:'all', price:'all' };
-  CARS.forEach(c => { c.available = true; });
-
-  // 6. กลับหน้าหลัก (Guard 2 ผ่านได้เพราะ paymentCompleted=false แล้ว)
   showPage('home');
 }
 function setFilter(type, value, el) {
