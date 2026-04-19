@@ -25,11 +25,16 @@ window.onload = function() {
 };
 
 function showPage(name) {
-  /* Guard: หน้า success เข้าได้เฉพาะหลังชำระเงินจริงเท่านั้น */
+  /* Guard 1: success เปิดได้เฉพาะหลังชำระเงิน */
   if (name === 'success' && !paymentCompleted) return;
 
-  /* ซ่อนทุกหน้าก่อน */
+  /* Guard 2: ถ้า success กำลังแสดงอยู่ ห้ามทุก showPage() ปิดมัน
+     จะปิดได้เฉพาะ goBackHome() เท่านั้น */
+  if (paymentCompleted && name !== 'success') return;
+
+  /* ซ่อนทุกหน้า — ข้าม page-success ไม่แตะเลย */
   document.querySelectorAll('.page').forEach(p => {
+    if (p.id === 'page-success') return;
     p.classList.remove('active');
     p.style.setProperty('display', 'none', 'important');
   });
@@ -37,8 +42,9 @@ function showPage(name) {
   const target = document.getElementById('page-' + name);
   if (!target) return;
 
-  /* เปิดหน้าที่ต้องการ */
-  target.style.removeProperty('display');
+  if (name === 'success') {
+    target.style.removeProperty('display');
+  }
   target.classList.add('active');
   window.scrollTo(0, 0);
 }
