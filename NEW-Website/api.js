@@ -241,7 +241,10 @@ if (methodType === 'credit' || !methodType) {
     /* แสดงข้อมูลรถบนหน้า success */
     _showSuccessCarInfo();
     paymentCompleted = true;
-    showPage('success');
+    setTimeout(() => {
+      showPage('success');
+      console.log("เปลี่ยนไปหน้า Success เรียบร้อยแล้ว");
+    }, 5000);
 
   } catch (err) {
     console.error('[API] book error:', err);
