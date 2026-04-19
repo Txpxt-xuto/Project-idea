@@ -95,46 +95,57 @@ function selectCar(id) {
 }
 
 function goToPayment() {
-  let deliverycost=1000;
-  const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric',month:'short',year:'numeric'});
-  document.getElementById('sum-icon').innerHTML = `<img src="${selectedCar.image}" alt="${selectedCar.name}" style="width:60px;height:48px;object-fit:contain;border-radius:8px;">`;
+  // 1. Check: ถ้ายังไม่ได้เลือกรถ ให้หยุดทำงานทันที (ป้องกัน Error)
+  if (!selectedCar) {
+    alert("กรุณาเลือกรถก่อนดำเนินการครับ");
+    return;
+  }
+
+  let deliverycost = 1000;
+  const fmt = d => new Date(d).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'numeric'});
+
+  // 2. แสดงรูปภาพและข้อมูลรถ
+  const iconEl = document.getElementById('sum-icon');
+  if (iconEl) {
+    // ถ้าใช้แท็ก <img> ให้ใช้ .src แต่ถ้าใช้ <div> ให้ใช้ .innerHTML แบบเดิมที่คุณเขียนได้ครับ
+    iconEl.innerHTML = `<img src="${selectedCar.image}" alt="${selectedCar.name}" style="width:100px;height:auto;object-fit:contain;border-radius:8px;">`;
+  }
+  
   document.getElementById('sum-name').textContent = selectedCar.name;
   document.getElementById('sum-type').textContent = selectedCar.type;
   document.getElementById('sum-start').textContent = fmt(startDate);
   document.getElementById('sum-end').textContent = fmt(endDate);
   document.getElementById('sum-days').textContent = totalDays + ' วัน';
 
-  if (mode == 0) {
-    let delivery = document.getElementById('delivery').value;
-    if (delivery === "Self-Pickup") {deliverycost = 0;}
+  // 3. ตรวจสอบค่า Delivery ตาม Mode (ใช้ ID ให้ตรงกับ HTML ของคุณ)
+  let deliveryValue = "";
+  if (mode === 0) {
+    // หน้าแรก (Home)
+    const delEl = document.getElementById('delivery');
+    deliveryValue = delEl ? delEl.value : "";
+  } else {
+    // จาก Modal
+    const delModEl = document.getElementById('modal-delivery');
+    deliveryValue = delModEl ? delModEl.value : "";
   }
-  else if (mode != 0) {
-    let delivery = document.getElementById('modal-delivery').value;
-    if (delivery === "Self-Pickup") {deliverycost = 0;}
+
+  if (deliveryValue === "Self-Pickup") {
+    deliverycost = 0;
   }
 
   let days = totalDays;
-  saleDay = 0;
+  let sDay = 0;
 
-  while(true)
-  {
-    if (days-30>=0) {
-      saleDay+=16;
-      days-=30;
-    }
-    else if (days-7>=0) {
-      saleDay+=5;
-      days-=7;
-    }
-    else {
-      saleDay+=days;
-      break;
-    }
+  while(true) {
+    if (days - 30 >= 0) { sDay += 16; days -= 30; }
+    else if (days - 7 >= 0) { sDay += 5; days -= 7; }
+    else { sDay += days; break; }
   }
 
   document.getElementById('sum-per-day').textContent = selectedCar.price.toLocaleString() + ' ฿';
-  document.getElementById('sum-delivery').textContent = deliverycost + ' ฿';
-  document.getElementById('sum-total').textContent = (selectedCar.price * saleDay + 3000 + deliverycost).toLocaleString() + ' ฿';
+  document.getElementById('sum-delivery').textContent = deliverycost.toLocaleString() + ' ฿';
+  const totalAmount = (selectedCar.price * sDay) + 3000 + deliverycost;
+  document.getElementById('sum-total').textContent = totalAmount.toLocaleString() + ' ฿';
 
   showPage('payment');
 }
@@ -191,7 +202,7 @@ function updateModalNights() {
         break;
       }
     }
-    if(delivery==="เดินทางมารับด้วยตนเอง (ไม่เสียค่าบริการ)") deliverycost=0;
+    if(delivery==="Self-Pickup") deliverycost=0;
     const total = (selectedCar ? selectedCar.price * saleDay + 3000 + deliverycost : 0).toLocaleString();
     info.textContent = `${totaldays} วัน · รวม ${total} ฿ (รวมประกัน 3,000 ฿)`;
     info.style.color = 'var(--accent)';
@@ -205,20 +216,19 @@ function confirmDateModal() {
   const s = document.getElementById('modal-start').value;
   const e = document.getElementById('modal-end').value;
   const delivery = document.getElementById('modal-delivery').value;
-  let deliverycost=1000;
 
   if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
-  if (e <= s) { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
-  if(delivery==="เดินทางมารับด้วยตนเอง (ไม่เสียค่าบริการ)") deliverycost=0;
+  if (new Date(e) <= new Date(s)) { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
   
-  startDate = s; endDate = e;
+  startDate = s; 
+  endDate = e;
+
   const ms = new Date(e) - new Date(s);
-  numDays = Math.max(1, Math.ceil(ms / 86400000));
+  totalDays = Math.max(1, Math.ceil(ms / 86400000)); 
 
   closeDateModal();
   goToPayment();
 }
-
 function selectPayMethod(el, method) {
   document.querySelectorAll('.pay-method').forEach(m => {
     m.classList.remove('selected');
