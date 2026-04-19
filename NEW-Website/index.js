@@ -25,45 +25,53 @@ window.onload = function() {
 };
 
 function showPage(name) {
-  // 1. ตรวจสอบ: ห้ามเข้าหน้า success ถ้าไม่ได้จ่ายเงิน
+  // Guard: ห้ามเข้า success ถ้าไม่ได้จ่ายเงิน
   if (name === 'success' && !paymentCompleted) return;
 
-  // 2. ซ่อนทุกหน้า
+  // ซ่อนทุกหน้า
   document.querySelectorAll('.page').forEach(p => {
     p.classList.remove('active');
-    p.style.display = 'none';
+    // ใช้สไตล์ปกติเพื่อให้เปลี่ยนหน้าได้ไหลลื่น
+    p.style.display = 'none'; 
   });
 
-  // 3. แสดงหน้าเป้าหมาย
   const target = document.getElementById('page-' + name);
   if (target) {
     target.classList.add('active');
-    target.style.display = 'block';
+    // ถ้าเป็นหน้าอื่นๆ ให้ใช้ display block ปกติ
+    target.style.setProperty('display', 'block', 'important'); 
     window.scrollTo(0, 0);
   }
-  
-  // ลบเงื่อนไข if (name !== 'success') paymentCompleted = false; ออกจากตรงนี้!!
 }
 
 /* กดปุ่มกลับหน้าหลักจากหน้า success — reset state ทั้งหมด */
 function goBackHome() {
-  // รีเซ็ตสถานะการจ่ายเงินตรงนี้เท่านั้น
-  paymentCompleted = false; 
+  // 1. ปลดล็อคสถานะการจ่ายเงิน
+  paymentCompleted = false;
   
+  // 2. ล้างข้อมูลการจองเดิม
   selectedCar = null;
   startDate = ''; 
   endDate = ''; 
-  numDays = 1;
+  totalDays = 0;
 
-  // ล้างค่าใน Input วันที่
-  const s = document.getElementById('modal-start');
-  const e = document.getElementById('modal-end');
-  if(s) s.value = '';
-  if(e) e.value = '';
+  // 3. บังคับซ่อนหน้า Success (แก้ปัญหาเรื่อง !important)
+  const successPage = document.getElementById('page-success');
+  if (successPage) {
+    successPage.classList.remove('active');
+    successPage.style.setProperty('display', 'none', 'important'); 
+  }
 
-  showPage('home'); // กลับไปหน้าแรก
+  // 4. ล้างค่าใน Input วันที่หน้าแรกและใน Modal
+  const inputs = ['modal-start', 'modal-end', 'start-date', 'end-date'];
+  inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  // 5. กลับไปหน้าหลัก
+  showPage('home');
 }
-
 function setFilter(type, value, el) {
   filters[type] = value;
   document.querySelectorAll(`[data-filter="${type}"]`).forEach(b => b.classList.remove('active'));
