@@ -238,13 +238,9 @@ if (methodType === 'credit' || !methodType) {
     }
 
     document.getElementById('booking-ref-num').textContent = result.refCode;
-    /* แสดงข้อมูลรถบนหน้า success */
     _showSuccessCarInfo();
     paymentCompleted = true;
-    setTimeout(() => {
-      showPage('success');
-      console.log("เปลี่ยนไปหน้า Success เรียบร้อยแล้ว");
-    }, 5000);
+    showPage('success');
 
   } catch (err) {
     console.error('[API] book error:', err);
