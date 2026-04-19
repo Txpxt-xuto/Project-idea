@@ -25,46 +25,43 @@ window.onload = function() {
 };
 
 function showPage(name) {
-  /* Guard 1: success เปิดได้เฉพาะหลังชำระเงิน */
+  // 1. ตรวจสอบ: ห้ามเข้าหน้า success ถ้าไม่ได้จ่ายเงิน
   if (name === 'success' && !paymentCompleted) return;
 
-  /* Guard 2: ถ้า success กำลังแสดงอยู่ ห้าม navigate ออก
-     จะออกได้เฉพาะ goBackHome() ซึ่ง reset paymentCompleted ก่อนแล้วค่อยเรียก showPage */
-  const successEl = document.getElementById('page-success');
-  if (paymentCompleted && name !== 'success') return;
-
-  /* ซ่อนทุกหน้า — ข้าม page-success ไม่แตะเลย
-     (ถ้าแตะแล้ว display:none !important จะทำให้มันหายทันที) */
+  // 2. ซ่อนทุกหน้า
   document.querySelectorAll('.page').forEach(p => {
-    if (p.id === 'page-success') return;
     p.classList.remove('active');
-    p.style.setProperty('display', 'none', 'important');
+    p.style.display = 'none';
   });
 
+  // 3. แสดงหน้าเป้าหมาย
   const target = document.getElementById('page-' + name);
-  if (!target) return;
-
-  if (name === 'success') {
-    /* ลบ inline style ที่ HTML ตั้งไว้ตอนโหลด แล้วเปิด */
-    successEl.style.removeProperty('display');
+  if (target) {
+    target.classList.add('active');
+    target.style.display = 'block';
+    window.scrollTo(0, 0);
   }
-
-  target.classList.add('active');
-  window.scrollTo(0, 0);
+  
+  // ลบเงื่อนไข if (name !== 'success') paymentCompleted = false; ออกจากตรงนี้!!
 }
 
 /* กดปุ่มกลับหน้าหลักจากหน้า success — reset state ทั้งหมด */
 function goBackHome() {
-  paymentCompleted = false;
+  // รีเซ็ตสถานะการจ่ายเงินตรงนี้เท่านั้น
+  paymentCompleted = false; 
+  
   selectedCar = null;
-  startDate = ''; endDate = ''; numDays = 1;
-  mode = 0;
-  /* ซ่อน success ก่อนแล้วค่อยแสดงหน้าหลัก */
-  document.getElementById('page-success').style.setProperty('display','none','important');
-  document.getElementById('page-success').classList.remove('active');
-  showPage('home');
-  /* reset car availability กลับเป็น default */
-  CARS.forEach(c => { c.available = true; });
+  startDate = ''; 
+  endDate = ''; 
+  numDays = 1;
+
+  // ล้างค่าใน Input วันที่
+  const s = document.getElementById('modal-start');
+  const e = document.getElementById('modal-end');
+  if(s) s.value = '';
+  if(e) e.value = '';
+
+  showPage('home'); // กลับไปหน้าแรก
 }
 
 function setFilter(type, value, el) {
@@ -105,7 +102,7 @@ function goToPayment() {
   document.getElementById('sum-type').textContent = selectedCar.type;
   document.getElementById('sum-start').textContent = fmt(startDate);
   document.getElementById('sum-end').textContent = fmt(endDate);
-  document.getElementById('sum-days').textContent = numDays + ' วัน';
+  document.getElementById('sum-days').textContent = totalDays + ' วัน';
 
   if (mode == 0) {
     let delivery = document.getElementById('delivery').value;
@@ -116,7 +113,7 @@ function goToPayment() {
     if (delivery === "Self-Pickup") {deliverycost = 0;}
   }
 
-  let days = numDays;
+  let days = totalDays;
   saleDay = 0;
 
   while(true)
