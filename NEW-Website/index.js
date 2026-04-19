@@ -25,51 +25,67 @@ window.onload = function() {
 };
 
 function showPage(name) {
-  // Guard: ห้ามเข้า success ถ้าไม่ได้จ่ายเงิน
+  /* Guard 1: เข้า success ได้เฉพาะหลังชำระเงิน */
   if (name === 'success' && !paymentCompleted) return;
 
-  // ซ่อนทุกหน้า
+  /* Guard 2: ถ้า success กำลังแสดงอยู่ ห้าม navigate ออก
+     goBackHome() จะ reset paymentCompleted=false ก่อนแล้วค่อยเรียก showPage('home') */
+  if (paymentCompleted && name !== 'success') return;
+
+  const successEl = document.getElementById('page-success');
+
+  /* ซ่อนทุกหน้า ยกเว้น page-success — ห้ามแตะเลย
+     เพราะมัน inline !important อยู่ จะจัดการเองแยกต่างหาก */
   document.querySelectorAll('.page').forEach(p => {
+    if (p.id === 'page-success') return;
     p.classList.remove('active');
-    // ใช้สไตล์ปกติเพื่อให้เปลี่ยนหน้าได้ไหลลื่น
-    p.style.display = 'none'; 
+    p.style.display = 'none';
   });
 
-  const target = document.getElementById('page-' + name);
-  if (target) {
+  if (name === 'success') {
+    /* forcefully ลบ inline style แล้วแสดง — ต้องใช้ removeAttribute ด้วย
+       เพราะ inline style attribute จาก HTML ไม่หายด้วย style.removeProperty เสมอไป */
+    successEl.removeAttribute('style');
+    successEl.style.display = 'flex';
+    successEl.classList.add('active');
+  } else {
+    const target = document.getElementById('page-' + name);
+    if (!target) return;
+    target.style.display = 'block';
     target.classList.add('active');
-    // ถ้าเป็นหน้าอื่นๆ ให้ใช้ display block ปกติ
-    target.style.setProperty('display', 'block', 'important'); 
-    window.scrollTo(0, 0);
   }
+
+  window.scrollTo(0, 0);
 }
 
 /* กดปุ่มกลับหน้าหลักจากหน้า success — reset state ทั้งหมด */
 function goBackHome() {
-  // 1. ปลดล็อคสถานะการจ่ายเงิน
+  // 1. ปลดล็อคสถานะก่อน เพื่อให้ Guard 2 ใน showPage ไม่บล็อก
   paymentCompleted = false;
-  
-  // 2. ล้างข้อมูลการจองเดิม
-  selectedCar = null;
-  startDate = ''; 
-  endDate = ''; 
-  totalDays = 0;
 
-  // 3. บังคับซ่อนหน้า Success (แก้ปัญหาเรื่อง !important)
-  const successPage = document.getElementById('page-success');
-  if (successPage) {
-    successPage.classList.remove('active');
-    successPage.style.setProperty('display', 'none', 'important'); 
+  // 2. บังคับซ่อนหน้า success ด้วยมือ (คืน inline style กลับ)
+  const successEl = document.getElementById('page-success');
+  if (successEl) {
+    successEl.classList.remove('active');
+    successEl.style.display = 'none';
   }
 
-  // 4. ล้างค่าใน Input วันที่หน้าแรกและใน Modal
-  const inputs = ['modal-start', 'modal-end', 'start-date', 'end-date'];
-  inputs.forEach(id => {
+  // 3. ล้างข้อมูลการจองเดิม
+  selectedCar = null;
+  startDate = ''; endDate = '';
+  numDays = 1; mode = 0;
+
+  // 4. ล้างค่า input วันที่
+  ['modal-start','modal-end','start-date','end-date'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
 
-  // 5. กลับไปหน้าหลัก
+  // 5. reset ตัวกรองและ availability
+  filters = { seats:'all', fuel:'all', price:'all' };
+  CARS.forEach(c => { c.available = true; });
+
+  // 6. กลับหน้าหลัก (Guard 2 ผ่านได้เพราะ paymentCompleted=false แล้ว)
   showPage('home');
 }
 function setFilter(type, value, el) {
