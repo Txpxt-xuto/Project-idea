@@ -262,7 +262,7 @@ function _showSuccessCarInfo() {
 
   if (imgEl)   { imgEl.src = selectedCar.image || ''; imgEl.alt = selectedCar.name; }
   if (nameEl)  nameEl.textContent = selectedCar.name;
-  if (dateEl)  dateEl.textContent = `📅 ${fmt(startDate)} → ${fmt(endDate)}  (${numDays} วัน)`;
+  if (dateEl)  dateEl.textContent = `📅 ${fmt(startDate)} → ${fmt(endDate)}  ( ${numDays} วัน )`;
   if (infoBox) infoBox.style.display = 'flex';
 }
 
