@@ -242,7 +242,7 @@ function confirmDateModal() {
   const delivery = document.getElementById('modal-delivery').value;
 
   if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
-  if (new Date(e) <= new Date(s)) { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
+  if (new Date(e) < new Date(s)) { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
   
   startDate = s; 
   endDate = e;
