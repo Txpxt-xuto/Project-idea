@@ -58,9 +58,11 @@ function showPage(name) {
   if (name === 'success') {
     /* ลบ inline attribute ที่ HTML ตั้งไว้ แล้วค่อย display */
     const el = document.getElementById('page-success');
-    el.removeAttribute('style');
-    el.style.display = 'flex';
-    el.classList.add('active');
+    if (el) {
+      el.removeAttribute('style');
+      el.style.display = 'flex';
+      el.classList.add('active');
+    }
   } else {
     const target = document.getElementById('page-' + name);
     if (!target) return;
@@ -82,6 +84,7 @@ function goBackHome() {
   if (successEl) {
     successEl.classList.remove('active');
     successEl.style.display = 'none';
+    successEl.style.setProperty('display', 'none', 'important');
   }
 
   selectedCar = null;
