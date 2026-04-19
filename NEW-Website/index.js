@@ -28,11 +28,13 @@ function showPage(name) {
   /* Guard 1: success เปิดได้เฉพาะหลังชำระเงิน */
   if (name === 'success' && !paymentCompleted) return;
 
-  /* Guard 2: ถ้า success กำลังแสดงอยู่ ห้ามทุก showPage() ปิดมัน
-     จะปิดได้เฉพาะ goBackHome() เท่านั้น */
+  /* Guard 2: ถ้า success กำลังแสดงอยู่ ห้าม navigate ออก
+     จะออกได้เฉพาะ goBackHome() ซึ่ง reset paymentCompleted ก่อนแล้วค่อยเรียก showPage */
+  const successEl = document.getElementById('page-success');
   if (paymentCompleted && name !== 'success') return;
 
-  /* ซ่อนทุกหน้า — ข้าม page-success ไม่แตะเลย */
+  /* ซ่อนทุกหน้า — ข้าม page-success ไม่แตะเลย
+     (ถ้าแตะแล้ว display:none !important จะทำให้มันหายทันที) */
   document.querySelectorAll('.page').forEach(p => {
     if (p.id === 'page-success') return;
     p.classList.remove('active');
@@ -43,8 +45,10 @@ function showPage(name) {
   if (!target) return;
 
   if (name === 'success') {
-    target.style.removeProperty('display');
+    /* ลบ inline style ที่ HTML ตั้งไว้ตอนโหลด แล้วเปิด */
+    successEl.style.removeProperty('display');
   }
+
   target.classList.add('active');
   window.scrollTo(0, 0);
 }
