@@ -144,7 +144,7 @@ nav ul li a.active { color: var(--accent); }
   nav { padding: 0 20px; height: 56px; }
   nav > ul { display: none; }           /* hide inline menu */
   .logo {font-size: 25px; letter-spacing: 2px;}
-  .nav-hamburger { display: flex; margin-right: 48%;}
+  .nav-hamburger { display: flex;}
   .nav-drawer { display: block; top: 56px; }
   .nav-scrim { top: 56px; }
 }
