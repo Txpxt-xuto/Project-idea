@@ -726,6 +726,7 @@
 /* ── Shared page padding adjustment for mobile nav height ── */
 @media (max-width: 767px) {
   .page { padding-top: 56px; }
+
 }
 
 /* ══ TABLET LANDSCAPE  900–1199 ══ */
@@ -734,6 +735,7 @@
   .stats { padding: 0 32px 60px; }
   .cars-layout { gap: 20px; }
   #page-cars, #page-payment { padding: 90px 32px 40px; }
+  .page { min-height: 10vh; }
 }
 
 /* ══ TABLET PORTRAIT  600–899 ══ */
@@ -746,6 +748,7 @@
   }
   .hero-text h1 { font-size: clamp(56px, 12vw, 80px); }
   .hero-text p { max-width: 100%; }
+  .container{ width: 100%; }
 
   /* Stats */
   .stats {
@@ -783,6 +786,7 @@
   .hero { padding: 24px 16px 16px; }
   .hero-text h1 { font-size: clamp(44px, 14vw, 64px); line-height: 0.95; }
   .hero-text p { font-size: 14px; }
+  .container{ width: 100%; }
 
   /* Search card */
   .search-card { padding: 24px 16px; border-radius: 16px; }
@@ -831,6 +835,7 @@
 
 /* ══ TINY PHONE  < 380 ══ */
 @media (max-width: 379px) {
+  .container{ width: 100%; }
   .hero-text h1 { font-size: 40px; }
   .stat-num { font-size: 32px; }
   .cars-header h2 { font-size: 28px; }
