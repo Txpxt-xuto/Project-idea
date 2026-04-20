@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSRM Route Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg:#f1f5f9; --surface:#ffffff; --border:#e2e8f0;
+  --text:#0f172a; --muted:#64748b; --subtle:#94a3b8;
+  --accent:#3b82f6; --danger:#ef4444; --success:#10b981;
+  --radius-lg:24px; --radius-md:16px; --radius-sm:12px;
+  --shadow:0 4px 6px -1px rgba(0,0,0,0.05),0 2px 4px -1px rgba(0,0,0,0.03);
+}
+html,body { height:100%; font-family:'Sarabun',sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }
+#app { display:flex; flex-direction:column; height:100vh; }
+
+/* Header */
+header {
+  height:64px; background:var(--surface); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 28px;
+  justify-content:space-between; flex-shrink:0; z-index:20;
+}
+.logo { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:800; letter-spacing:-0.5px; }
+.logo span { color:var(--accent); }
+.header-right { display:flex; align-items:center; gap:12px; }
+.status-pill {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 12px; border-radius:99px;
+  background:var(--bg); color:var(--muted);
+  font-size:12px; font-weight:600;
+}
+.dot-live { width:6px; height:6px; border-radius:50%; background:var(--success); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+.avatar { width:34px; height:34px; background:var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+
+/* Grid */
+.grid {
+  flex:1; min-height:0;
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  grid-template-rows:repeat(8,1fr);
+  gap:14px; padding:16px;
+}
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-lg); box-shadow:var(--shadow); overflow:hidden;
+}
+
+/* Map card */
+#card-map { grid-column:1/9; grid-row:1/7; position:relative; }
+#map { width:100%; height:100%; }
+
+.map-coord-box {
+  position:absolute; bottom:18px; left:18px; z-index:400;
+  background:rgba(255,255,255,0.93); backdrop-filter:blur(8px);
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:10px 14px;
+}
+.mcb-label { font-size:10px; font-family:'Space Grotesk',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--subtle); margin-bottom:3px; }
+.mcb-value { font-size:13px; font-weight:600; font-family:'Space Grotesk',sans-serif; color:var(--text); }
+
+.map-actions {
+  position:absolute; top:14px; right:14px; z-index:400;
+  opacity:0; transition:opacity 0.2s;
+}
+#card-map:hover .map-actions { opacity:1; }
+.icon-btn {
+  width:40px; height:40px; background:var(--surface);
+  border:1px solid var(--border); border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:var(--shadow); transition:background 0.15s;
+}
+.icon-btn:hover { background:var(--bg); }
+.icon-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+/* Stats card */
+#card-stats { grid-column:9/13; grid-row:1/4; padding:22px; display:flex; flex-direction:column; }
+.chip-tag {
+  align-self:flex-start; padding:4px 12px; border-radius:99px;
+  background:var(--bg); color:var(--muted);
+  font-size:11px; font-weight:700; font-family:'Space Grotesk',sans-serif;
+  letter-spacing:0.5px; margin-bottom:10px;
+}
+.big-row { display:flex; align-items:center; gap:10px; }
+.big-num {
+  font-family:'Space Grotesk',sans-serif;
+  font-size:50px; font-weight:800; line-height:1; color:var(--text);
+  display:flex; align-items:baseline; gap:6px;
+}
+.big-unit { font-size:18px; color:var(--muted); font-weight:600; }
+.spin {
+  width:20px; height:20px;
+  border:2px solid var(--border); border-top-color:var(--accent);
+  border-radius:50%; animation:spin 0.7s linear infinite; display:none;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.sub-text { color:var(--muted); font-size:13px; margin-top:8px; font-weight:500; }
+.mini-row { display:flex; gap:10px; margin-top:18px; }
+.mini-card { flex:1; background:var(--bg); border-radius:var(--radius-md); padding:14px; }
+.mini-lbl { font-size:10px; font-family:'Space Grotesk',sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--subtle); margin-bottom:5px; }
+.mini-val { font-size:17px; font-weight:700; font-family:'Space Grotesk',sans-serif; }
+
+/* Detail card */
+#card-detail { grid-column:9/13; grid-row:4/7; padding:22px; display:flex; flex-direction:column; }
+.section-title { font-size:15px; font-weight:700; font-family:'Space Grotesk',sans-serif; margin-bottom:14px; }
+.route-timeline { display:flex; flex-direction:column; gap:8px; }
+.rp { display:flex; gap:12px; align-items:flex-start; }
+.rp-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.rp-dot.blue { background:var(--accent); }
+.rp-dot.red  { background:var(--danger); }
+.rp-dash { height:20px; border-left:2px dashed var(--border); margin-left:4px; }
+.rp-sublbl { font-size:11px; color:var(--subtle); margin-bottom:2px; }
+.rp-val    { font-size:13px; font-weight:600; }
+.card-foot { margin-top:auto; padding-top:12px; border-top:1px solid var(--bg); font-size:11px; color:var(--muted); }
+.card-foot b { color:var(--accent); }
+
+/* Action bar */
+#card-action { grid-column:1/13; grid-row:7/9; padding:0 26px; display:flex; align-items:center; justify-content:space-between; }
+.action-copy h4 { font-size:17px; font-weight:700; font-family:'Space Grotesk',sans-serif; margin-bottom:4px; }
+.action-copy p  { font-size:13px; color:var(--muted); }
+.btn-group { display:flex; gap:10px; }
+.btn-cancel {
+  background:transparent; border:1px solid var(--border);
+  padding:11px 22px; border-radius:var(--radius-sm);
+  font-size:14px; font-weight:600; cursor:pointer; font-family:'Sarabun',sans-serif;
+  transition:background 0.15s;
+}
+.btn-cancel:hover { background:var(--bg); }
+.btn-ok {
+  background:var(--text); color:#fff; border:none;
+  padding:11px 22px; border-radius:var(--radius-sm);
+  font-size:14px; font-weight:700; cursor:pointer; font-family:'Sarabun',sans-serif;
+  box-shadow:0 4px 14px rgba(15,23,42,0.22);
+  transition:background 0.15s, transform 0.1s;
+}
+.btn-ok:hover  { background:#1e293b; }
+.btn-ok:active { transform:scale(0.97); }
+.btn-ok:disabled { opacity:0.45; cursor:not-allowed; transform:none; }
+
+/* Leaflet popup */
+.leaflet-popup-content-wrapper {
+  border-radius:10px; font-family:'Sarabun',sans-serif;
+  font-size:14px; font-weight:600; box-shadow:var(--shadow);
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="logo">ROUTER<span>OSRM</span></div>
+    <div class="header-right">
+      <div class="status-pill">
+        <div class="dot-live"></div>ระบบพร้อมใช้งาน
+      </div>
+      <div class="avatar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- Map -->
+    <div class="card" id="card-map">
+      <div id="map"></div>
+      <div class="map-coord-box">
+        <div class="mcb-label">พิกัดปัจจุบัน</div>
+        <div class="mcb-value" id="coord-txt">โปรดคลิกเลือกจุดบนแผนที่</div>
+      </div>
+      <div class="map-actions">
+        <button class="icon-btn" id="btn-gmaps" disabled title="เปิดใน Google Maps" onclick="openGmaps()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="card" id="card-stats">
+      <div class="chip-tag">การคำนวณจาก OSRM</div>
+      <div class="big-row">
+        <div class="big-num">
+          <span id="dist-val">0.0</span>
+          <span class="big-unit">กม.</span>
+        </div>
+        <div class="spin" id="spinner"></div>
+      </div>
+      <div class="sub-text">ระยะทางจริงบนพื้นผิวถนน</div>
+      <div class="mini-row">
+        <div class="mini-card">
+          <div class="mini-lbl">เวลาเดินทาง</div>
+          <div class="mini-val" id="dur-val">—</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-lbl">สภาพจราจร</div>
+          <div class="mini-val" style="color:var(--success)">ปกติ</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail -->
+    <div class="card" id="card-detail">
+      <div class="section-title">รายละเอียดการเดินทาง</div>
+      <div class="route-timeline">
+        <div class="rp">
+          <div class="rp-dot blue"></div>
+          <div><div class="rp-sublbl">จุดเริ่มต้น</div><div class="rp-val">ตำแหน่งร้าน (สค.)</div></div>
+        </div>
+        <div class="rp-dash"></div>
+        <div class="rp">
+          <div class="rp-dot red"></div>
+          <div><div class="rp-sublbl">จุดปลายทาง</div><div class="rp-val" id="dest-txt">รอการปักหมุด...</div></div>
+        </div>
+      </div>
+      <div class="card-foot">ใช้เอนจิน <b>OSRM v5.22</b></div>
+    </div>
+
+    <!-- Action bar -->
+    <div class="card" id="card-action">
+      <div class="action-copy">
+        <h4>ยืนยันระยะสำหรับการจัดส่ง</h4>
+        <p>ค่าบริการจัดส่งจะถูกคำนวณตามระยะทางจริง ไม่ใช่เส้นตรง</p>
+      </div>
+      <div class="btn-group">
+        <button class="btn-cancel" onclick="resetMap()">ยกเลิก</button>
+        <button class="btn-ok" id="btn-ok" disabled onclick="confirmLocation()">ยืนยันตำแหน่ง</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ── Config ── */
+const HOME       = { lat: 13.577892, lng: 100.295456 };
+const RATE_PER_KM = 20;
+const BASE_FEE    = 200;
+
+/* ── State ── */
+let custCoords  = null;
+let routeData   = null;
+let routeLayer  = null;
+let custMarker  = null;
+
+/* ── Init Map ── */
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+
+const map = L.map('map', { zoomControl:true }).setView([HOME.lat, HOME.lng], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19, attribution:'© OpenStreetMap'
+}).addTo(map);
+
+/* Home marker */
+const homeIcon = L.divIcon({
+  html:`<div style="width:34px;height:34px;background:var(--accent,#3b82f6);border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(59,130,246,.4);">
+    <svg style="transform:rotate(45deg)" width="15" height="15" viewBox="0 0 24 24" stroke="#fff" fill="none" stroke-width="2.5">
+      <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg></div>`,
+  className:'', iconAnchor:[17,34], popupAnchor:[0,-36]
+});
+L.marker([HOME.lat,HOME.lng],{icon:homeIcon}).addTo(map).bindPopup('<b>บ้านของเรา</b>');
+
+/* Customer marker icon */
+const custIcon = L.divIcon({
+  html:`<div style="width:34px;height:34px;background:#ef4444;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(239,68,68,.4);">
+    <svg style="transform:rotate(45deg)" width="15" height="15" viewBox="0 0 24 24" stroke="#fff" fill="none" stroke-width="2.5">
+      <circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="5"/>
+      <line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/>
+      <line x1="19" y1="12" x2="22" y2="12"/>
+    </svg></div>`,
+  className:'', iconAnchor:[17,34], popupAnchor:[0,-36]
+});
+
+/* Map click */
+map.on('click', function(e){
+  const {lat,lng} = e.latlng;
+  custCoords = [lat,lng];
+
+  if(custMarker){ custMarker.setLatLng([lat,lng]); }
+  else {
+    custMarker = L.marker([lat,lng],{icon:custIcon,draggable:true})
+      .addTo(map).bindPopup('<b>ตำแหน่งลูกค้า</b>');
+    custMarker.on('dragend',ev=>{
+      const p=ev.target.getLatLng();
+      custCoords=[p.lat,p.lng];
+      calcRoute(p.lat,p.lng);
+    });
+  }
+  custMarker.openPopup();
+
+  document.getElementById('coord-txt').textContent = `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E`;
+  document.getElementById('dest-txt').textContent  = 'จุดที่ลูกค้าปักหมุด';
+  document.getElementById('btn-gmaps').disabled    = false;
+
+  calcRoute(lat,lng);
+});
+
+/* ── OSRM ── */
+async function calcRoute(lat,lng){
+  setLoading(true);
+  try{
+    const url = `https://router.project-osrm.org/route/v1/driving/`+
+                `${HOME.lng},${HOME.lat};${lng},${lat}`+
+                `?overview=full&geometries=geojson`;
+    const res  = await fetch(url);
+    const data = await res.json();
+
+    if(data.code!=='Ok'||!data.routes?.length){ showErr(); return; }
+
+    const route  = data.routes[0];
+    const distKm = (route.distance/1000).toFixed(1);
+    const durMin = Math.round(route.duration/60);
+    const coords = route.geometry.coordinates.map(c=>[c[1],c[0]]);
+    routeData    = { distance:route.distance, duration:route.duration, dist:distKm };
+
+    if(routeLayer) map.removeLayer(routeLayer);
+    routeLayer = L.polyline(coords,{color:'#3b82f6',weight:5,opacity:0.8}).addTo(map);
+    map.fitBounds(routeLayer.getBounds(),{padding:[40,40]});
+
+    document.getElementById('dist-val').textContent = distKm;
+    document.getElementById('dur-val').textContent  =
+      durMin>=60 ? `${Math.floor(durMin/60)}ชม. ${durMin%60}น.` : `${durMin} นาที`;
+    document.getElementById('btn-ok').disabled = false;
+
+  }catch(err){ console.error(err); showErr(); }
+  finally{ setLoading(false); }
+}
+
+function setLoading(on){
+  document.getElementById('spinner').style.display = on?'block':'none';
+  if(on) document.getElementById('dist-val').textContent='...';
+}
+function showErr(){
+  document.getElementById('dist-val').textContent = 'ERR';
+  document.getElementById('dur-val').textContent  = '—';
+}
+
+/* ── Actions ── */
+function resetMap(){
+  if(custMarker){ map.removeLayer(custMarker); custMarker=null; }
+  if(routeLayer){ map.removeLayer(routeLayer); routeLayer=null; }
+  custCoords=null; routeData=null;
+  document.getElementById('coord-txt').textContent = 'โปรดคลิกเลือกจุดบนแผนที่';
+  document.getElementById('dist-val').textContent  = '0.0';
+  document.getElementById('dur-val').textContent   = '—';
+  document.getElementById('dest-txt').textContent  = 'รอการปักหมุด...';
+  document.getElementById('btn-ok').disabled       = true;
+  document.getElementById('btn-gmaps').disabled    = true;
+  map.setView([HOME.lat,HOME.lng],13);
+}
+
+function openGmaps(){
+  if(!custCoords) return;
+  window.open(`https://www.google.com/maps/dir/${HOME.lat},${HOME.lng}/${custCoords[0]},${custCoords[1]}`,'_blank');
+}
+
+function confirmLocation(){
+  if(!custCoords||!routeData) return;
+  const [lat,lng] = custCoords;
+  const fee = Math.max(BASE_FEE, Math.round(routeData.dist * RATE_PER_KM / 10)*10);
+  const result = {
+    type:'DELIVERY_LOCATION', lat, lng,
+    dist:routeData.dist, fee,
+    label:`${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`
+  };
+  if(window.opener){ window.opener.postMessage(result,'*'); window.close(); }
+  else if(window.parent!==window){ window.parent.postMessage(result,'*'); }
+  else { alert(`ยืนยันตำแหน่งแล้ว\nระยะทาง: ${routeData.dist} กม.\nค่าบริการ: ${fee.toLocaleString()} ฿`); }
+}
+</script>
+</body>
+</html>
