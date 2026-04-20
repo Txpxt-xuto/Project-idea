@@ -577,7 +577,7 @@
     text-align: center; min-height: 100vh; 
     background: var(--bg); padding: 100px 48px 60px;
   }
-  .success-content { max-width: 480; text-align:center; margin-left: 50%;}
+  .success-content { max-width: 480; text-align:center;}
   .success-icon {
     width: 100px; height: 100px; border-radius: 50%;
     background: rgba(74,222,128,0.1); border: 2px solid rgba(74,222,128,0.3);
