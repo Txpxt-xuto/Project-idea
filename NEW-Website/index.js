@@ -23,22 +23,72 @@ let paymentCompleted = false;  /* guard สำหรับ page-success */
 window.onload = function() {
   buildMarquee();
 
-  /* intercept ทุก <a href> ที่จะ reload หน้า
-     ถ้า success กำลังแสดงอยู่ให้บล็อกการออกจนกว่าจะกด goBackHome() */
+  /* intercept ทุก <a href> ที่จะ reload หน้า */
   document.addEventListener('click', function(e) {
-    if (!paymentCompleted) return;  /* ไม่ได้อยู่หน้า success → ปล่อยผ่าน */
-
+    if (!paymentCompleted) return;
     const anchor = e.target.closest('a');
     if (!anchor) return;
-
     const href = anchor.getAttribute('href');
-    /* บล็อกเฉพาะ link ที่จะออกจากหน้า (ไม่ใช่ # หรือ onclick-only) */
     if (href && href !== '#' && !href.startsWith('javascript')) {
       e.preventDefault();
       alert('กรุณาจดหมายเลขการจองไว้ก่อน\nแล้วกดปุ่ม "กลับสู่หน้าหลัก" เพื่อออกจากหน้านี้');
     }
-  }, true); /* useCapture=true เพื่อดักก่อน onclick */
+  }, true);
+
+  /* ── delivery select: ถ้าเลือก custom-map ให้เปิดแผนที่ ── */
+  const deliverySelect = document.getElementById('delivery');
+  if (deliverySelect) {
+    deliverySelect.addEventListener('change', function() {
+      if (this.value === 'custom-map') {
+        openDeliveryMap();
+      } else {
+        /* ซ่อน result box ถ้าเปลี่ยนไปตัวเลือกอื่น */
+        document.getElementById('map-result-box').style.display = 'none';
+      }
+    });
+  }
+
+  /* ── รับ postMessage จาก delivery-map.html ── */
+  window.addEventListener('message', function(e) {
+    if (!e.data || e.data.type !== 'DELIVERY_LOCATION') return;
+    const { lat, lng, dist, fee, label } = e.data;
+
+    /* เก็บพิกัดไว้ใน dataset ของ select */
+    const sel = document.getElementById('delivery');
+    if (sel) {
+      sel.value = 'custom-map';
+      sel.dataset.customLat  = lat;
+      sel.dataset.customLng  = lng;
+      sel.dataset.customDist = dist;
+      sel.dataset.customFee  = fee;
+    }
+
+    /* แสดง result box */
+    const box = document.getElementById('map-result-box');
+    if (box) {
+      box.style.display = 'block';
+      document.getElementById('map-result-label').textContent =
+        `${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`;
+      document.getElementById('map-result-dist').textContent = dist;
+      document.getElementById('map-result-fee').textContent  =
+        parseInt(fee).toLocaleString();
+    }
+  });
 };
+
+/* เปิด delivery map ใน popup window */
+function openDeliveryMap() {
+  const w = Math.min(560, window.screen.width);
+  const h = Math.min(680, window.screen.height);
+  const left = (window.screen.width  - w) / 2;
+  const top  = (window.screen.height - h) / 2;
+  window.open(
+    'delivery-map.html',
+    'DeliveryMap',
+    `width=${w},height=${h},left=${left},top=${top},` +
+    'resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no'
+  );
+}
 
 function showPage(name) {
   /* Guard 1: success เปิดได้เฉพาะหลังชำระเงิน */
