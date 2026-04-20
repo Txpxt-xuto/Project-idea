@@ -243,8 +243,6 @@ h1 {
   .container { padding: 80px 20px 40px; max-width: 100%; }
   h1 { font-size: 32px; }
   .grid { grid-template-columns: 1fr 1fr; gap: 14px; }
-  /* contact card spans full width */
-  .cardcontect { width: 100%; }
 }
 
 /* ══ PHONE  < 600 ══ */
