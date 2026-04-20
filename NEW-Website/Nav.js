@@ -24,9 +24,22 @@
     scrim.className = 'nav-scrim';
     document.body.appendChild(scrim);
 
-    /* close all drawer links on click */
+    /* close all drawer links on click — also guard success page */
     drawerUl.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', closeMenu);
+      a.addEventListener('click', function(e) {
+        /* ถ้า success กำลังแสดงอยู่ ห้าม navigate ออกจาก drawer */
+        if (typeof paymentCompleted !== 'undefined' && paymentCompleted) {
+          const href = a.getAttribute('href');
+          if (href && href !== '#' && !href.startsWith('javascript')) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('กรุณาจดหมายเลขการจองไว้ก่อน\nแล้วกดปุ่ม "กลับสู่หน้าหลัก" เพื่อออกจากหน้านี้');
+            closeMenu();
+            return;
+          }
+        }
+        closeMenu();
+      });
     });
 
     function openMenu() {
