@@ -50,7 +50,18 @@
           <option value="SKN-ThaChalom">สมุทรสาคร—ท่าฉลอม</option>
           <option value="SKN-Banphaeo">สมุทรสาคร—บ้านแพ้ว</option>
           <option value="SKN-KrathumBaen">สมุทรสาคร—กระทุ่มแบน</option>
+          <option value="custom-map">📍 ปักหมุดตำแหน่งของฉันบนแผนที่...</option>
         </select>
+        <!-- แสดงผลเมื่อลูกค้าปักหมุด -->
+        <div id="map-result-box" style="display:none;margin-top:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">📌 ตำแหน่งที่เลือก</div>
+          <div id="map-result-label" style="font-size:14px;font-weight:600;color:var(--text);"></div>
+          <div style="display:flex;gap:16px;margin-top:6px;">
+            <span style="font-size:13px;color:var(--accent);">🛣️ <span id="map-result-dist">—</span> กม.</span>
+            <span style="font-size:13px;color:var(--accent2);">💰 <span id="map-result-fee">—</span> ฿</span>
+          </div>
+          <button onclick="openDeliveryMap()" style="margin-top:8px;padding:5px 12px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;cursor:pointer;font-size:12px;font-family:'Mitr',sans-serif;">เปลี่ยนตำแหน่ง</button>
+        </div>
       </div>
       <button class="btn-primary" onclick="searchCarsFromServer()">ค้นหารถว่าง</button>
     </div>
