@@ -56,7 +56,7 @@ typedef struct {
     int  number;   /* ลำดับที่ใน CSV (1-based) */
     int  id;       /* ราคา/วัน                 */
     char model[64];
-    int  booked[MAX_DAYS]; /* 0=ว่าง 1=จอง (index=dayOfYear) */
+    int  booked[MAX_DAYS]; /* 0=ว่าง 1=จอง */
 } Car;
 
 static Car cars[MAX_CARS];
@@ -78,7 +78,7 @@ static int dateToDayIndex(const char *s){
     char tmp[64];
     strcpy(tmp, s);
 
-    // 🔥 ลบ newline / carriage return
+    //  ลบ newline / carriage return
     tmp[strcspn(tmp, "\r\n")] = 0;
 
     int y,m,d;
