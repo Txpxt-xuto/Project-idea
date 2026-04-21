@@ -70,8 +70,7 @@ window.onload = function() {
       document.getElementById('map-result-label').textContent =
         `${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`;
       document.getElementById('map-result-dist').textContent = dist;
-      document.getElementById('map-result-fee').textContent  =
-        parseInt(fee).toLocaleString();
+      document.getElementById('map-result-fee').textContent  = parseInt(fee).toLocaleString();
     }
   });
 };
@@ -215,10 +214,9 @@ function goToPayment() {
     deliveryValue = delModEl ? delModEl.value : "";
   }
 
-  if (deliveryValue === "Self-Pickup") {
-    deliverycost = 0;
-  }
-
+  if (deliveryValue === "Self-Pickup") { deliverycost = 0 }
+  if (deliveryValue === "custom-map") { deliverycost = Number(document.getElementById('map-result-fee').textContent) }
+  console.log(deliverycost.id)
   let days = totalDays;
   let sDay = 0;
 
@@ -288,7 +286,10 @@ function updateModalNights() {
         break;
       }
     }
-    if(delivery==="Self-Pickup") deliverycost=0;
+    
+    if (delivery==="Self-Pickup") { deliverycost=0; }
+    if (delivery === "custom-map") { deliverycost = Number(document.getElementById('map-result-fee').textContent) }
+
     const total = (selectedCar ? selectedCar.price * saleDay + 3000 + deliverycost : 0).toLocaleString();
     info.textContent = `${totaldays} วัน · รวม ${total} ฿ (รวมประกัน 3,000 ฿)`;
     info.style.color = 'var(--accent)';
