@@ -267,6 +267,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 }).addTo(map);
 
 /* Home marker */
+/*                   ผมคอมเม้นท์ไว้ เพื่อใม่ให้แสดงตำแหน่งบน map
 const homeIcon = L.divIcon({
   html:`<div style="width:34px;height:34px;background:var(--accent,#3b82f6);border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(59,130,246,.4);">
     <svg style="transform:rotate(45deg)" width="15" height="15" viewBox="0 0 24 24" stroke="#fff" fill="none" stroke-width="2.5">
@@ -276,6 +277,7 @@ const homeIcon = L.divIcon({
   className:'', iconAnchor:[17,34], popupAnchor:[0,-36]
 });
 L.marker([HOME.lat,HOME.lng],{icon:homeIcon}).addTo(map).bindPopup('<b>บ้านของเรา</b>');
+*/
 
 /* Customer marker icon */
 const custIcon = L.divIcon({
@@ -331,8 +333,8 @@ async function calcRoute(lat,lng){
     routeData    = { distance:route.distance, duration:route.duration, dist:distKm };
 
     if(routeLayer) map.removeLayer(routeLayer);
-    routeLayer = L.polyline(coords,{color:'#3b82f6',weight:5,opacity:0.8}).addTo(map);
-    map.fitBounds(routeLayer.getBounds(),{padding:[40,40]});
+    //routeLayer = L.polyline(coords,{color:'#3b82f6',weight:5,opacity:0.8}).addTo(map);        ผมคอมเม้นท์ไว้ เพื่อใม่ให้แสดง path บน map
+    //map.fitBounds(routeLayer.getBounds(),{padding:[40,40]});        ผมคอมเม้นท์ไว้ เพื่อใม่ให้ map เกิดการ zoom ตาม
 
     document.getElementById('dist-val').textContent = distKm;
     document.getElementById('dur-val').textContent  =
