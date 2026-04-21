@@ -711,7 +711,7 @@ function renderCars() {
 })();
 
 /* ── Config ── */
-const SHOP_MAP   = { lat:13.5282, lng:100.2749, name:'รถเช่ามหาชัย' };
+const SHOP_MAP   = { lat: 13.577892, lng: 100.295456 };
 const MAP_RATE   = 20;
 const MAP_BASE   = 200;
 
