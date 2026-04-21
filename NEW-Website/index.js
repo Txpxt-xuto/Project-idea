@@ -624,3 +624,262 @@ function renderCars() {
     </div>
   `).join('');
 }
+/* ══════════════════════════════════════════════════════════
+   MAP MODAL  —  inline Leaflet + OSRM
+   ══════════════════════════════════════════════════════════ */
+
+/* inject CSS */
+(function(){
+  const s = document.createElement('style');
+  s.textContent = `
+    .btn-map-open {
+      display:inline-flex;align-items:center;gap:6px;
+      padding:8px 16px;border-radius:10px;
+      background:var(--card);border:1px solid var(--border);
+      color:var(--text);font-family:'Mitr',sans-serif;font-size:13px;
+      font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap;
+    }
+    .btn-map-open:hover{border-color:var(--accent);color:var(--accent);background:rgba(232,197,71,0.06);}
+
+    .map-modal-box {
+      background:var(--card);border:1px solid var(--border);
+      border-radius:20px;width:100%;max-width:820px;
+      max-height:90vh;display:flex;flex-direction:column;
+      overflow:hidden;position:relative;
+      box-shadow:0 24px 64px rgba(0,0,0,0.55);
+      animation:modal-fade-in 0.22s ease;
+    }
+    .map-modal-box::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+    }
+    .map-modal-header{
+      display:flex;align-items:flex-start;justify-content:space-between;
+      padding:18px 22px 14px;flex-shrink:0;
+    }
+    .map-modal-title{font-size:17px;font-weight:600;color:var(--text);}
+    .map-modal-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+    #inline-map{
+      flex:1;min-height:360px;max-height:420px;
+      border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+    }
+    .map-info-bar{
+      display:flex;gap:16px;flex-shrink:0;
+      padding:14px 22px;background:var(--surface);
+      border-bottom:1px solid var(--border);flex-wrap:wrap;
+    }
+    .map-info-col{min-width:110px;}
+    .map-info-label{font-size:10px;text-transform:uppercase;font-weight:700;
+      letter-spacing:1px;color:var(--muted);margin-bottom:4px;}
+    .map-info-value{font-size:14px;font-weight:600;color:var(--text);}
+    .map-info-value.accent{color:var(--accent);}
+    .map-info-value.accent2{color:var(--accent2);}
+    .map-spinner{
+      width:20px;height:20px;border:2px solid var(--border);
+      border-top-color:var(--accent);border-radius:50%;
+      animation:map-spin 0.7s linear infinite;
+    }
+    @keyframes map-spin{to{transform:rotate(360deg)}}
+    .map-modal-actions{display:flex;gap:10px;padding:14px 22px;flex-shrink:0;}
+    .map-btn-reset{
+      padding:10px 16px;background:transparent;
+      border:1px solid var(--border);color:var(--muted);
+      border-radius:10px;font-family:'Mitr',sans-serif;font-size:13px;
+      cursor:pointer;transition:all 0.15s;white-space:nowrap;
+    }
+    .map-btn-reset:hover{border-color:var(--accent2);color:var(--accent2);}
+    .map-btn-gmaps{
+      padding:10px 16px;background:transparent;
+      border:1px solid var(--border);color:var(--muted);
+      border-radius:10px;font-family:'Mitr',sans-serif;font-size:13px;
+      cursor:pointer;transition:all 0.15s;white-space:nowrap;
+    }
+    .map-btn-gmaps:not(:disabled):hover{border-color:var(--accent);color:var(--accent);}
+    .map-btn-gmaps:disabled{opacity:0.4;cursor:not-allowed;}
+    .leaflet-popup-content-wrapper{
+      font-family:'Mitr',sans-serif;font-size:13px;font-weight:600;border-radius:10px;
+    }
+    @media(max-width:600px){
+      .map-modal-box{border-radius:16px;}
+      #inline-map{min-height:240px;max-height:300px;}
+      .map-info-bar{gap:10px;padding:10px 14px;}
+      .map-modal-actions{flex-wrap:wrap;padding:10px 14px;}
+      .map-btn-reset,.map-btn-gmaps{flex:1;text-align:center;}
+    }
+  `;
+  document.head.appendChild(s);
+})();
+
+/* ── Config ── */
+const SHOP_MAP   = { lat:13.5282, lng:100.2749, name:'รถเช่ามหาชัย' };
+const MAP_RATE   = 20;
+const MAP_BASE   = 200;
+
+/* ── State ── */
+let _mapInited    = false;
+let _inlineMap    = null;
+let _custMarker   = null;
+let _routeLayer   = null;
+let _mapCustCoords = null;
+let _mapRouteData  = null;
+
+/* ── Open / Close ── */
+function openMapModal() {
+  document.getElementById('map-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    if (!_mapInited) initInlineMap();
+    else _inlineMap.invalidateSize();
+  }, 80);
+}
+function closeMapModal() {
+  document.getElementById('map-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleMapModalOutsideClick(e) {
+  if (e.target === document.getElementById('map-modal-overlay')) closeMapModal();
+}
+
+/* ── Init Leaflet (lazy load) ── */
+function initInlineMap() {
+  if (typeof L === 'undefined') {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(link);
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = _buildMap;
+    document.head.appendChild(script);
+  } else {
+    _buildMap();
+  }
+}
+
+function _buildMap() {
+  if (L.Icon && L.Icon.Default && L.Icon.Default.prototype._getIconUrl) {
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      iconUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    });
+  }
+
+  _inlineMap = L.map('inline-map', { zoomControl:true })
+    .setView([SHOP_MAP.lat, SHOP_MAP.lng], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19, attribution:'© OpenStreetMap'
+  }).addTo(_inlineMap);
+
+  /* Shop marker */
+  const shopIcon = L.divIcon({
+    html:`<div style="width:32px;height:32px;background:#e8c547;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(232,197,71,.45);"><span style="transform:rotate(45deg);font-size:14px;">🏠</span></div>`,
+    className:'', iconAnchor:[16,32], popupAnchor:[0,-34]
+  });
+  L.marker([SHOP_MAP.lat, SHOP_MAP.lng], { icon:shopIcon })
+    .addTo(_inlineMap)
+    .bindPopup(`<b>${SHOP_MAP.name}</b><br>จุดรับ-คืนรถ`)
+    .openPopup();
+
+  /* Customer pin icon */
+  const custIcon = L.divIcon({
+    html:`<div style="width:32px;height:32px;background:#ff6b35;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(255,107,53,.45);"><span style="transform:rotate(45deg);font-size:14px;">📌</span></div>`,
+    className:'', iconAnchor:[16,32], popupAnchor:[0,-34]
+  });
+
+  _inlineMap.on('click', function(e) {
+    const {lat,lng} = e.latlng;
+    _mapCustCoords = [lat,lng];
+    if (_custMarker) { _custMarker.setLatLng([lat,lng]); }
+    else {
+      _custMarker = L.marker([lat,lng],{icon:custIcon,draggable:true})
+        .addTo(_inlineMap).bindPopup('<b>ตำแหน่งของคุณ</b>');
+      _custMarker.on('dragend', ev => {
+        const p = ev.target.getLatLng();
+        _mapCustCoords = [p.lat, p.lng];
+        _calcMapRoute(p.lat, p.lng);
+      });
+    }
+    _custMarker.openPopup();
+    document.getElementById('mi-coord').textContent = `${lat.toFixed(4)}° N, ${lng.toFixed(4)}° E`;
+    document.getElementById('btn-open-gmaps').disabled = false;
+    _calcMapRoute(lat, lng);
+  });
+
+  _mapInited = true;
+}
+
+/* ── OSRM ── */
+async function _calcMapRoute(lat, lng) {
+  document.getElementById('mi-spinner').style.display = 'flex';
+  ['mi-dist','mi-dur','mi-fee'].forEach(id => document.getElementById(id).textContent = '...');
+  document.getElementById('btn-map-confirm').disabled = true;
+  try {
+    const url = `https://router.project-osrm.org/route/v1/driving/`+
+                `${SHOP_MAP.lng},${SHOP_MAP.lat};${lng},${lat}`+
+                `?overview=full&geometries=geojson`;
+    const res  = await fetch(url);
+    const data = await res.json();
+    if (data.code!=='Ok'||!data.routes?.length) {
+      document.getElementById('mi-dist').textContent='ไม่พบเส้นทาง'; return;
+    }
+    const route  = data.routes[0];
+    const distKm = (route.distance/1000).toFixed(1);
+    const durMin = Math.round(route.duration/60);
+    const fee    = Math.max(MAP_BASE, Math.round(distKm*MAP_RATE/10)*10);
+    const coords = route.geometry.coordinates.map(c=>[c[1],c[0]]);
+    _mapRouteData = { distance:route.distance, duration:route.duration, dist:distKm, fee };
+    if (_routeLayer) _inlineMap.removeLayer(_routeLayer);
+    _routeLayer = L.polyline(coords,{color:'#e8c547',weight:4,opacity:0.85,dashArray:'10 6'}).addTo(_inlineMap);
+    _inlineMap.fitBounds(_routeLayer.getBounds(),{padding:[36,36]});
+    document.getElementById('mi-dist').textContent = `${distKm} กม.`;
+    document.getElementById('mi-dur').textContent  = durMin>=60 ? `${Math.floor(durMin/60)}ชม. ${durMin%60}น.` : `${durMin} น.`;
+    document.getElementById('mi-fee').textContent  = `${fee.toLocaleString()} ฿`;
+    document.getElementById('btn-map-confirm').disabled = false;
+  } catch(err) {
+    console.error('[MapModal]',err);
+    document.getElementById('mi-dist').textContent='เกิดข้อผิดพลาด';
+  } finally {
+    document.getElementById('mi-spinner').style.display='none';
+  }
+}
+
+/* ── Actions ── */
+function resetInlineMap() {
+  if (_custMarker){_inlineMap.removeLayer(_custMarker);_custMarker=null;}
+  if (_routeLayer){_inlineMap.removeLayer(_routeLayer);_routeLayer=null;}
+  _mapCustCoords=null;_mapRouteData=null;
+  ['mi-coord','mi-dist','mi-dur','mi-fee'].forEach((id,i)=>
+    document.getElementById(id).textContent=i===0?'คลิกบนแผนที่':'—');
+  document.getElementById('btn-map-confirm').disabled=true;
+  document.getElementById('btn-open-gmaps').disabled=true;
+  _inlineMap.setView([SHOP_MAP.lat,SHOP_MAP.lng],11);
+}
+
+function openGmapsFromModal() {
+  if (!_mapCustCoords) return;
+  window.open(`https://www.google.com/maps/dir/${SHOP_MAP.lat},${SHOP_MAP.lng}/${_mapCustCoords[0]},${_mapCustCoords[1]}`,'_blank');
+}
+
+function confirmMapLocation() {
+  if (!_mapCustCoords||!_mapRouteData) return;
+  const [lat,lng] = _mapCustCoords;
+  const sel = document.getElementById('delivery');
+  if (sel) {
+    sel.value='custom-map';
+    sel.dataset.customLat  = lat;
+    sel.dataset.customLng  = lng;
+    sel.dataset.customDist = _mapRouteData.dist;
+    sel.dataset.customFee  = _mapRouteData.fee;
+  }
+  const box = document.getElementById('map-result-box');
+  if (box) {
+    box.style.display='block';
+    document.getElementById('map-result-label').textContent=`${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`;
+    document.getElementById('map-result-dist').textContent=_mapRouteData.dist;
+    document.getElementById('map-result-fee').textContent=parseInt(_mapRouteData.fee).toLocaleString();
+  }
+  closeMapModal();
+  alert(`บันทึกตำแหน่งแล้ว\n🛣️ ระยะทาง: ${_mapRouteData.dist} กม.\n💰 ค่าบริการส่งโดยประมาณ: ${parseInt(_mapRouteData.fee).toLocaleString()} ฿`);
+}
