@@ -66,8 +66,9 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
-  width: 205%;
+  width: 100%;
   transition: 0.2s;
+  grid-column: span 2;
 }
 
 
@@ -254,6 +255,17 @@ h1 {
   .grid { grid-template-columns: 1fr; gap: 12px; }
   .cardcontect { width: 100%; }
   .card, .cardcontect { padding: 18px; }
+
+
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+
+  
   .title { font-size: 15px; }
   .icon { font-size: 22px; }
 
