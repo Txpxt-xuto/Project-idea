@@ -137,7 +137,12 @@
         &nbsp; &nbsp; <span id="display-days">—</span>
       </div>
     </div>
-    <div style="font-size:14px;color:var(--muted);" id="result-count">กำลังโหลด...</div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button class="btn-map-open" onclick="openMapModal()" title="ดูตำแหน่งร้านบนแผนที่">
+        🗺️ ดูแผนที่ &amp; คำนวณระยะทาง
+      </button>
+      <div style="font-size:14px;color:var(--muted);" id="result-count">กำลังโหลด...</div>
+    </div>
   </div>
 
   <div class="cars-layout">
@@ -438,6 +443,7 @@
           <option value="SKN-ThaChalom">สมุทรสาคร—ท่าฉลอม</option>
           <option value="SKN-Banphaeo">สมุทรสาคร—บ้านแพ้ว</option>
           <option value="SKN-KrathumBaen">สมุทรสาคร—กระทุ่มแบน</option>
+          <option value="custom-map" onclick="openDeliveryMap()">📍 ปักหมุดตำแหน่งของฉันบนแผนที่</option>
         </select>
       </div>
     </div>
@@ -449,5 +455,58 @@
 <script src="api.js"></script>
 <script src="index.js"></script>
 <script src="nav.js"></script>
+
+<!-- ===== MAP MODAL ===== -->
+<div id="map-modal-overlay" class="modal-overlay" onclick="handleMapModalOutsideClick(event)">
+  <div class="map-modal-box">
+
+    <!-- Header -->
+    <div class="map-modal-header">
+      <div>
+        <div class="map-modal-title">🗺️ แผนที่ &amp; ระยะทางจากร้าน</div>
+        <div class="map-modal-sub">คลิกบนแผนที่เพื่อคำนวณระยะทางจากร้านของเรา</div>
+      </div>
+      <button class="modal-close" onclick="closeMapModal()">✕</button>
+    </div>
+
+    <!-- Map -->
+    <div id="inline-map"></div>
+
+    <!-- Info bar -->
+    <div class="map-info-bar">
+      <div class="map-info-col">
+        <div class="map-info-label">📍 พิกัดที่เลือก</div>
+        <div class="map-info-value" id="mi-coord">คลิกบนแผนที่</div>
+      </div>
+      <div class="map-info-col">
+        <div class="map-info-label">🛣️ ระยะทางบนถนน</div>
+        <div class="map-info-value accent" id="mi-dist">—</div>
+      </div>
+      <div class="map-info-col">
+        <div class="map-info-label">⏱️ เวลาเดินทาง</div>
+        <div class="map-info-value" id="mi-dur">—</div>
+      </div>
+      <div class="map-info-col">
+        <div class="map-info-label">💰 ค่าบริการส่ง</div>
+        <div class="map-info-value accent2" id="mi-fee">—</div>
+      </div>
+      <div id="mi-spinner" style="display:none;align-self:center;">
+        <div class="map-spinner"></div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="map-modal-actions">
+      <button class="map-btn-reset" onclick="resetInlineMap()">↺ ล้างหมุด</button>
+      <button class="map-btn-gmaps" id="btn-open-gmaps" disabled onclick="openGmapsFromModal()">
+        ↗ เปิด Google Maps
+      </button>
+      <button class="btn-primary" id="btn-map-confirm" style="flex:1;padding:12px;" disabled onclick="confirmMapLocation()">
+        ✔ ใช้ตำแหน่งนี้
+      </button>
+    </div>
+
+  </div>
+</div>
 </body>
 </html>
