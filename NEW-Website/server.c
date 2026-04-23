@@ -533,17 +533,6 @@ static void handleCancel(int sock, const char *body){
     }
 }
 
-/* POST /mybookings
-    Body: { "firstName":"สมชาย", "lastName":"ใจดี" }
-    Response:
-    {
-        "ok": true,
-        "bookings": [
-        { "car":"Toyota Vios White", "startDate":"2026-04-15",
-        "endDate":"2026-04-17", "delivery":"NO", "recordDate":"2026-04-10" }
-        ]
-    }
-*/
 void handleMyBookings(int client, const char *jsonBody) {
     /* ── parse ชื่อ-นามสกุลจาก JSON ด้วย getJsonStr ที่รองรับ UTF-8 ── */
     char reqF[256]="", reqL[256]="";
