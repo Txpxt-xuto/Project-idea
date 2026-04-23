@@ -1,30 +1,3 @@
-/*
- * ============================================================
- *  RODCHAOMAHACHAI  —  Car Rental HTTP Backend
- *  Compile:  gcc server.c -o server
- *  Run:      ./server
- *  Port:     8080
- *
- *  Endpoints (JSON over HTTP):
- *    GET  /availability?start=YYYY-MM-DD&end=YYYY-MM-DD
- *         -> ส่งรายการรถที่ว่าง / ไม่ว่าง ในช่วงวันนั้น
- *
- *    POST /book
- *         body: JSON { carId, startDate, endDate,
- *                      firstName, lastName, phone, email, delivery }
- *         -> จองรถ บันทึก CUSTOMER.csv + CAR.csv
- *         -> ตอบ { ok, refCode }
- *
- *    POST /cancel
- *         body: JSON { firstName, lastName }
- *         -> ยกเลิกการจอง
- *         -> ตอบ { ok, message }
- *
- *    GET  /status
- *         -> ตอบ { ok: true }  (health check)
- * ============================================================
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
