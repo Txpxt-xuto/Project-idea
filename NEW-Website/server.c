@@ -728,7 +728,7 @@ static void handleAllBookings(int sock, const char *url) {
             for(int k=0;qCar[k]&&k<63;k++)   qLower[k]   = (char)tolower((unsigned char)qCar[k]);
             if(!strstr(carLower,qLower)) continue;
         }
-        
+
         if(qFrom[0] && startDate[0] && strcmp(startDate, qFrom) < 0) continue;
         if(qTo[0]   && startDate[0] && strcmp(startDate, qTo)   > 0) continue;
         if(qStatus[0] && strcmp(rowStatus, qStatus)!=0) continue;
@@ -738,7 +738,6 @@ static void handleAllBookings(int sock, const char *url) {
         char carEsc[256]=""; int ei=0;
         for(int k=0;car[k]&&ei<254;k++){ if(car[k]=='"') carEsc[ei++]='\\'; carEsc[ei++]=car[k]; }
 
-        /* accumulate revenue */
         total_revenue += atoi(totalStr);
 
         pos += snprintf(resbuf+pos, 1024*1024-pos,
