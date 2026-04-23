@@ -164,11 +164,6 @@ static void cancelCar(int carIdx, int startDay, int endDay){
 }
 
 /* ─── append to CUSTOMER.csv ──────────────────────────────── */
-/* CSV columns (ตรงกับ header):
-    รถยนต์,ชื่อ,นามสกุล,เบอร์โทร,อีเมล,เลขประจำตัวประชาชน,
-    วันเริ่มต้นการเช่า,วันสิ้นสุดการเช่า,สถานที่,วันที่บันทึก,
-    วิธีการชำระ,ชื่อบนบัตรหรือชื่อบัญชี,หมายเลขบัตรหรือรหัสอ้างอิง,
-    เวลาหรือ cvv,วันเดือนปีหรือวันหมดอายุ,จำนวนเงิน            */
 static void saveCustomer(
         const char *carModel,
         const char *fname,    const char *lname,
