@@ -689,12 +689,7 @@ static void handleAllBookings(int sock, const char *url) {
     struct tm *nowtm = localtime(&nowt);
     char todayStr[20];
     strftime(todayStr, sizeof(todayStr), "%Y-%m-%d", nowtm);
-
-    /* ── compute status for a row ── */
-    /* returns: "upcoming" "active" "past" */
-    /* We compare strings lexicographically (YYYY-MM-DD sorts correctly) */
-
-    /* ── build JSON — iterate REVERSE order (newest first) ── */
+    
     char *resbuf = (char*)malloc(1024*1024); /* 1MB */
     if(!resbuf){ free(rows); sendResponse(sock,500,"{\"ok\":false,\"error\":\"OOM\"}"); return; }
 
