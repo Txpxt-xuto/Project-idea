@@ -689,7 +689,7 @@ static void handleAllBookings(int sock, const char *url) {
     struct tm *nowtm = localtime(&nowt);
     char todayStr[20];
     strftime(todayStr, sizeof(todayStr), "%Y-%m-%d", nowtm);
-    
+
     char *resbuf = (char*)malloc(1024*1024); /* 1MB */
     if(!resbuf){ free(rows); sendResponse(sock,500,"{\"ok\":false,\"error\":\"OOM\"}"); return; }
 
@@ -728,17 +728,13 @@ static void handleAllBookings(int sock, const char *url) {
             for(int k=0;qCar[k]&&k<63;k++)   qLower[k]   = (char)tolower((unsigned char)qCar[k]);
             if(!strstr(carLower,qLower)) continue;
         }
-        /* date range filter on startDate */
+        
         if(qFrom[0] && startDate[0] && strcmp(startDate, qFrom) < 0) continue;
         if(qTo[0]   && startDate[0] && strcmp(startDate, qTo)   > 0) continue;
-        /* status filter */
         if(qStatus[0] && strcmp(rowStatus, qStatus)!=0) continue;
-        /* payment method filter */
         if(qMethod[0] && strcmp(payMethod, qMethod)!=0) continue;
-        /* location filter (substring) */
         if(qLoc[0] && !strstr(location, qLoc)) continue;
 
-        /* ── escape fields for JSON ── */
         char carEsc[256]=""; int ei=0;
         for(int k=0;car[k]&&ei<254;k++){ if(car[k]=='"') carEsc[ei++]='\\'; carEsc[ei++]=car[k]; }
 
