@@ -386,19 +386,6 @@ static void dayIndexToDate(int dayIdx, char *out){
                         Handlers
    ══════════════════════════════════════════════════════════════ */
 
-/*  GET /availability?start=YYYY-MM-DD&end=YYYY-MM-DD
-    Response:
-    {
-        "ok": true,
-        "startDay": 10,
-        "endDay":   12,
-        "cars": [
-        { "number":1, "id":990, "model":"Toyota Altis Grey",
-            "available": true },
-        ...
-        ]
-    }
-*/
 static void handleAvailability(int sock, const char *url){
     char startStr[20]="", endStr[20]="";
     getParam(url,"start",startStr,20);
