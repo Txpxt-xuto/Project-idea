@@ -40,7 +40,7 @@ window.onload = function() {
   if (deliverySelect) {
     deliverySelect.addEventListener('change', function() {
       if (this.value === 'custom-map') {
-        openDeliveryMap();
+        openDeliveryMap('main');   /* บอกว่าเปิดจากหน้าหลัก */
       } else {
         /* ซ่อน result box ถ้าเปลี่ยนไปตัวเลือกอื่น */
         document.getElementById('map-result-box').style.display = 'none';
@@ -48,13 +48,22 @@ window.onload = function() {
     });
   }
 
+  /* ── modal-delivery select: เปิด delivery-map.html เหมือนกัน แต่ส่ง source=modal ── */
+  const modalDeliverySelect = document.getElementById('modal-delivery');
+  if (modalDeliverySelect) {
+    modalDeliverySelect.addEventListener('change', function() {
+      if (this.value === 'custom-map') openDeliveryMap('modal');
+    });
+  }
+
   /* ── รับ postMessage จาก delivery-map.html ── */
   window.addEventListener('message', function(e) {
     if (!e.data || e.data.type !== 'DELIVERY_LOCATION') return;
-    const { lat, lng, dist, fee, label } = e.data;
+    const { lat, lng, dist, fee, source } = e.data;
 
-    /* เก็บพิกัดไว้ใน dataset ของ select */
-    const sel = document.getElementById('delivery');
+    /* เลือก select ที่ถูกต้องตาม source */
+    const selId = source === 'modal' ? 'modal-delivery' : 'delivery';
+    const sel = document.getElementById(selId);
     if (sel) {
       sel.value = 'custom-map';
       sel.dataset.customLat  = lat;
@@ -63,26 +72,28 @@ window.onload = function() {
       sel.dataset.customFee  = fee;
     }
 
-    /* แสดง result box */
-    const box = document.getElementById('map-result-box');
-    if (box) {
-      box.style.display = 'block';
-      document.getElementById('map-result-label').textContent =
-        `${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`;
-      document.getElementById('map-result-dist').textContent = dist;
-      document.getElementById('map-result-fee').textContent  = parseInt(fee).toLocaleString();
+    /* แสดง result-box เฉพาะเมื่อเปิดจากหน้าหลัก */
+    if (source !== 'modal') {
+      const box = document.getElementById('map-result-box');
+      if (box) {
+        box.style.display = 'block';
+        document.getElementById('map-result-label').textContent =
+          `${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`;
+        document.getElementById('map-result-dist').textContent = dist;
+        document.getElementById('map-result-fee').textContent  = parseInt(fee).toLocaleString();
+      }
     }
   });
 };
 
 /* เปิด delivery map ใน popup window */
-function openDeliveryMap() {
+function openDeliveryMap(source = 'main') {
   const w = Math.min(560, window.screen.width);
   const h = Math.min(680, window.screen.height);
   const left = (window.screen.width  - w) / 2;
   const top  = (window.screen.height - h) / 2;
   window.open(
-    'delivery-map.html',
+    `delivery-map.html?source=${source}`,
     'DeliveryMap',
     `width=${w},height=${h},left=${left},top=${top},` +
     'resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no'
