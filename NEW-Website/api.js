@@ -161,7 +161,7 @@ async function confirmPaymentToServer() {
     const lat = deliverySel?.dataset.customLat;
     const lng = deliverySel?.dataset.customLng;
     if (lat && lng) {
-      deliveryValue = `GPS:${parseFloat(lat).toFixed(5)},${parseFloat(lng).toFixed(5)}`;
+      deliveryValue = `Latitude:${parseFloat(lat).toFixed(5)}Longitude:${parseFloat(lng).toFixed(5)}`;
     } else {
       alert('กรุณาปักหมุดตำแหน่งของคุณบนแผนที่ก่อน');
       if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
