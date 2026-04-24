@@ -335,6 +335,7 @@ async function calcRoute(lat,lng){
     if(routeLayer) map.removeLayer(routeLayer);
     //routeLayer = L.polyline(coords,{color:'#3b82f6',weight:5,opacity:0.8}).addTo(map);        ผมคอมเม้นท์ไว้ เพื่อใม่ให้แสดง path บน map
     //map.fitBounds(routeLayer.getBounds(),{padding:[40,40]});        ผมคอมเม้นท์ไว้ เพื่อใม่ให้ map เกิดการ zoom ตาม
+    map.setView([lat, lng], 16);
 
     document.getElementById('dist-val').textContent = distKm;
     document.getElementById('dur-val').textContent  =
@@ -377,14 +378,9 @@ function confirmLocation(){
   if(!custCoords||!routeData) return;
   const [lat,lng] = custCoords;
   const fee = Math.max(BASE_FEE, Math.round(routeData.dist * RATE_PER_KM / 10)*10);
-
-  /* อ่าน source จาก URL query string (?source=modal หรือ ?source=main) */
-  const source = new URLSearchParams(window.location.search).get('source') || 'main';
-
   const result = {
     type:'DELIVERY_LOCATION', lat, lng,
     dist:routeData.dist, fee,
-    source,                      /* ส่งกลับไปให้ index.js รู้ว่าใครเปิด */
     label:`${parseFloat(lat).toFixed(5)}, ${parseFloat(lng).toFixed(5)}`
   };
   if(window.opener){ window.opener.postMessage(result,'*'); window.close(); }
