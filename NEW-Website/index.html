@@ -138,6 +138,9 @@
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
+      <button class="btn-map-open" onclick="openMapModal()" title="ดูตำแหน่งร้านบนแผนที่">
+        🗺️ ดูแผนที่ &amp; คำนวณระยะทาง
+      </button>
       <div style="font-size:14px;color:var(--muted);" id="result-count">กำลังโหลด...</div>
     </div>
   </div>
@@ -386,6 +389,7 @@
     <div class="success-icon">✔</div>
     <h2>จองสำเร็จ!</h2>
     <p>ขอบคุณที่ใช้บริการ RODCHAOMAHACHAI<br>เราจะส่งรายละเอียดการจองไปยังอีเมลของคุณ</p>
+ 
     <!-- ข้อมูลรถที่จอง -->
     <div class="success-car-info" id="success-car-info" style="display:none;">
       <img id="success-car-img" src="" alt="" class="success-car-img">
@@ -394,12 +398,12 @@
         <div id="success-car-dates" class="success-car-dates"></div>
       </div>
     </div>
-
+ 
     <div class="booking-ref">
       <div class="ref-label">หมายเลขการจอง — กรุณาจดไว้ก่อนปิดหน้านี้</div>
       <div class="ref-num" id="booking-ref-num">RM-000000</div>
     </div>
-
+ 
     <button class="btn-home" onclick="goBackHome()">กลับสู่หน้าหลัก</button>
   </div>
 </div>
@@ -409,6 +413,7 @@
   <div class="modal-box">
     <button class="modal-close" onclick="closeDateModal()">✕</button>
     <div class="modal-car-preview" id="modal-car-preview">
+      <span id="modal-car-emoji" style="font-size:48px;">🚗</span>
       <div>
         <div id="modal-car-name" style="font-size:18px;font-weight:600;color:var(--text);"></div>
         <div id="modal-car-type" style="font-size:13px;color:var(--muted);"></div>
