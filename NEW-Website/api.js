@@ -153,7 +153,21 @@ async function confirmPaymentToServer() {
   if (!selectedCar) { alert('เกิดข้อผิดพลาด: ไม่ได้เลือกรถ'); return; }
 
   /* ── 2. ที่อยู่รับรถ ── */
-  const deliveryValue = document.getElementById('delivery')?.value || '';
+  const deliverySel   = document.getElementById('delivery');
+  let   deliveryValue = deliverySel?.value || '';
+
+  /* ถ้าลูกค้าเลือกปักหมุด ให้ใช้พิกัดจริงแทน string "custom-map" */
+  if (deliveryValue === 'custom-map') {
+    const lat = deliverySel?.dataset.customLat;
+    const lng = deliverySel?.dataset.customLng;
+    if (lat && lng) {
+      deliveryValue = `GPS:${parseFloat(lat).toFixed(5)},${parseFloat(lng).toFixed(5)}`;
+    } else {
+      alert('กรุณาปักหมุดตำแหน่งของคุณบนแผนที่ก่อน');
+      if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
+      return;
+    }
+  }
 
   /* ── 3. วิธีชำระเงิน — อ่านตาม section ที่ active ── */
   const activeMethod = document.querySelector('.pay-method.selected');
