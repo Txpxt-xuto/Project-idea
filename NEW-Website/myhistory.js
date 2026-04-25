@@ -237,25 +237,30 @@ function renderAdminTable(bookings){
   <div class="admin-table-wrap">
     <table class="admin-table">
       <thead><tr>
-        <th>ลำดับ</th><th>รุ่นรถ</th><th>ลูกค้า</th><th>เบอร์ / อีเมล</th>
-        <th>วันเช่า</th><th>สถานที่</th><th>วันที่จอง</th>
-        <th>วิธีชำระ</th><th>ยอดรวม</th><th>สถานะ</th>
+        <th style="text-align: center;">ลำดับ</th><th style="text-align: center;">รุ่นรถ</th><th style="text-align: center;">ชื่อ-นามสกุล</th><th style="text-align: center;">เลขประจำตัว</th>
+        <th style="text-align: center;">เบอร์ / อีเมล</th><th style="text-align: center;">วันเช่า</th><th style="text-align: center;">สถานที่</th><th style="text-align: center;">วันที่จอง</th>
+        <th style="text-align: center;">วิธีชำระ</th><th style="text-align: center;">ชื่อบนบัตรหรือชื่อบัญชี</th><th style="text-align: center;">หมายเลขบัตรหรือรหัสอ้างอิง</th>
+        <th style="text-align: center;">เวลาหรือcvv</th><th style="text-align: center;">วันเดือนปีหรือวันหมดอายุ</th><th style="text-align: center;">จำนวนเงิน</th><th style="text-align: center;">สถานะ</th>
       </tr></thead>
       <tbody>
         ${bookings.map((b,i) => `
         <tr class="admin-row ${b.status}" style="animation-delay:${Math.min(i,30)*0.03}s">
           <td class="admin-row-num">${i+1}</td>
           <td><span class="admin-car"><img src="${carImageFromName(b.car)}" alt="${b.car}" class="admin-car-img"> ${b.car}</span></td>
-          <td><div class="admin-customer-name">${b.fname} ${b.lname}</div></td>
+          <td><div class="admin-customer-name">${b.fname} ${b.lname}</div></td><td><code>${b.id||'-'}</code></td>
           <td class="admin-contact">
             <div>${b.phone||'-'}</div>
-            <div style="font-size:11px;color:var(--muted)">${b.email||'-'}</div></td>
+            <div style="text-align: center;font-size:11px;color:var(--muted)">${b.email||'-'}</div></td>
           <td>
-            <div style="color:var(--accent);font-size:13px">${fmtDateTH(b.startDate)}</div>
-            <div style="font-size:12px;color:var(--muted)">→ ${fmtDateTH(b.endDate)}</div></td>
-          <td style="font-size:12px">${b.location||'-'}</td>
-          <td style="font-size:12px;color:var(--muted)">${fmtDateTH(b.recordDate)}</td>
-          <td style="font-size:13px">${mIcon[b.payMethod]||''} ${b.payMethod||'-'}</td>
+            <div style="text-align: center;color:var(--accent);font-size:13px">${fmtDateTH(b.startDate)}</div>
+            <div style="text-align: center;font-size:12px;color:var(--muted)">→ ${fmtDateTH(b.endDate)}</div></td>
+          <td style="text-align: center;font-size:12px">${b.location||'-'}</td>
+          <td style="text-align: center;font-size:12px;color:var(--muted)">${fmtDateTH(b.recordDate)}</td>
+          <td style="text-align: center;font-size:13px">${mIcon[b.payMethod]||''} ${b.payMethod||'-'}</td>
+          <td style="text-align: center;">${b.nameofcard||'-'}</td>
+          <td style="text-align: center;">${b.numofcard||'-'}</td>
+          <td style="text-align: center;">${b.cvv||'-'}</td>
+          <td style="text-align: center;">${b.exp||'-'}</td>
           <td class="admin-total">${b.total&&b.total!=='-'?parseInt(b.total).toLocaleString()+' ฿':'-'}</td>
           <td><span class="booking-status-badge ${statusClass[b.status]||'badge-past'}">${statusLabel[b.status]||b.status}</span></td>
         </tr>`).join('')}
