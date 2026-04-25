@@ -60,7 +60,7 @@ function bookingStatus(startDate, endDate){
 async function lookupBookings(){
   const fname = document.getElementById('mb-fname').value.trim();
   const lname = document.getElementById('mb-lname').value.trim();
-  if(!fname||!lname){ alert('กรุณากรอกชื่อและนามสกุล'); return; }
+  if(!fname||!lname){ toast('กรุณากรอกชื่อและนามสกุล', 'warning'); return; }
 
   _mbFname = fname; _mbLname = lname;
 
@@ -376,5 +376,5 @@ async function confirmCancelBooking(){
   btn.disabled=false; btn.textContent='✔ ยืนยันยกเลิกการจอง';
   closeCancelModal();
   if(result.ok){ if(_isAdmin) await loadAdminDashboard(); else await lookupBookings(); }
-  else alert('เกิดข้อผิดพลาด: '+(result.error||'unknown'));
+  else toast('เกิดข้อผิดพลาด: '+(result.error||'unknown'), 'error');
 }
