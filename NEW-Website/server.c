@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <curl/curl.h>
 
 #ifdef _WIN32
   #include <winsock2.h>
@@ -23,6 +24,80 @@
 #define MAX_DAYS    370
 #define CAR_FILE    "CAR.csv"
 #define CUST_FILE   "CUSTOMER.csv"
+
+/* ─── send-mail ─────────────────────────────────────────────── */
+struct upload_status {
+    int lines_read;
+};
+
+static size_t payload_source(void *ptr, size_t size, size_t nmemb, void *userp) {
+    struct upload_status *upload_ctx = (struct upload_status *)userp;
+    const char **payload_text = (const char **)ptr;
+
+    return 0; 
+}
+
+
+void send_confirmation_email(const char* to_email, const char* refCode, const char* fname, const char* lname, const char* car, const char* start, const char* end, const char* total) {
+    CURL *curl;
+    CURLcode res = CURLE_OK;
+    struct curl_slist *recipients = NULL;
+
+    curl = curl_easy_init();
+    if(curl) {
+        // 1. ตั้งค่าบัญชีผู้ส่ง (แนะนำ Gmail SMTP)
+        curl_easy_setopt(curl, CURLOPT_URL, "smtp://smtp.gmail.com:587");
+        curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
+        curl_easy_setopt(curl, CURLOPT_USERNAME, "tapatauto9898@gmail.com"); // เมลนาย
+        curl_easy_setopt(curl, CURLOPT_PASSWORD, "uqub ngtj puvi ycjv");    // App Password 16 หลัก
+
+        // 2. ตั้งค่าผู้รับและผู้ส่ง
+        curl_easy_setopt(curl, CURLOPT_MAIL_FROM, "<tapatauto9898@gmail.com>");
+        recipients = curl_slist_append(recipients, to_email);
+        curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+
+        // 3. สร้างเนื้อหา HTML โดยใช้ Format ของ RODCHAOMAHACHAI
+        char full_payload[9000];
+        snprintf(full_payload, sizeof(full_payload),
+            "To: %s\r\n"
+            "From: RODCHAOMAHACHAI <tapatauto9898@gmail.com>\r\n"
+            "Subject: ยืนยันการจองรถหมายเลข #%s\r\n"
+            "Content-Type: text/html; charset=\"UTF-8\"\r\n"
+            "\r\n" // บรรทัดว่างคั่นระหว่าง Header กับ Body
+            "<html><body style='margin:0;padding:0;font-family:sans-serif;background-color:#0a0a0f;color:#f0f0f0;'>"
+            "  <div style='background-color:#13131a;max-width:600px;margin:20px auto;border-radius:16px;border:1px solid rgba(232,197,71,0.2);overflow:hidden;'>"
+            "    <div style='padding:40px;text-align:center;background:#1a1a25;'>"
+            "      <h1 style='color:#e8c547;margin:0;'>BOOKING SUCCESS!</h1>"
+            "      <p style='color:#888;'>ขอบคุณที่ไว้วางใจ รถเช่ามหาชัย</p>"
+            "    </div>"
+            "    <div style='padding:30px;'>"
+            "      <div style='background:#1a1a25;padding:20px;border-radius:12px;border-left:4px solid #e8c547;margin-bottom:20px;'>"
+            "        <span style='color:#888;font-size:12px;'>รหัสการจอง:</span>"
+            "        <h2 style='color:#e8c547;margin:5px 0;'>#%s</h2>"
+            "      </div>"
+            "      <p><b>ชื่อลูกค้า:</b> %s %s</p>"
+            "      <p><b>รถยนต์:</b> %s</p>"
+            "      <p><b>ระยะเวลา:</b> %s ถึง %s</p>"
+            "      <hr style='border:0;border-top:1px solid rgba(255,255,255,0.1);margin:20px 0;'>"
+            "      <h3 style='color:#ff6b35;'>ยอดชำระสุทธิ: %s บาท</h3>"
+            "    </div>"
+            "  </div>"
+            "</body></html>\r\n",
+            to_email, refCode, refCode, fname, lname, car, start, end, total);
+
+        // 4. ส่งข้อมูล
+        curl_easy_setopt(curl, CURLOPT_READDATA, full_payload);
+        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+
+        res = curl_easy_perform(curl);
+
+        if(res != CURLE_OK)
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+
+        curl_slist_free_all(recipients);
+        curl_easy_cleanup(curl);
+    }
+}
 
 /* ─── car struct ──────────────────────────────────────────── */
 typedef struct {
@@ -496,6 +571,19 @@ static void handleBook(int sock, const char *body){
 
     /* บันทึก customer พร้อม fields ใหม่ทั้งหมด */
     saveCustomer(cars[carIdx].model, fname, lname, phone, email, idCard, startDate, endDate, location, payMethod, cardName, cardNumber, timeOrCvv, expiry, total);
+
+    printf("[MAIL] กำลังส่งเมลยืนยันไปที่: %s\n", email);
+    send_confirmation_email(
+        email,      // อีเมลผู้รับ
+        refCode,    // หมายเลขการจอง
+        firstName, 
+        lastName, 
+        carName,    // ชื่อรถ
+        start,      // วันเริ่ม
+        end,        // วันจบ
+        totalCost   // ราคาสรุป
+    );
+    sendResponse(client, 200, "{\"ok\":true}");
 
     int numDays=(e-s)+1;
     if(numDays<1) numDays=1;
