@@ -31,7 +31,7 @@ window.onload = function() {
     const href = anchor.getAttribute('href');
     if (href && href !== '#' && !href.startsWith('javascript')) {
       e.preventDefault();
-      alert('กรุณาจดหมายเลขการจองไว้ก่อน\nแล้วกดปุ่ม "กลับสู่หน้าหลัก" เพื่อออกจากหน้านี้');
+      toast('กรุณาจดหมายเลขการจองไว้ก่อน แล้วกดปุ่ม "กลับสู่หน้าหลัก" เพื่อออกจากหน้านี้', 'warning', 6000);
     }
   }, true);
 
@@ -182,7 +182,7 @@ function selectCar(id) {
 function goToPayment() {
   // 1. Check: ถ้ายังไม่ได้เลือกรถ ให้หยุดทำงานทันที (ป้องกัน Error)
   if (!selectedCar) {
-    alert("กรุณาเลือกรถก่อนดำเนินการครับ");
+    toast("กรุณาเลือกรถก่อนดำเนินการครับ", "warning");
     return;
   }
 
@@ -304,8 +304,8 @@ function confirmDateModal() {
   const e = document.getElementById('modal-end').value;
   const delivery = document.getElementById('modal-delivery').value;
 
-  if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
-  if (new Date(e) < new Date(s)) { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
+  if (!s || !e) { toast('กรุณาเลือกวันที่รับและคืนรถ', 'warning'); return; }
+  if (new Date(e) < new Date(s)) { toast('วันคืนรถต้องเป็นวันหลังจากการรับรถ', 'warning'); return; }
   
   startDate = s; 
   endDate = e;
