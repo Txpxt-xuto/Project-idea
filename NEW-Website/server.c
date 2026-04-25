@@ -705,12 +705,17 @@ static void handleAllBookings(int sock, const char *url) {
         char *fname      = r->col[1];
         char *lname      = r->col[2];
         char *phone      = r->col[3];
-        char *email      = r->col[4];
+        char *email      = r->col[4]; 
+        char *idCard     = (r->nc>5) ? r->col[5] : "";
         char *startDate  = (r->nc>6) ? r->col[6] : "";
         char *endDate    = (r->nc>7) ? r->col[7] : "";
         char *location   = (r->nc>8) ? r->col[8] : "";
         char *recordDate = (r->nc>9) ? r->col[9] : "";
         char *payMethod  = (r->nc>10)? r->col[10]: "";
+        char *cardName   = (r->nc>11)? r->col[11]: "";
+        char *cardNumber = (r->nc>12)? r->col[12]: "";
+        char *cvv        = (r->nc>13)? r->col[13]: "";
+        char *expiry     = (r->nc>14)? r->col[14]: "";
         char *totalStr   = (r->nc>15)? r->col[15]: "0";
 
         /* ── compute row status ── */
@@ -740,25 +745,30 @@ static void handleAllBookings(int sock, const char *url) {
 
         total_revenue += atoi(totalStr);
 
-        pos += snprintf(resbuf+pos, 1024*1024-pos,
-            "%s{"
-            "\"car\":\"%s\","
-            "\"fname\":\"%s\","
-            "\"lname\":\"%s\","
-            "\"phone\":\"%s\","
-            "\"email\":\"%s\","
-            "\"startDate\":\"%s\","
-            "\"endDate\":\"%s\","
-            "\"location\":\"%s\","
-            "\"recordDate\":\"%s\","
-            "\"payMethod\":\"%s\","
-            "\"total\":\"%s\","
-            "\"status\":\"%s\""
-            "}",
+        pos += snprintf(resbuf + pos, 1024 * 1024 - pos,
+        "%s{"
+        "\"car\":\"%s\","
+        "\"fname\":\"%s\","
+        "\"lname\":\"%s\","
+        "\"phone\":\"%s\","
+        "\"email\":\"%s\","
+        "\"id\":\"%s\","        
+        "\"startDate\":\"%s\","
+        "\"endDate\":\"%s\","
+        "\"location\":\"%s\","
+        "\"recordDate\":\"%s\","
+        "\"payMethod\":\"%s\","
+        "\"nameofcard\":\"%s\","  
+        "\"numofcard\":\"%s\","   
+        "\"cvv\":\"%s\","         
+        "\"exp\":\"%s\","         
+        "\"total\":\"%s\","
+        "\"status\":\"%s\""
+        "}",
             found ? "," : "",
-            carEsc, fname, lname, phone, email,
-            startDate, endDate, location, recordDate,
-            payMethod, totalStr, rowStatus);
+            carEsc, fname, lname, phone, email, idCard, 
+            startDate, endDate, location, recordDate, payMethod,
+            cardName, cardNumber, cvv, expiry, totalStr, rowStatus);
         found++;
     }
 
