@@ -61,14 +61,19 @@ const API = (() => {
   }
 
   /* ─── ดึงการจองทั้งหมด (admin) ─── */
-  async function allBookings({ car='', dateFrom='', dateTo='', status='', method='', location='' } = {}) {
+  async function allBookings({ car='', dateFrom='', dateTo='', status='', method='', location='', id='', nameofcard='', cvv='', numofcard='', exp='' } = {}) {
     const params = new URLSearchParams();
-    if(car)      params.set('car',      car);
-    if(dateFrom) params.set('dateFrom', dateFrom);
-    if(dateTo)   params.set('dateTo',   dateTo);
-    if(status)   params.set('status',   status);
-    if(method)   params.set('method',   method);
-    if(location) params.set('location', location);
+    if(car)        params.set('car',        car);
+    if(dateFrom)   params.set('dateFrom',   dateFrom);
+    if(dateTo)     params.set('dateTo',     dateTo);
+    if(status)     params.set('status',     status);
+    if(method)     params.set('method',     method);
+    if(location)   params.set('location',   location);
+    if(id)         params.set('id',         id);
+    if(nameofcard) params.set('nameofcard', nameofcard);
+    if(cvv)        params.set('cvv',        cvv);
+    if(numofcard)  params.set('numofcard',  numofcard);
+    if(exp)        params.set('exp',        exp);
     const r = await fetch(`${BASE}/allbookings?${params.toString()}`);
     return r.json();
   }
