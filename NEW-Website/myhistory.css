@@ -307,25 +307,37 @@ input::-webkit-calendar-picker-indicator {
 }
  
 /* ===== ADMIN TABLE ===== */
+.container {
+    max-width: 1400px; /* เพิ่มจากเดิม (เช่น 1000px) เป็น 1400px หรือ 95% */
+    margin: 0 auto;
+    padding: 0 20px;
+}
 .admin-table-wrap {
-  overflow-x: auto;
-  border-radius: 16px;
-  border: 1px solid var(--border);
+    width: 100%;
+    overflow-x: auto; /* เปิดการเลื่อนแนวนอน */
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-top: 20px;
 }
 .admin-table {
-  width: 100%; border-collapse: collapse;
-  font-size: 13px;
-  background: var(--card);
+    width: 100%;
+    min-width: 1200px; /* บังคับความกว้างขั้นต่ำเพื่อให้ข้อมูลไม่เบียดกัน */
+    border-collapse: collapse;
+    font-size: 13px; /* ลดขนาดฟอนต์ลงเล็กน้อยเพื่อให้ใส่ข้อมูลได้ครบ */
 }
 .admin-table thead tr {
   background: rgba(232,197,71,0.06);
   border-bottom: 2px solid var(--border);
 }
 .admin-table th {
-  padding: 12px 14px; text-align: left;
-  font-size: 11px; font-weight: 500;
-  letter-spacing: 1.2px; text-transform: uppercase;
-  color: var(--muted); white-space: nowrap;
+    background: rgba(232, 197, 71, 0.05);
+    color: var(--accent);
+    text-align: left;
+    font-weight: 500;
+    padding: 14px 10px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap; /* ห้ามตัดบรรทัดหัวตาราง */
 }
 .admin-row {
   border-bottom: 1px solid var(--border);
@@ -337,7 +349,11 @@ input::-webkit-calendar-picker-indicator {
 .admin-row.upcoming { border-left: 3px solid #fbbf24; }
 .admin-row.active   { border-left: 3px solid #4ade80; }
 .admin-row.past     { border-left: 3px solid transparent; }
-.admin-table td { padding: 11px 14px; vertical-align: middle; }
+.admin-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    white-space: nowrap; /* ห้ามตัดบรรทัดข้อมูลเพื่อให้ตารางยืดออกไปด้านข้าง */
+}
 .admin-row-num {
   font-size: 11px; color: var(--muted);
   font-weight: 700; text-align: center;
@@ -350,7 +366,13 @@ input::-webkit-calendar-picker-indicator {
   font-size: 16px; color: var(--accent);
   letter-spacing: 0.5px; white-space: nowrap;
 }
- 
+code {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
 @media (max-width: 900px) {
   .admin-filter-grid { grid-template-columns: 1fr 1fr; }
   .admin-stats-bar { gap: 8px; }
