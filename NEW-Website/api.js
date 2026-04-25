@@ -93,8 +93,8 @@ const API = (() => {
 async function searchCarsFromServer() {
   const s = document.getElementById('start-date').value;
   const e = document.getElementById('end-date').value;
-  if (!s || !e) { alert('กรุณาเลือกวันที่รับและคืนรถ'); return; }
-  if (e < s)   { alert('วันคืนรถต้องเป็นวันหลังจากการรับรถ'); return; }
+  if (!s || !e) { toast('กรุณาเลือกวันที่รับและคืนรถ','warning'); return; }
+  if (e < s)   { toast('วันคืนรถต้องเป็นวันหลังจากการรับรถ','warning'); return; }
 
   startDate = s; endDate = e;
   let ms = new Date(e) - new Date(s);
@@ -120,7 +120,7 @@ async function searchCarsFromServer() {
     }
 
     const data = await API.checkAvailability(s, e);
-    if (!data.ok) { alert('เกิดข้อผิดพลาด: ' + (data.error || 'unknown')); return; }
+    if (!data.ok) { toast('เกิดข้อผิดพลาด: ' + (data.error || 'unknown'), 'error'); return; }
 
     /* sync สถานะ available จาก server เข้า CARS array */
     data.cars.forEach(serverCar => {
@@ -152,10 +152,10 @@ async function confirmPaymentToServer() {
   const idCard = document.getElementById('idcard').value;
 
   if (!fname || !lname || !phone || !email) {
-    alert('กรุณากรอกข้อมูลผู้เช่าให้ครบถ้วน (ชื่อ นามสกุล เบอร์โทร อีเมล)');
+    toast('กรุณากรอกข้อมูลผู้เช่าให้ครบถ้วน (ชื่อ นามสกุล เบอร์โทร อีเมล)', 'warning');
     return;
   }
-  if (!selectedCar) { alert('เกิดข้อผิดพลาด: ไม่ได้เลือกรถ'); return; }
+  if (!selectedCar) { toast('เกิดข้อผิดพลาด: ไม่ได้เลือกรถ', 'error'); return; }
 
   /* ── 2. ที่อยู่รับรถ ── */
   const deliverySel   = document.getElementById('delivery');
@@ -235,7 +235,7 @@ if (methodType === 'credit' || !methodType) {
 
     const carNumber = selectedCar.serverNumber;
     if (!carNumber) {
-      alert('เกิดข้อผิดพลาด: ไม่พบหมายเลขรถ (serverNumber)');
+      toast('เกิดข้อผิดพลาด: ไม่พบหมายเลขรถ', 'error');
       if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
       return;
     }
@@ -252,7 +252,7 @@ if (methodType === 'credit' || !methodType) {
     if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
 
     if (!result.ok) {
-      alert('ไม่สามารถจองได้: ' + (result.error || 'unknown'));
+      toast('ไม่สามารถจองได้: ' + (result.error || 'unknown'), 'error');
       return;
     }
 
@@ -264,7 +264,7 @@ if (methodType === 'credit' || !methodType) {
   } catch (err) {
     console.error('[API] book error:', err);
     if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
-    alert('ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่');
+    toast('ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่', 'error');
   }
 }
 
