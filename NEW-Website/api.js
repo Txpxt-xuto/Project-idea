@@ -109,6 +109,7 @@ async function searchCarsFromServer() {
   document.getElementById('cars-grid').innerHTML =
     `<div class="no-results"><div class="icon">⏳</div><p>กำลังตรวจสอบรถว่าง...</p></div>`;
   showPage('cars');
+  showSpinner('กำลังตรวจสอบรถว่าง', 'กรุณารอสักครู่...');
 
   try {
     const alive = await API.isServerAlive();
@@ -116,6 +117,7 @@ async function searchCarsFromServer() {
       /* Server ออฟไลน์ → ใช้ข้อมูล JS เดิม (offline mode) */
       console.warn('[API] C server offline — using local CARS data');
       renderCars();   /* ฟังก์ชันเดิมใน index.js */
+      hideSpinner();
       return;
     }
 
@@ -136,6 +138,8 @@ async function searchCarsFromServer() {
   } catch (err) {
     console.error('[API] checkAvailability error:', err);
     renderCars(); /* fallback */
+  } finally {
+    hideSpinner();
   }
 }
 
@@ -173,6 +177,7 @@ async function confirmPaymentToServer() {
       return;
     }
   }
+
 
   /* ── 3. วิธีชำระเงิน — อ่านตาม section ที่ active ── */
   const activeMethod = document.querySelector('.pay-method.selected');
@@ -219,6 +224,7 @@ if (methodType === 'credit' || !methodType) {
   /* ── 5. ส่งไป server ── */
   const btn = document.querySelector('#page-payment .btn-primary:last-of-type');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...'; }
+  showSpinner('กำลังบันทึกการจอง', 'กรุณาอย่าปิดหน้าต่าง...');
 
   try {
     const alive = await API.isServerAlive();
@@ -229,6 +235,7 @@ if (methodType === 'credit' || !methodType) {
       _showSuccessCarInfo();
       paymentCompleted = true;
       showPage('success');
+      hideSpinner();
       if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
       return;
     }
@@ -252,6 +259,7 @@ if (methodType === 'credit' || !methodType) {
     if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
 
     if (!result.ok) {
+      hideSpinner();
       toast('ไม่สามารถจองได้: ' + (result.error || 'unknown'), 'error');
       return;
     }
@@ -259,11 +267,13 @@ if (methodType === 'credit' || !methodType) {
     document.getElementById('booking-ref-num').textContent = result.refCode;
     _showSuccessCarInfo();
     paymentCompleted = true;
+    hideSpinner();
     showPage('success');
 
   } catch (err) {
     console.error('[API] book error:', err);
     if (btn) { btn.disabled = false; btn.textContent = '✔ ยืนยันการจองและชำระเงิน'; }
+    hideSpinner();
     toast('ไม่สามารถเชื่อมต่อ server ได้ กรุณาลองใหม่', 'error');
   }
 }
