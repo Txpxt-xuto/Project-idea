@@ -5,12 +5,15 @@
             "label": "C/C++: gcc.exe build active file",
             "command": "C:/TDM-GCC-64/bin/gcc.exe",
             "args": [
-    "-g",
-    "${file}",
-    "-o",
-    "${fileDirname}\\${fileBasenameNoExtension}.exe",
-    "-lws2_32"  // <--- เพิ่มบรรทัดนี้เข้าไปครับ (ตัวแอล พิมพ์เล็ก ตามด้วย ws2_32)
-],
+                "-g",
+                "-I${workspaceFolder}/curl-dev/curl-8.19.0_8-win64-mingw/include",
+                "-L${workspaceFolder}/curl-dev/curl-8.19.0_8-win64-mingw/lib",
+                "${file}",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-lcurl",
+                "-lws2_32"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
