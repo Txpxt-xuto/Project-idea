@@ -26,10 +26,6 @@
 #define CUST_FILE   "CUSTOMER.csv"
 
 /* ─── send-mail via Python ─────────────────────────────── */
-/* เรียก send_email.py ด้วย popen() — ไม่ต้องพึ่ง libcurl  */
-/* argument order: to ref fname lname car start end total   */
-
-/* helper: escape single quotes ใน shell argument           */
 static void shell_escape(const char *src, char *dst, int dstLen) {
     int j = 0;
     for (int i = 0; src[i] && j < dstLen-5; i++) {
