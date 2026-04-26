@@ -68,6 +68,7 @@ async function lookupBookings(){
   list.innerHTML = `<div class="mybookings-empty"><div class="icon">⏳</div><p>กำลังค้นหา...</p></div>`;
   document.getElementById('mybookings-search-section').style.display = 'none';
   document.getElementById('mybookings-results').style.display = 'block';
+  showSpinner('กำลังค้นหาประวัติการจอง');
 
   const alive = await API.isServerAlive();
   if(!alive){
