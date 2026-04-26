@@ -163,6 +163,7 @@ async function loadAdminDashboard(){
 function injectAdminUI(){
   if(!document.getElementById('admin-stats-bar')){
     const el = document.createElement('div');
+    hideSpinner();
     el.id = 'admin-stats-bar'; el.className = 'admin-stats-bar';
     document.getElementById('mybookings-results').insertBefore(el, document.getElementById('mybookings-list'));
   }
@@ -232,6 +233,7 @@ function renderAdminTable(bookings){
     list.innerHTML = `<div class="mybookings-empty"><div class="icon">🔍</div><p>ไม่พบข้อมูลตามเงื่อนไข</p></div>`;
     return;
   }
+  hideSpinner();
 
   const statusLabel = { upcoming:'⏳ รอรับรถ', active:'🟢 กำลังเช่า', past:'✔ เสร็จสิ้น' };
   const statusClass = { upcoming:'badge-upcoming', active:'badge-active', past:'badge-past' };
