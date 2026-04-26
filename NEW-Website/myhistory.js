@@ -148,6 +148,7 @@ async function loadAdminDashboard(){
   list.innerHTML = `<div class="mybookings-empty"><div class="icon">⏳</div><p>กำลังโหลดข้อมูลทั้งหมด...</p></div>`;
   showSpinner('กำลังโหลดข้อมูลทั้งหมด', 'กรุณารอสักครู่...');
   const data = await API.allBookings({});
+  hideSpinner();
   if(!data.ok){
     list.innerHTML = `<div class="mybookings-empty"><div class="icon">❌</div><p>${data.error||'unknown error'}</p></div>`;
     return;
@@ -163,7 +164,6 @@ async function loadAdminDashboard(){
 function injectAdminUI(){
   if(!document.getElementById('admin-stats-bar')){
     const el = document.createElement('div');
-    hideSpinner();
     el.id = 'admin-stats-bar'; el.className = 'admin-stats-bar';
     document.getElementById('mybookings-results').insertBefore(el, document.getElementById('mybookings-list'));
   }
