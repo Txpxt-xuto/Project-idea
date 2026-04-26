@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "C++ Launch (TDM-GCC)",
             "type": "cppdbg",
@@ -25,5 +26,7 @@
             // ชื่อ Task ที่ใช้คอมไพล์ก่อนเริ่ม Debug (ต้องตรงกับใน tasks.json)
             "preLaunchTask": "C/C++: gcc.exe build active file"
         }
+
+        
     ]
 }
