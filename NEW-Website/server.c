@@ -48,7 +48,7 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
         // 1. ตั้งค่าบัญชีผู้ส่ง (แนะนำ Gmail SMTP)
         curl_easy_setopt(curl, CURLOPT_URL, "smtp://smtp.gmail.com:587");
         curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
-        curl_easy_setopt(curl, CURLOPT_USERNAME, "tapatauto9898@gmail.com"); // เมลนาย
+        curl_easy_setopt(curl, CURLOPT_USERNAME, "tapatauto9898@gmail.com"); 
         curl_easy_setopt(curl, CURLOPT_PASSWORD, "uqub ngtj puvi ycjv");    // App Password 16 หลัก
 
         // 2. ตั้งค่าผู้รับและผู้ส่ง
@@ -572,7 +572,7 @@ static void handleBook(int sock, const char *body){
     /* บันทึก customer พร้อม fields ใหม่ทั้งหมด */
     saveCustomer(cars[carIdx].model, fname, lname, phone, email, idCard, startDate, endDate, location, payMethod, cardName, cardNumber, timeOrCvv, expiry, total);
 
-    printf("[MAIL] กำลังส่งเมลยืนยันไปที่: %s\n", email);
+    printf("[MAIL] sendto: %s\n", email);
     send_confirmation_email(
     email,
     refCode,
