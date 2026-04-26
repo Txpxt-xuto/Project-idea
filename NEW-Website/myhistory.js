@@ -72,6 +72,7 @@ async function lookupBookings(){
 
   const alive = await API.isServerAlive();
   if(!alive){
+    hideSpinner();
     list.innerHTML = `<div class="mybookings-empty"><div class="icon">🔴</div>
       <p>ไม่สามารถเชื่อมต่อ server ได้<br><small>กรุณาตรวจสอบว่า server กำลังรันอยู่</small></p></div>`;
     return;
@@ -90,6 +91,7 @@ async function lookupBookings(){
   /* ── NORMAL USER ── */
   _isAdmin = false;
   removeAdminUI();
+  hideSpinner();
   const data = await API.myBookings(fname, lname);
   document.getElementById('mb-display-name').textContent = `${fname} ${lname}`;
 
@@ -144,9 +146,11 @@ function renderUserBookings(bookings){
 async function loadAdminDashboard(){
   const list = document.getElementById('mybookings-list');
   list.innerHTML = `<div class="mybookings-empty"><div class="icon">⏳</div><p>กำลังโหลดข้อมูลทั้งหมด...</p></div>`;
+  hideSpinner();
 
   const data = await API.allBookings({});
   if(!data.ok){
+    hideSpinner();
     list.innerHTML = `<div class="mybookings-empty"><div class="icon">❌</div><p>${data.error||'unknown error'}</p></div>`;
     return;
   }
