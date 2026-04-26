@@ -146,7 +146,6 @@ function renderUserBookings(bookings){
 async function loadAdminDashboard(){
   const list = document.getElementById('mybookings-list');
   list.innerHTML = `<div class="mybookings-empty"><div class="icon">⏳</div><p>กำลังโหลดข้อมูลทั้งหมด...</p></div>`;
-  hideSpinner();
   showSpinner('กำลังโหลดข้อมูลทั้งหมด', 'กรุณารอสักครู่...');
   const data = await API.allBookings({});
   if(!data.ok){
