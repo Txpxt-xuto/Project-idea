@@ -42,36 +42,31 @@ static void shell_escape(const char *src, char *dst, int dstLen) {
     dst[j] = 0;
 }
 
-void send_confirmation_email(const char *to_email,
-                              const char *refCode,
-                              const char *fname,
-                              const char *lname,
-                              const char *car,
-                              const char *start,
-                              const char *end,
-                              const char *total)
-{
-    char eTo[256], eRef[64], eFn[256], eLn[256];
-    char eCar[128], eSt[32], eEn[32], eTot[32];
-
-    shell_escape(to_email, eTo,  sizeof(eTo));
-    shell_escape(refCode,  eRef, sizeof(eRef));
-    shell_escape(fname,    eFn,  sizeof(eFn));
-    shell_escape(lname,    eLn,  sizeof(eLn));
-    shell_escape(car,      eCar, sizeof(eCar));
-    shell_escape(start,    eSt,  sizeof(eSt));
-    shell_escape(end,      eEn,  sizeof(eEn));
-    shell_escape(total,    eTot, sizeof(eTot));
-
+void send_confirmation_email(const char* to_email, const char* refCode, const char* fname, const char* lname, const char* car, const char* start, const char* end, const char* total) {
+    
+    char esc_fname[128], esc_lname[128], esc_car[128];
+    shell_escape(fname, esc_fname, sizeof(esc_fname));
+    shell_escape(lname, esc_lname, sizeof(esc_lname));
+    shell_escape(car, esc_car, sizeof(esc_car));
     char cmd[2048];
-    snprintf(cmd, sizeof(cmd),
-        "python3 send_email.py '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' &",
-        eTo, eRef, eFn, eLn, eCar, eSt, eEn, eTot);
 
-    printf("[MAIL] cmd: %s\n", cmd);
-    int ret = system(cmd);
-    if (ret != 0)
-        fprintf(stderr, "[MAIL] system() returned %d\n", ret);
+    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"", to_email, refCode, esc_fname, esc_lname, esc_car, start, end, total);
+    printf("[MAIL DEBUG] Executing command: %s\n", cmd);
+
+    FILE *fp = popen(cmd, "r");
+    if (fp == NULL) {
+        perror("[MAIL ERROR] Cannot open pipe to python");
+        return;
+    }
+
+    char buffer[512];
+    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        printf("[PYTHON LOG]: %s", buffer);
+    }
+
+    int status = pclose(fp);
+    if (status == 0) printf("[MAIL SUCCESS] Email process finished.\n");
+    else printf("[MAIL ERROR] Python exited with code %d\n", status);
 }
 
 /* ─── car struct ──────────────────────────────────────────── */
