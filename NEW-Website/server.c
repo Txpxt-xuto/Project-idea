@@ -574,16 +574,15 @@ static void handleBook(int sock, const char *body){
 
     printf("[MAIL] กำลังส่งเมลยืนยันไปที่: %s\n", email);
     send_confirmation_email(
-        email,      // อีเมลผู้รับ
-        refCode,    // หมายเลขการจอง
-        firstName, 
-        lastName, 
-        carName,    // ชื่อรถ
-        start,      // วันเริ่ม
-        end,        // วันจบ
-        totalCost   // ราคาสรุป
+    email,
+    refCode,
+    fname,                    
+    lname,                     
+    cars[carIdx].model,       
+    startDate,                 
+    endDate,                  
+    total                     
     );
-    sendResponse(client, 200, "{\"ok\":true}");
 
     int numDays=(e-s)+1;
     if(numDays<1) numDays=1;
@@ -593,9 +592,6 @@ static void handleBook(int sock, const char *body){
     sendResponse(sock,200,resp);
 }
 
-/* POST /cancel
-    Body: { "firstName":"สมชาย", "lastName":"ใจดี" }
-*/
 static void handleCancel(int sock, const char *body){
     char fname[64]="", lname[64]="";
     getJsonStr(body,"firstName",fname,64);
