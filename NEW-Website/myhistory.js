@@ -91,8 +91,8 @@ async function lookupBookings(){
   /* ── NORMAL USER ── */
   _isAdmin = false;
   removeAdminUI();
-  hideSpinner();
   const data = await API.myBookings(fname, lname);
+  hideSpinner();
   document.getElementById('mb-display-name').textContent = `${fname} ${lname}`;
 
   if(!data.ok || !data.bookings || data.bookings.length === 0){
