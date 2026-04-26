@@ -2,8 +2,8 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from_addr='Sentfrom' # ชื่อที่ส่งไปหาผู้รับ
-to_addr=['Sendto@gmail.com'] # email ผู้รับ
+from_addr='tapatauto9898@gmail.com' # ชื่อที่ส่งไปหาผู้รับ
+to_addr=['tapatauto9898@gmail.com'] # email ผู้รับ
 msg=MIMEMultipart()
 
 msg['From']=from_addr
@@ -14,8 +14,8 @@ body='content' # เนื้อหาภายใน
 
 msg.attach(MIMEText(body,'plain'))
 
-email='example@gmail.com' # email ผู้ส่ง
-password='examplepassword' 
+email='tapatauto9898@gmail.com' # email ผู้ส่ง
+password='uqub ngtj puvi ycjv' 
 # password สามารถไปสร้างได้ที่ google account --> รหัสผ่านสำหรับแอป
 # ตัวอย่างรหัส dhry quxy wcys ande
 
