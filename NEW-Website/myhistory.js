@@ -149,11 +149,11 @@ async function loadAdminDashboard(){
   showSpinner('กำลังโหลดข้อมูลทั้งหมด', 'กรุณารอสักครู่...');
   const data = await API.allBookings({});
   if(!data.ok){
-    hideSpinner();
     list.innerHTML = `<div class="mybookings-empty"><div class="icon">❌</div><p>${data.error||'unknown error'}</p></div>`;
     return;
   }
 
+  hideSpinner();
   _allBookingsCache = data.bookings || [];
   document.getElementById('mb-display-count').textContent = `· ทั้งหมด ${_allBookingsCache.length} รายการ`;
   injectAdminUI();
@@ -233,7 +233,6 @@ function renderAdminTable(bookings){
     list.innerHTML = `<div class="mybookings-empty"><div class="icon">🔍</div><p>ไม่พบข้อมูลตามเงื่อนไข</p></div>`;
     return;
   }
-  hideSpinner();
 
   const statusLabel = { upcoming:'⏳ รอรับรถ', active:'🟢 กำลังเช่า', past:'✔ เสร็จสิ้น' };
   const statusClass = { upcoming:'badge-upcoming', active:'badge-active', past:'badge-past' };
