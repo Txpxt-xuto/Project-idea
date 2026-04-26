@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <time.h>
-#include <curl/curl.h>
 
 #ifdef _WIN32
   #include <winsock2.h>
@@ -25,78 +25,57 @@
 #define CAR_FILE    "CAR.csv"
 #define CUST_FILE   "CUSTOMER.csv"
 
-/* ─── send-mail ─────────────────────────────────────────────── */
-struct upload_status {
-    int lines_read;
-};
+/* ─── send-mail via Python ─────────────────────────────── */
+/* เรียก send_email.py ด้วย popen() — ไม่ต้องพึ่ง libcurl  */
+/* argument order: to ref fname lname car start end total   */
 
-static size_t payload_source(void *ptr, size_t size, size_t nmemb, void *userp) {
-    struct upload_status *upload_ctx = (struct upload_status *)userp;
-    const char **payload_text = (const char **)ptr;
-
-    return 0; 
+/* helper: escape single quotes ใน shell argument           */
+static void shell_escape(const char *src, char *dst, int dstLen) {
+    int j = 0;
+    for (int i = 0; src[i] && j < dstLen-5; i++) {
+        if (src[i] == '\'') {
+            /* ' → '\'' */
+            dst[j++] = '\'';
+            dst[j++] = '\\';
+            dst[j++] = '\'';
+            dst[j++] = '\'';
+        } else {
+            dst[j++] = src[i];
+        }
+    }
+    dst[j] = 0;
 }
 
+void send_confirmation_email(const char *to_email,
+                              const char *refCode,
+                              const char *fname,
+                              const char *lname,
+                              const char *car,
+                              const char *start,
+                              const char *end,
+                              const char *total)
+{
+    char eTo[256], eRef[64], eFn[256], eLn[256];
+    char eCar[128], eSt[32], eEn[32], eTot[32];
 
-void send_confirmation_email(const char* to_email, const char* refCode, const char* fname, const char* lname, const char* car, const char* start, const char* end, const char* total) {
-    CURL *curl;
-    CURLcode res = CURLE_OK;
-    struct curl_slist *recipients = NULL;
+    shell_escape(to_email, eTo,  sizeof(eTo));
+    shell_escape(refCode,  eRef, sizeof(eRef));
+    shell_escape(fname,    eFn,  sizeof(eFn));
+    shell_escape(lname,    eLn,  sizeof(eLn));
+    shell_escape(car,      eCar, sizeof(eCar));
+    shell_escape(start,    eSt,  sizeof(eSt));
+    shell_escape(end,      eEn,  sizeof(eEn));
+    shell_escape(total,    eTot, sizeof(eTot));
 
-    curl = curl_easy_init();
-    if(curl) {
-        // 1. ตั้งค่าบัญชีผู้ส่ง (แนะนำ Gmail SMTP)
-        curl_easy_setopt(curl, CURLOPT_URL, "smtp://smtp.gmail.com:587");
-        curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
-        curl_easy_setopt(curl, CURLOPT_USERNAME, "tapatauto9898@gmail.com"); 
-        curl_easy_setopt(curl, CURLOPT_PASSWORD, "uqub ngtj puvi ycjv");    // App Password 16 หลัก
+    char cmd[2048];
+    snprintf(cmd, sizeof(cmd),
+        "python3 send_email.py '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' &",
+        eTo, eRef, eFn, eLn, eCar, eSt, eEn, eTot);
 
-        // 2. ตั้งค่าผู้รับและผู้ส่ง
-        curl_easy_setopt(curl, CURLOPT_MAIL_FROM, "<tapatauto9898@gmail.com>");
-        recipients = curl_slist_append(recipients, to_email);
-        curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
-
-        // 3. สร้างเนื้อหา HTML โดยใช้ Format ของ RODCHAOMAHACHAI
-        char full_payload[9000];
-        snprintf(full_payload, sizeof(full_payload),
-            "To: %s\r\n"
-            "From: RODCHAOMAHACHAI <tapatauto9898@gmail.com>\r\n"
-            "Subject: ยืนยันการจองรถหมายเลข #%s\r\n"
-            "Content-Type: text/html; charset=\"UTF-8\"\r\n"
-            "\r\n" // บรรทัดว่างคั่นระหว่าง Header กับ Body
-            "<html><body style='margin:0;padding:0;font-family:sans-serif;background-color:#0a0a0f;color:#f0f0f0;'>"
-            "  <div style='background-color:#13131a;max-width:600px;margin:20px auto;border-radius:16px;border:1px solid rgba(232,197,71,0.2);overflow:hidden;'>"
-            "    <div style='padding:40px;text-align:center;background:#1a1a25;'>"
-            "      <h1 style='color:#e8c547;margin:0;'>BOOKING SUCCESS!</h1>"
-            "      <p style='color:#888;'>ขอบคุณที่ไว้วางใจ รถเช่ามหาชัย</p>"
-            "    </div>"
-            "    <div style='padding:30px;'>"
-            "      <div style='background:#1a1a25;padding:20px;border-radius:12px;border-left:4px solid #e8c547;margin-bottom:20px;'>"
-            "        <span style='color:#888;font-size:12px;'>รหัสการจอง:</span>"
-            "        <h2 style='color:#e8c547;margin:5px 0;'>#%s</h2>"
-            "      </div>"
-            "      <p><b>ชื่อลูกค้า:</b> %s %s</p>"
-            "      <p><b>รถยนต์:</b> %s</p>"
-            "      <p><b>ระยะเวลา:</b> %s ถึง %s</p>"
-            "      <hr style='border:0;border-top:1px solid rgba(255,255,255,0.1);margin:20px 0;'>"
-            "      <h3 style='color:#ff6b35;'>ยอดชำระสุทธิ: %s บาท</h3>"
-            "    </div>"
-            "  </div>"
-            "</body></html>\r\n",
-            to_email, refCode, refCode, fname, lname, car, start, end, total);
-
-        // 4. ส่งข้อมูล
-        curl_easy_setopt(curl, CURLOPT_READDATA, full_payload);
-        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-
-        res = curl_easy_perform(curl);
-
-        if(res != CURLE_OK)
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-
-        curl_slist_free_all(recipients);
-        curl_easy_cleanup(curl);
-    }
+    printf("[MAIL] cmd: %s\n", cmd);
+    int ret = system(cmd);
+    if (ret != 0)
+        fprintf(stderr, "[MAIL] system() returned %d\n", ret);
 }
 
 /* ─── car struct ──────────────────────────────────────────── */
