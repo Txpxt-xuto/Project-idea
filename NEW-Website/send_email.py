@@ -95,24 +95,6 @@ def build_html(to_email, ref, fname, lname, car, start, end, total):
 </body>
 </html>"""
 
-def build_cancel_html(to_email, ref, fname, lname, car):
-    """สร้าง HTML body สำหรับอีเมลแจ้งยกเลิกการจอง"""
-    return f"""<!DOCTYPE html>
-<html lang="th">
-<head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;font-family:'Sarabun',sans-serif;background:#0a0a0f;color:#f0f0f0;">
-  <div style="background:#13131a; max-width:600px; margin:20px auto; padding:30px; border-radius:16px; border:1px solid #ff4d4d;">
-    <h2 style="color:#ff4d4d; text-align:center;">ยืนยันการยกเลิกการจอง</h2>
-    <p>สวัสดีคุณ {fname} {lname},</p>
-    <p>ระบบได้รับเรื่องการยกเลิกการจองรถของคุณเรียบร้อยแล้ว โดยมีรายละเอียดดังนี้:</p>
-    <div style="background:#1a1a25; padding:20px; border-radius:12px; margin:20px 0;">
-      <p style="margin:5px 0;"><strong>หมายเลขการจอง:</strong> #{ref}</p>
-      <p style="margin:5px 0;"><strong>รถที่ยกเลิก:</strong> {car}</p>
-    </div>
-    <p style="text-align:center; color:#888; font-size:12px;">หากคุณไม่ได้เป็นผู้ทำรายการนี้ หรือต้องการสอบถามเพิ่มเติม โปรดติดต่อเราทันที</p>
-  </div>
-</body>
-</html>"""
 
 def send(to_email, ref, fname, lname, car, start, end, total):
     msg = MIMEMultipart('alternative')
@@ -122,10 +104,10 @@ def send(to_email, ref, fname, lname, car, start, end, total):
 
     # plain text fallback
     plain = (f"ยืนยันการจอง #{ref}\n"
-            f"ชื่อ: {fname} {lname}\n"
-            f"รถ: {car}\n"
-            f"วันเช่า: {start} ถึง {end}\n"
-            f"ยอด: {total} บาท")
+             f"ชื่อ: {fname} {lname}\n"
+             f"รถ: {car}\n"
+             f"วันเช่า: {start} ถึง {end}\n"
+             f"ยอด: {total} บาท")
 
     msg.attach(MIMEText(plain, 'plain', 'utf-8'))
     msg.attach(MIMEText(build_html(to_email, ref, fname, lname, car, start, end, total),
@@ -140,20 +122,15 @@ def send(to_email, ref, fname, lname, car, start, end, total):
     print(f'[EMAIL] sent to {to_email} ref={ref}', flush=True)
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: python send_email.py <type> <args...>")
+if __name__ == '__main__':
+    # รับ argument: to ref fname lname car start end total
+    if len(sys.argv) < 9:
+        print('[EMAIL ERROR] ต้องการ 8 arguments', file=sys.stderr)
         sys.exit(1)
 
-    type_mail = sys.argv[1] # เพิ่มตัวแปรเช็คประเภท 'book' หรือ 'cancel'
-    
-    if type_mail == "book":
-        # logic เดิมที่คุณมี (ส่ง 8 args)
-        _, _, to_email, ref, fname, lname, car, start, end, total = sys.argv
-        # ... โค้ดส่งเมลจองเดิมของคุณ ...
-    
-    elif type_mail == "cancel":
-        # logic สำหรับยกเลิก (ส่ง 5 args)
-        _, _, to_email, ref, fname, lname, car = sys.argv
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = Header(f'แจ้งยกเลิกการจอง #{ref} สำเร็จ — รถเช่ามหาชัย', 'utf-8')
+    _, to, ref, fn, ln, car, st, en, tot = sys.argv[:9]
+    try:
+        send(to, ref, fn, ln, car, st, en, tot)
+    except Exception as e:
+        print(f'[EMAIL ERROR] {e}', file=sys.stderr)
+        sys.exit(1)
