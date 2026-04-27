@@ -580,7 +580,7 @@ static void handleCancel(int sock, const char *body) {
     char email[128] = "", model[128] = "";
 
     if (deleteCustomer(fname, lname, &carIdx, &s, &e, email, model)) {
-        printf("-----%d %d",s,e);
+        printf("-----%d",carIdx);
         //คืนสถานะรถ 
         if (carIdx >= 0) {
             cancelCar(carIdx, s, e); 
