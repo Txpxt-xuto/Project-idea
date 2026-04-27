@@ -69,21 +69,6 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
     else printf("[MAIL ERROR] Python exited with code %d\n", status);
 }
 
-void send_cancel_email(const char* to_email, const char* fname, const char* lname, const char* car) {
-    char esc_fname[128], esc_lname[128], esc_car[128];
-    shell_escape(fname, esc_fname, sizeof(esc_fname));
-    shell_escape(lname, esc_lname, sizeof(esc_lname));
-    shell_escape(car, esc_car, sizeof(esc_car));
-
-    char cmd[2048];
-    // เพิ่มคำว่า "cancel" เป็น argument แรกเพื่อให้ python แยกแยะประเภทเมล์ได้
-    snprintf(cmd, sizeof(cmd), "python send_email.py cancel \"%s\" \"%s\" \"%s\" \"%s\"", to_email, esc_fname, esc_lname, esc_car);
-
-    printf("[MAIL] Executing: %s\n", cmd);
-    FILE *fp = popen(cmd, "r");
-    if (fp) pclose(fp);
-}
-
 /* ─── car struct ──────────────────────────────────────────── */
 typedef struct {
     int  number;   /* ลำดับที่ใน CSV (1-based) */
@@ -264,40 +249,66 @@ static void saveCustomer(
 }
 
 /* ─── delete customer from CSV ────────────────────────────── */
-// ปรับ Parameter ให้รับ email และ carName ออกมาด้วย
-static int deleteCustomer(const char *fn, const char *ln, int *carIdx, int *s, int *e, char *outEmail, char *outCarName) {
-    FILE *f = fopen(CUST_FILE, "r");
-    if (!f) return 0;
+static int deleteCustomer(const char *fname,const char *lname,
+                          int *outCarIdx, int *outStart, int *outEnd){
+    FILE *fp=fopen(CUST_FILE,"r");
+    if(!fp) return 0;
 
-    FILE *tmp = fopen("CUST.tmp", "w");
-    char line[1024];
-    int found = 0;
+    char lines[500][512];
+    int count=0;
+    int foundLine=-1;
 
-    while (fgets(line, sizeof(line), f)) {
-        char r[32], f_n[64], l_n[64], p[32], em[64], id[32], dv[32], pm[32], cn[64], cno[32], cv[16], ex[16], car[64];
-        int cIdx, start, end, t;
-        
-        // อ่านข้อมูลตามโครงสร้าง CSV ของคุณ (ตรวจสอบลำดับ Column ให้ตรงกับไฟล์ CUSTOMER.csv)
-        // สมมติโครงสร้าง: Ref,FName,LName,Phone,Email,ID,Delivery,Pay,CardName,No,CVV,Exp,CarName,CarIdx,S,E,Total
-        sscanf(line, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%d,%d,%d,%d",
-            r, f_n, l_n, p, em, id, dv, pm, cn, cno, cv, ex, car, &cIdx, &start, &end, &t);
+    while(fgets(lines[count],512,fp) && count<499){
+        char tmp[512];
+        strcpy(tmp,lines[count]);
+        char *model=strtok(tmp,",");
+        char *fn   =strtok(NULL,",");
+        char *ln   =strtok(NULL,",");
 
-        if (!found && strcmp(fn, f_n) == 0 && strcmp(ln, l_n) == 0) {
-            found = 1;
-            *carIdx = cIdx;
-            *s = start;
-            *e = end;
-            if(outEmail) strcpy(outEmail, em);       // เก็บ Email ไว้ส่งเมล
-            if(outCarName) strcpy(outCarName, car); // เก็บชื่อรถไว้ส่งเมล
-            continue; // ข้ามบรรทัดนี้ไป (คือการลบ)
+        if(fn&&ln){
+            fn[strcspn(fn,"\n")]=0;
+            ln[strcspn(ln,"\n")]=0;
+            if(strcmp(fn,fname)==0&&strcmp(ln,lname)==0){
+                foundLine=count;
+                /* หา carIdx, start, end */
+                char tmp2[512]; strcpy(tmp2,lines[count]);
+                char *m2   =strtok(tmp2,",");
+                char *fn2  =strtok(NULL,",");
+                char *ln2  =strtok(NULL,",");
+                char *ph2  =strtok(NULL,",");
+                char *em2  =strtok(NULL,",");
+                char *idcard  =strtok(NULL,",");
+                char *sd   =strtok(NULL,",");
+                char *ed   =strtok(NULL,",");
+                if(sd&&ed){
+                    sd[strcspn(sd,"\n")]=0;
+                    ed[strcspn(ed,"\n")]=0;
+                    *outStart=dateToDayIndex(sd);
+                    *outEnd  =dateToDayIndex(ed);
+                }
+                /* หา car index จาก model name */
+                if(m2){
+                    m2[strcspn(m2,"\n")]=0;
+                    *outCarIdx=-1;
+                    for(int i=0;i<numCars;i++){
+                        if(strcmp(cars[i].model,m2)==0){ *outCarIdx=i; break; }
+                    }
+                }
+            }
         }
-        fputs(line, tmp);
+        count++;
     }
-    fclose(f);
-    fclose(tmp);
-    remove(CUST_FILE);
-    rename("CUST.tmp", CUST_FILE);
-    return found;
+    fclose(fp);
+    if(foundLine<0) return 0;
+
+    /* เขียนไฟล์ใหม่โดยข้ามบรรทัดนั้น */
+    FILE *out=fopen(CUST_FILE,"w");
+    if(!out) return 0;
+    for(int i=0;i<count;i++){
+        if(i!=foundLine) fprintf(out,"%s",lines[i]);
+    }
+    fclose(out);
+    return 1;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -552,37 +563,27 @@ static void handleBook(int sock, const char *body){
 }
 
 static void handleCancel(int sock, const char *body){
-    char fname[64]="", lname[64]="", email[64]="", carName[64]="";
-    getJsonStr(body,"firstName", fname, 64);
-    getJsonStr(body,"lastName", lname, 64);
-
-    if(!fname[0] || !lname[0]){
-        sendResponse(sock, 400, "{\"ok\":false,\"error\":\"missing name\"}");
+    char fname[64]="", lname[64]="";
+    getJsonStr(body,"firstName",fname,64);
+    getJsonStr(body,"lastName", lname,64);
+    if(!fname[0]||!lname[0]){
+        sendResponse(sock,400,"{\"ok\":false,\"error\":\"missing name\"}");
         return;
     }
 
     loadCars();
 
-    int carIdx = -1, s = -1, e = -1;
-    // ส่งตัวแปร email และ carName เข้าไปรับค่าจากในไฟล์
-    int found = deleteCustomer(fname, lname, &carIdx, &s, &e, email, carName);
-
+    int carIdx=-1, s=-1, e=-1;
+    int found=deleteCustomer(fname,lname,&carIdx,&s,&e);
+    printf("%d %d %d\n",carIdx,s,e);
     if(!found){
-        sendResponse(sock, 200, "{\"ok\":false,\"error\":\"customer not found\"}");
+        sendResponse(sock,200,"{\"ok\":false,\"error\":\"customer not found\"}");
         return;
     }
-
-    // หากพบข้อมูลและลบสำเร็จ ให้ส่งอีเมลแจ้งยกเลิก
-    if(email[0] != '\0') {
-        // สร้างหมายเลข Ref (ถ้าไม่ได้เก็บไว้ใน deleteCustomer อาจจะส่งเป็น "N/A" หรือหาเพิ่ม)
-        send_cancel_email(email, fname, lname, carName);
-        printf("[INFO] Cancel email sent to: %s\n", email);
-    }
-
-    if(carIdx >= 0 && s > 0 && e > 0) 
+    if(carIdx>=0&&s>0&&e>0) 
     {
-        cancelCar(carIdx, s, e);
-        sendResponse(sock, 200, "{\"ok\":true,\"message\":\"booking cancelled\"}");
+        cancelCar(carIdx,s,e);
+        sendResponse(sock,200,"{\"ok\":true,\"message\":\"booking cancelled\"}");
     }
 }
 
