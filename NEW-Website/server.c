@@ -69,7 +69,7 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
     else printf("[MAIL ERROR] Python exited with code %d\n", status);
 }
 
-void send_email_cmd(const char* mode, const char* to_email, const char* refCode, const char* fname, const char* lname, const char* car, const char* start, const char* end, const char* total) {
+void send_email_cmd(const char* mode, const char* to_email, const char* fname, const char* lname, const char* car, const char* start, const char* end, const char* total) {
     char esc_fname[128], esc_lname[128], esc_car[128];
     shell_escape(fname, esc_fname, sizeof(esc_fname));
     shell_escape(lname, esc_lname, sizeof(esc_lname));
@@ -77,7 +77,7 @@ void send_email_cmd(const char* mode, const char* to_email, const char* refCode,
     
     char cmd[2048];
     // เพิ่ม "mode" เข้าไปใน command string
-    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"", mode, to_email, refCode, esc_fname, esc_lname, esc_car, start, end, total);
+    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"", mode, to_email, esc_fname, esc_lname, esc_car, start, end, total);
 
     popen(cmd, "r"); // รันแบบ background/ไม่ต้องรออ่าน log เพื่อความเร็ว
 }
@@ -598,7 +598,7 @@ static void handleCancel(int sock, const char *body){
         dayIndexToDate(s, sDate);
         dayIndexToDate(e, eDate);
         
-        send_email_cmd("cancel", email, "CANCELLED", fname, lname, model, sDate, eDate, "0");
+        send_email_cmd("cancel", email, fname, lname, model, sDate, eDate, "0");
         
         sendResponse(sock, 200, "{\"ok\":true,\"message\":\"booking cancelled and email sent\"}");
     }
