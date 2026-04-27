@@ -612,14 +612,14 @@ static void handleCancel(int sock, const char *body) {
             for (int d = s; d <= e; d++) {
                 if (d >= 0 && d < MAX_DAYS) cars[carIdx].booked[d] = 0;
             }
-            saveCarsToCSV(); 
+            saveCars(); 
         }
 
         // 2. ส่งเมลแจ้งยกเลิก
         char sDate[20], eDate[20];
         dayIndexToDate(s, sDate);
         dayIndexToDate(e, eDate);
-        send_email_cmd("cancel", email, "CANCELLED", fname, lname, model, sDate, eDate, "0");
+        send_email_cmd("cancel", email, fname, lname, model, sDate, eDate, "0");
 
         sendResponse(sock, 200, "{\"ok\":true}");
     } else {
