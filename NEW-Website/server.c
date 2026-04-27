@@ -69,19 +69,6 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
     else printf("[MAIL ERROR] Python exited with code %d\n", status);
 }
 
-void send_email_cmd(const char* mode, const char* to_email, const char* fname, const char* lname, const char* car, const char* start, const char* end, const char* total) {
-    char esc_fname[128], esc_lname[128], esc_car[128];
-    shell_escape(fname, esc_fname, sizeof(esc_fname));
-    shell_escape(lname, esc_lname, sizeof(esc_lname));
-    shell_escape(car, esc_car, sizeof(esc_car));
-    
-    char cmd[2048];
-    // เพิ่ม "mode" เข้าไปใน command string
-    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"", mode, to_email, esc_fname, esc_lname, esc_car, start, end, total);
-
-    popen(cmd, "r"); // รันแบบ background/ไม่ต้องรออ่าน log เพื่อความเร็ว
-}
-
 /* ─── car struct ──────────────────────────────────────────── */
 typedef struct {
     int  number;   /* ลำดับที่ใน CSV (1-based) */
@@ -262,9 +249,8 @@ static void saveCustomer(
 }
 
 /* ─── delete customer from CSV ────────────────────────────── */
-static int deleteCustomer(const char *fname, const char *lname, 
-                          int *outCarIdx, int *outStart, int *outEnd, 
-                          char *outEmail, char *outModel){
+static int deleteCustomer(const char *fname,const char *lname,
+                          int *outCarIdx, int *outStart, int *outEnd){
     FILE *fp=fopen(CUST_FILE,"r");
     if(!fp) return 0;
 
@@ -300,8 +286,6 @@ static int deleteCustomer(const char *fname, const char *lname,
                     *outStart=dateToDayIndex(sd);
                     *outEnd  =dateToDayIndex(ed);
                 }
-                if (em2) strcpy(outEmail, em2);
-                if (m2) strcpy(outModel, m2);
                 /* หา car index จาก model name */
                 if(m2){
                     m2[strcspn(m2,"\n")]=0;
@@ -579,28 +563,27 @@ static void handleBook(int sock, const char *body){
 }
 
 static void handleCancel(int sock, const char *body){
-    char fname[64]="", lname[64]="", email[128]="", model[128]="";
-    // ... parse fname, lname ...
-
-    int carIdx=-1, s=-1, e=-1;
-    int found = deleteCustomer(fname, lname, &carIdx, &s, &e, email, model);
-    
-    if(!found){
-        sendResponse(sock, 200, "{\"ok\":false,\"error\":\"customer not found\"}");
+    char fname[64]="", lname[64]="";
+    getJsonStr(body,"firstName",fname,64);
+    getJsonStr(body,"lastName", lname,64);
+    if(!fname[0]||!lname[0]){
+        sendResponse(sock,400,"{\"ok\":false,\"error\":\"missing name\"}");
         return;
     }
 
-    if(carIdx >= 0 && s > 0 && e > 0) {
-        cancelCar(carIdx, s, e);
-        
-        // ส่งอีเมลแจ้งยกเลิก
-        char sDate[20], eDate[20];
-        dayIndexToDate(s, sDate);
-        dayIndexToDate(e, eDate);
-        
-        send_email_cmd("cancel", email, fname, lname, model, sDate, eDate, "0");
-        
-        sendResponse(sock, 200, "{\"ok\":true,\"message\":\"booking cancelled and email sent\"}");
+    loadCars();
+
+    int carIdx=-1, s=-1, e=-1;
+    int found=deleteCustomer(fname,lname,&carIdx,&s,&e);
+    printf("%d %d %d\n",carIdx,s,e);
+    if(!found){
+        sendResponse(sock,200,"{\"ok\":false,\"error\":\"customer not found\"}");
+        return;
+    }
+    if(carIdx>=0&&s>0&&e>0) 
+    {
+        cancelCar(carIdx,s,e);
+        sendResponse(sock,200,"{\"ok\":true,\"message\":\"booking cancelled\"}");
     }
 }
 
