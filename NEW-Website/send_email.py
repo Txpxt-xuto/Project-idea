@@ -122,15 +122,67 @@ def send(to_email, ref, fname, lname, car, start, end, total):
     print(f'[EMAIL] sent to {to_email} ref={ref}', flush=True)
 
 
+# เพิ่มฟังก์ชันนี้ต่อจาก build_html เดิม
+def build_cancel_html(to_email, ref, fname, lname, car, start, end):
+    """สร้าง HTML body สำหรับอีเมลแจ้งยกเลิกการจอง"""
+    return f"""<!DOCTYPE html>
+<html lang="th">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;font-family:'Sarabun',sans-serif;background:#0a0a0f;color:#f0f0f0;">
+  <div style="background:#13131a;max-width:600px;margin:24px auto;border-radius:16px;
+              border:1px solid rgba(255,107,53,0.25);overflow:hidden;">
+    <div style="padding:36px;text-align:center;background:#1a1a25; border-bottom:1px solid rgba(255,107,53,0.15);">
+      <h1 style="color:#ff6b35;margin:0;font-size:28px;letter-spacing:2px;">
+        ❌ CANCELLATION SUCCESS
+      </h1>
+      <p style="color:#888;margin:8px 0 0;">การยกเลิกการจองของคุณเสร็จสมบูรณ์แล้ว</p>
+    </div>
+    <div style="padding:24px 30px;">
+      <p>เรียนคุณ {fname} {lname},</p>
+      <p>ระบบได้รับการยกเลิกการจองหมายเลข <strong>#{ref}</strong> ของท่านเรียบร้อยแล้ว โดยมีรายละเอียดดังนี้:</p>
+      <table style="width:100%;font-size:15px;color:#ccc;">
+        <tr><td style="padding:5px 0;">🚗 รถยนต์:</td><td>{car}</td></tr>
+        <tr><td style="padding:5px 0;">📅 ช่วงเวลา:</td><td>{start} ถึง {end}</td></tr>
+      </table>
+      <p style="margin-top:20px; color:#888; font-size:13px;">หากท่านมีข้อสงสัยหรือต้องการจองใหม่ โปรดติดต่อเราได้ทุกเมื่อ</p>
+    </div>
+  </div>
+</body>
+</html>"""
+
+# แก้ไขส่วน main เพื่อแยกประเภทอีเมล
 if __name__ == '__main__':
-    # รับ argument: to ref fname lname car start end total
-    if len(sys.argv) < 9:
-        print('[EMAIL ERROR] ต้องการ 8 arguments', file=sys.stderr)
+    # เพิ่ม mode เป็น argument แรก
+    # python3 send_email.py <mode: book|cancel> <to> <ref> <fname> <lname> <car> <start> <end> <total>
+    if len(sys.argv) < 10:
+        print('[EMAIL ERROR] ต้องการ 9 arguments', file=sys.stderr)
         sys.exit(1)
 
-    _, to, ref, fn, ln, car, st, en, tot = sys.argv[:9]
+    mode, to, ref, fn, ln, car, st, en, tot = sys.argv[1:10]
+    
     try:
-        send(to, ref, fn, ln, car, st, en, tot)
+        msg = MIMEMultipart('alternative')
+        msg['From'] = f'{FROM_NAME} <{GMAIL_USER}>'
+        msg['To'] = to
+        
+        if mode == 'cancel':
+            msg['Subject'] = Header(f'แจ้งยกเลิกการจองรถหมายเลข #{ref} — รถเช่ามหาชัย', 'utf-8')
+            html_content = build_cancel_html(to, ref, fn, ln, car, st, en)
+            plain_text = f"ยกเลิกการจอง #{ref} เรียบร้อยแล้ว"
+        else:
+            msg['Subject'] = Header(f'ยืนยันการจองรถหมายเลข #{ref} — รถเช่ามหาชัย', 'utf-8')
+            html_content = build_html(to, ref, fn, ln, car, st, en, tot)
+            plain_text = f"ยืนยันการจอง #{ref}\nรถ: {car}"
+
+        msg.attach(MIMEText(plain_text, 'plain', 'utf-8'))
+        msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(GMAIL_USER, GMAIL_PASS)
+            server.sendmail(GMAIL_USER, [to], msg.as_string())
+        
+        print(f'[EMAIL {mode.upper()}] sent to {to}', flush=True)
     except Exception as e:
         print(f'[EMAIL ERROR] {e}', file=sys.stderr)
         sys.exit(1)
