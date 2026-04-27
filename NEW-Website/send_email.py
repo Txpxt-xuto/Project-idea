@@ -123,7 +123,7 @@ def send(to_email, ref, fname, lname, car, start, end, total):
 
 
 # เพิ่มฟังก์ชันนี้ต่อจาก build_html เดิม
-def build_cancel_html(to_email, ref, fname, lname, car, start, end):
+def build_cancel_html(to_email, fname, lname, car, start, end):
     """สร้าง HTML body สำหรับอีเมลแจ้งยกเลิกการจอง"""
     return f"""<!DOCTYPE html>
 <html lang="th">
@@ -139,7 +139,7 @@ def build_cancel_html(to_email, ref, fname, lname, car, start, end):
     </div>
     <div style="padding:24px 30px;">
       <p>เรียนคุณ {fname} {lname},</p>
-      <p>ระบบได้รับการยกเลิกการจองหมายเลข <strong>#{ref}</strong> ของท่านเรียบร้อยแล้ว โดยมีรายละเอียดดังนี้:</p>
+      <p>ระบบได้รับการยกเลิกการจองของท่านเรียบร้อยแล้ว โดยมีรายละเอียดดังนี้:</p>
       <table style="width:100%;font-size:15px;color:#ccc;">
         <tr><td style="padding:5px 0;">🚗 รถยนต์:</td><td>{car}</td></tr>
         <tr><td style="padding:5px 0;">📅 ช่วงเวลา:</td><td>{start} ถึง {end}</td></tr>
@@ -167,7 +167,7 @@ if __name__ == '__main__':
         
         if mode == 'cancel':
             msg['Subject'] = Header(f'แจ้งยกเลิกการจองรถหมายเลข #{ref} — รถเช่ามหาชัย', 'utf-8')
-            html_content = build_cancel_html(to, ref, fn, ln, car, st, en)
+            html_content = build_cancel_html(to, fn, ln, car, st, en)
             plain_text = f"ยกเลิกการจอง #{ref} เรียบร้อยแล้ว"
         else:
             msg['Subject'] = Header(f'ยืนยันการจองรถหมายเลข #{ref} — รถเช่ามหาชัย', 'utf-8')
