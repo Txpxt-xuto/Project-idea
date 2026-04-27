@@ -316,6 +316,7 @@ function confirmDateModal() {
   closeDateModal();
   goToPayment();
 }
+
 function selectPayMethod(el, method) {
   document.querySelectorAll('.pay-method').forEach(m => {
     m.classList.remove('selected');
