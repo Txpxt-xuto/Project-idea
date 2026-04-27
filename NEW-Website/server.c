@@ -598,7 +598,7 @@ static void handleCancel(int sock, const char *body) {
 
         sendResponse(sock, 200, "{\"ok\":true}");
     } else {
-        printf("[DEBUG] ไม่พบการจองของ: %s %s\n", fname, lname);
+        printf("[DEBUG] not found: %s %s\n", fname, lname);
         sendResponse(sock, 200, "{\"ok\":false,\"error\":\"ไม่พบข้อมูลการจอง โปรดตรวจสอบชื่อและนามสกุล\"}");
     }
 }
