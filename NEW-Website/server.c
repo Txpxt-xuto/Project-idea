@@ -72,8 +72,7 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
 static void send_email_cmd(const char* mode, const char* to, const char* ref, const char* fn, const char* ln, const char* car, const char* st, const char* en, const char* tot) {
     char cmd[2048];
     // เพิ่ม \"%s\" ตัวแรกเพื่อส่ง mode ('book' หรือ 'cancel')
-    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &",
-             mode, to, ref, fn, ln, car, st, en, tot);
+    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &",mode, to, ref, fn, ln, car, st, en, tot);
     system(cmd);
 }
 
@@ -298,13 +297,14 @@ static int deleteCustomer(const char *fname, const char *lname, int *outCarIdx, 
 
                 *outCarIdx = -1;
                 for (int i = 0; i < numCars; i++) {
-                    if (strcmp(cars[i].model, m2) == 0) {
+                    printf("[DEBUG] Comparing FileModel: '%s' with ArrayModel: '%s'\n", m2, cars[i].model);
+                    if (strcmp(cars[i].model, m2) == 0) { 
                         *outCarIdx = i;
                         break;
                     }
                 }
                 found = 1; 
-                continue; // ข้ามการเพิ่ม count เพื่อลบบรรทัดนี้
+                continue;
             }
         }
         count++;
