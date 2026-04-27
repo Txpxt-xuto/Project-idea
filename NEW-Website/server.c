@@ -72,7 +72,7 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
 static void send_email_cmd(const char* mode, const char* to, const char* ref, const char* fn, const char* ln, const char* car, const char* st, const char* en, const char* tot) {
     char cmd[2048];
     // เพิ่ม \"%s\" ตัวแรกเพื่อส่ง mode ('book' หรือ 'cancel')
-    snprintf(cmd, sizeof(cmd), "python3 send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &",
+    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &",
              mode, to, ref, fn, ln, car, st, en, tot);
     system(cmd);
 }
@@ -296,7 +296,6 @@ static int deleteCustomer(const char *fname, const char *lname, int *outCarIdx, 
                 if (sd) *outStart = dateToDayIndex(sd);
                 if (ed) *outEnd = dateToDayIndex(ed);
 
-                // หา carIdx จากชื่อรุ่นรถ
                 *outCarIdx = -1;
                 for (int i = 0; i < numCars; i++) {
                     if (strcmp(cars[i].model, m2) == 0) {
@@ -574,28 +573,22 @@ static void handleBook(int sock, const char *body){
 
 static void handleCancel(int sock, const char *body) {
     char fname[64] = "", lname[64] = "";
-    // ดึงค่าจาก JSON
-    char *p1 = strstr(body, "\"fname\":\""); 
-    char *p2 = strstr(body, "\"lname\":\"");
+    getJsonStr(body,"firstName",fname,64);
+    getJsonStr(body,"lastName", lname,64);
 
     int carIdx = -1, s = -1, e = -1;
     char email[128] = "", model[128] = "";
 
     if (deleteCustomer(fname, lname, &carIdx, &s, &e, email, model)) {
-        // 1. คืนสถานะรถ (เรียกใช้ฟังก์ชันที่คุณมี)
+        printf("-----%d %d",s,e);
+        //คืนสถานะรถ 
         if (carIdx >= 0) {
             cancelCar(carIdx, s, e); 
-            // หมายเหตุ: cancelCar ของคุณเรียก saveCars() อยู่แล้ว ไฟล์ CAR.csv จะอัปเดตทันที
         }
-
-        // 2. ส่งอีเมลแจ้งยกเลิก
         char sDate[20], eDate[20];
         dayIndexToDate(s, sDate);
         dayIndexToDate(e, eDate);
-        
-        // ส่งโหมด "cancel" ไปที่ Python
         send_email_cmd("cancel", email, "CANCELLED", fname, lname, model, sDate, eDate, "0");
-
         sendResponse(sock, 200, "{\"ok\":true}");
     } else {
         printf("[DEBUG] not found: %s %s\n", fname, lname);
