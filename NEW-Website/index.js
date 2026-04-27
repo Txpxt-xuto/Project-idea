@@ -316,16 +316,18 @@ function confirmDateModal() {
   closeDateModal();
   goToPayment();
 }
+
 function selectPayMethod(el, method) {
+
   document.querySelectorAll('.pay-method').forEach(m => {
     m.classList.remove('selected');
-    m.setAttribute('data-method', m.getAttribute('data-method') || method);
   });
+
   el.classList.add('selected');
-  el.setAttribute('data-method', method);
-  document.getElementById('credit-section').style.display = method === 'credit' ? 'block' : 'none';
-  document.getElementById('qr-section').style.display   = method === 'qr'   ? 'block' : 'none';
-  document.getElementById('bank-section').style.display = method === 'bank' ? 'block' : 'none';
+
+  document.getElementById('credit-section').style.display = (method === 'credit') ? 'block' : 'none';
+  document.getElementById('qr-section').style.display     = (method === 'qr')     ? 'block' : 'none';
+  document.getElementById('bank-section').style.display   = (method === 'bank')   ? 'block' : 'none';
 }
 
 function formatCard(input) {
