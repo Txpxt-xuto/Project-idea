@@ -151,38 +151,38 @@ def build_cancel_html(to_email, fname, lname, car, start, end):
 </html>"""
 
 # แก้ไขส่วน main เพื่อแยกประเภทอีเมล
-if __name__ == '__main__':
-    # เพิ่ม mode เป็น argument แรก
-    # python3 send_email.py <mode: book|cancel> <to> <ref> <fname> <lname> <car> <start> <end> <total>
+if __name__ == "__main__":
     if len(sys.argv) < 10:
-        print('[EMAIL ERROR] ต้องการ 9 arguments', file=sys.stderr)
         sys.exit(1)
 
-    mode, to, ref, fn, ln, car, st, en, tot = sys.argv[1:10]
-    
+    mode = sys.argv[1] # 'book' หรือ 'cancel'
+    to_email = sys.argv[2]
+    ref = sys.argv[3]
+    fname = sys.argv[4]
+    lname = sys.argv[5]
+    car = sys.argv[6]
+    start = sys.argv[7]
+    end = sys.argv[8]
+    total = sys.argv[9]
+
+    msg = MIMEMultipart('alternative')
+    msg['From'] = f"{FROM_NAME} <{GMAIL_USER}>"
+    msg['To'] = to_email
+
+    if mode == "cancel":
+        msg['Subject'] = Header(f"แจ้งยกเลิกการจอง #{ref}", 'utf-8')
+        html = build_cancel_html(to_email, fname, lname, car, start, end)
+    else:
+        msg['Subject'] = Header(f"ยืนยันการจองรถ #{ref}", 'utf-8')
+        html = build_html(ref, fname, lname, car, start, end, total)
+
+    msg.attach(MIMEText(html, 'html', 'utf-8'))
+
     try:
-        msg = MIMEMultipart('alternative')
-        msg['From'] = f'{FROM_NAME} <{GMAIL_USER}>'
-        msg['To'] = to
-        
-        if mode == 'cancel':
-            msg['Subject'] = Header(f'แจ้งยกเลิกการจองรถหมายเลข #{ref} — รถเช่ามหาชัย', 'utf-8')
-            html_content = build_cancel_html(to, fn, ln, car, st, en)
-            plain_text = f"ยกเลิกการจอง #{ref} เรียบร้อยแล้ว"
-        else:
-            msg['Subject'] = Header(f'ยืนยันการจองรถหมายเลข #{ref} — รถเช่ามหาชัย', 'utf-8')
-            html_content = build_html(to, ref, fn, ln, car, st, en, tot)
-            plain_text = f"ยืนยันการจอง #{ref}\nรถ: {car}"
-
-        msg.attach(MIMEText(plain_text, 'plain', 'utf-8'))
-        msg.attach(MIMEText(html_content, 'html', 'utf-8'))
-
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
             server.login(GMAIL_USER, GMAIL_PASS)
-            server.sendmail(GMAIL_USER, [to], msg.as_string())
-        
-        print(f'[EMAIL {mode.upper()}] sent to {to}', flush=True)
+            server.sendmail(GMAIL_USER, [to_email], msg.as_string())
+        print("Email sent successfully")
     except Exception as e:
-        print(f'[EMAIL ERROR] {e}', file=sys.stderr)
-        sys.exit(1)
+        print(f"Error: {e}")
