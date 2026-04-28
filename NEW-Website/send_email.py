@@ -183,7 +183,7 @@ def build_cancel_html(to_email, fname, lname, car, start, end):
 
 # แก้ไขส่วน main เพื่อแยกประเภทอีเมล
 if __name__ == "__main__":
-    if len(sys.argv) < 10:
+    if len(sys.argv) < 9:
         sys.exit(1)
 
     mode = sys.argv[1] # 'book' หรือ 'cancel'
