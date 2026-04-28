@@ -146,7 +146,6 @@ def build_cancel_html(to_email, fname, lname, car, start, end):
         <div style="color:#888;font-size:12px;text-transform:uppercase;
                     letter-spacing:1px;margin-bottom:6px;">รหัสการจองที่ถูกยกเลิก</div>
         <div style="color:#ff6b35;font-size:26px;font-weight:700;
-                    letter-spacing:4px;">#{ref}</div>
       </div>
 
       <table style="width:100%;border-collapse:collapse;font-size:15px;">
@@ -183,18 +182,21 @@ def build_cancel_html(to_email, fname, lname, car, start, end):
 
 # แก้ไขส่วน main เพื่อแยกประเภทอีเมล
 if __name__ == "__main__":
-    if len(sys.argv) < 9:
+    # เช็คว่ามี argument อย่างน้อย mode, to_email, ref (รวมชื่อไฟล์เป็น 4)
+    if len(sys.argv) < 4:
+        print("Usage: python send_email.py <mode> <to_email> <ref> ...")
         sys.exit(1)
 
-    mode = sys.argv[1] # 'book' หรือ 'cancel'
-    to_email = sys.argv[2]
-    ref = sys.argv[3]
-    fname = sys.argv[4]
-    lname = sys.argv[5]
-    car = sys.argv[6]
-    start = sys.argv[7]
-    end = sys.argv[8]
-    total = sys.argv[9]
+    # ใช้การดึงค่าแบบปลอดภัย ถ้าไม่มีให้เป็นค่าว่าง ""
+    mode     = sys.argv[1] if len(sys.argv) > 1 else "book"
+    to_email = sys.argv[2] if len(sys.argv) > 2 else ""
+    ref      = sys.argv[3] if len(sys.argv) > 3 else "N/A"
+    fname    = sys.argv[4] if len(sys.argv) > 4 else ""
+    lname    = sys.argv[5] if len(sys.argv) > 5 else ""
+    car      = sys.argv[6] if len(sys.argv) > 6 else "Unknown Car"
+    start    = sys.argv[7] if len(sys.argv) > 7 else "-"
+    end      = sys.argv[8] if len(sys.argv) > 8 else "-"
+    total    = sys.argv[9] if len(sys.argv) > 9 else "0" # ป้องกัน IndexError ตรงนี้
 
     msg = MIMEMultipart('alternative')
     msg['From'] = f"{FROM_NAME} <{GMAIL_USER}>"
