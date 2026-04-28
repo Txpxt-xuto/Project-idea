@@ -85,7 +85,7 @@ typedef struct {
 } Car;
 
 static Car cars[MAX_CARS];
-static int numCars = 0;
+int numCars = 0;
 
 /* ─── helper: leap year ───────────────────────────────────── */
 static int isLeap(int y){
@@ -257,68 +257,68 @@ static void saveCustomer(
 
 /* ─── delete customer from CSV ────────────────────────────── */
 static int deleteCustomer(const char *fname, const char *lname, int *outCarIdx, int *outStart, int *outEnd, char *outEmail, char *outModel) {
-    FILE *fp = fopen(CUST_FILE, "r");
-    if (!fp) return 0;
+    FILE *fp=fopen(CUST_FILE,"r");
+    if(!fp) return 0;
 
-    char lines[500][1024];
-    int count = 0;
-    int found = 0;
-
-    while (fgets(lines[count], 1024, fp) && count < 499) {
-        char tmp[1024];
-        strcpy(tmp, lines[count]);
+    char lines[500][512];
+    int count=0;
+    int foundLine=-1;
+    loadCars();
+    while(fgets(lines[count],512,fp) && count<499){
+        char tmp[512];
+        strcpy(tmp,lines[count]);
+        char *model=strtok(tmp,",");
+        char *fn   =strtok(NULL,",");
+        char *ln   =strtok(NULL,",");
         
-        // โครงสร้างไฟล์คุณ: Model, Fname, Lname, Phone, Email...
-        char *m = strtok(tmp, ",");   // [0] Model
-        char *f = strtok(NULL, ",");   // [1] Fname
-        char *l = strtok(NULL, ",");   // [2] Lname
-
-        if (f && l) {
-            // ล้างช่องว่างหรือ \r\n ออก
-            f[strcspn(f, "\r\n")] = 0;
-            l[strcspn(l, "\r\n")] = 0;
-
-            if (strcmp(f, fname) == 0 && strcmp(l, lname) == 0) {
-                // ดึงข้อมูลออกมาเก็บไว้ก่อนลบ
-                char tmp2[1024];
-                strcpy(tmp2, lines[count]);
-                char *m2 = strtok(tmp2, ","); 
-                strtok(NULL, ","); strtok(NULL, ","); // ข้าม f, l
-                strtok(NULL, ","); // ข้าม phone
-                char *em2 = strtok(NULL, ","); // [4] Email
-                strtok(NULL, ","); // ข้าม id
-                char *sd = strtok(NULL, ",");  // [6] Start
-                char *ed = strtok(NULL, ",");  // [7] End
-
+        if(fn&&ln){
+            fn[strcspn(fn,"\n")]=0;
+            ln[strcspn(ln,"\n")]=0;
+            if(strcmp(fn,fname)==0&&strcmp(ln,lname)==0){
+                foundLine=count;
+                /* หา carIdx, start, end */
+                char tmp2[512]; strcpy(tmp2,lines[count]);
+                char *m2   =strtok(tmp2,",");
+                char *fn2  =strtok(NULL,",");
+                char *ln2  =strtok(NULL,",");
+                char *ph2  =strtok(NULL,",");
+                char *em2  =strtok(NULL,",");
+                char *idcard  =strtok(NULL,",");
+                char *sd   =strtok(NULL,",");
+                char *ed   =strtok(NULL,",");
+                if(sd&&ed){
+                    sd[strcspn(sd,"\n")]=0;
+                    ed[strcspn(ed,"\n")]=0;
+                    *outStart=dateToDayIndex(sd);
+                    *outEnd  =dateToDayIndex(ed);
+                }
                 if (m2) strcpy(outModel, m2);
                 if (em2) strcpy(outEmail, em2);
-                if (sd) *outStart = dateToDayIndex(sd);
-                if (ed) *outEnd = dateToDayIndex(ed);
-
+                /* หา car index จาก model name */
                 *outCarIdx = -1;
                 for (int i = 0; i < numCars; i++) {
-                    printf("[DEBUG] Comparing FileModel: '%s' with ArrayModel: '%s'\n", m2, cars[i].model);
-                    if (strcmp(cars[i].model, m2) == 0) { 
+                    if (strcmp(cars[i].model, m2) == 0) {
                         *outCarIdx = i;
                         break;
                     }
                 }
-                found = 1; 
-                continue;
             }
         }
         count++;
     }
     fclose(fp);
+    if(foundLine<0) return 0;
 
-    if (!found) return 0;
-
-    // บันทึกไฟล์กลับโดยไม่มีบรรทัดที่ลบ
-    fp = fopen(CUST_FILE, "w");
-    for (int i = 0; i < count; i++) fputs(lines[i], fp);
-    fclose(fp);
+    /* เขียนไฟล์ใหม่โดยข้ามบรรทัดนั้น */
+    FILE *out=fopen(CUST_FILE,"w");
+    if(!out) return 0;
+    for(int i=0;i<count;i++){
+        if(i!=foundLine) fprintf(out,"%s",lines[i]);
+    }
+    fclose(out);
     return 1;
 }
+
 
 /* ══════════════════════════════════════════════════════════════
                         HTTP helpers
@@ -580,8 +580,6 @@ static void handleCancel(int sock, const char *body) {
     char email[128] = "", model[128] = "";
 
     if (deleteCustomer(fname, lname, &carIdx, &s, &e, email, model)) {
-        printf("-----%d",carIdx);
-        //คืนสถานะรถ 
         if (carIdx >= 0) {
             cancelCar(carIdx, s, e); 
         }
