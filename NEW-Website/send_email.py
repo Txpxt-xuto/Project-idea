@@ -131,20 +131,51 @@ def build_cancel_html(to_email, fname, lname, car, start, end):
 <body style="margin:0;padding:0;font-family:'Sarabun',sans-serif;background:#0a0a0f;color:#f0f0f0;">
   <div style="background:#13131a;max-width:600px;margin:24px auto;border-radius:16px;
               border:1px solid rgba(255,107,53,0.25);overflow:hidden;">
-    <div style="padding:36px;text-align:center;background:#1a1a25; border-bottom:1px solid rgba(255,107,53,0.15);">
+
+    <div style="padding:36px;text-align:center;background:#1a1a25;
+                border-bottom:1px solid rgba(255,107,53,0.15);">
       <h1 style="color:#ff6b35;margin:0;font-size:28px;letter-spacing:2px;">
         ❌ CANCELLATION SUCCESS
       </h1>
-      <p style="color:#888;margin:8px 0 0;">การยกเลิกการจองของคุณเสร็จสมบูรณ์แล้ว</p>
+      <p style="color:#888;margin:8px 0 0;">ระบบดำเนินการยกเลิกการจองของท่านเรียบร้อยแล้ว</p>
     </div>
-    <div style="padding:24px 30px;">
-      <p>เรียนคุณ {fname} {lname},</p>
-      <p>ระบบได้รับการยกเลิกการจองของท่านเรียบร้อยแล้ว โดยมีรายละเอียดดังนี้:</p>
-      <table style="width:100%;font-size:15px;color:#ccc;">
-        <tr><td style="padding:5px 0;">🚗 รถยนต์:</td><td>{car}</td></tr>
-        <tr><td style="padding:5px 0;">📅 ช่วงเวลา:</td><td>{start} ถึง {end}</td></tr>
+
+    <div style="padding:24px 30px 0;">
+      <div style="background:#1a1a25;padding:18px 20px;border-radius:12px;
+                  border-left:4px solid #ff6b35;margin-bottom:20px;">
+        <div style="color:#888;font-size:12px;text-transform:uppercase;
+                    letter-spacing:1px;margin-bottom:6px;">รหัสการจองที่ถูกยกเลิก</div>
+        <div style="color:#ff6b35;font-size:26px;font-weight:700;
+                    letter-spacing:4px;">#{ref}</div>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;font-size:15px;">
+        <tr>
+          <td style="padding:10px 0;color:#888;width:40%;">👤 ชื่อลูกค้า</td>
+          <td style="padding:10px 0;font-weight:600;">{fname} {lname}</td>
+        </tr>
+        <tr style="border-top:1px solid rgba(255,255,255,0.06);">
+          <td style="padding:10px 0;color:#888;">🚗 รถยนต์</td>
+          <td style="padding:10px 0;font-weight:600;">{car}</td>
+        </tr>
+        <tr style="border-top:1px solid rgba(255,255,255,0.06);">
+          <td style="padding:10px 0;color:#888;">📅 ช่วงเวลาเดิม</td>
+          <td style="padding:10px 0;font-weight:600;">{start} ถึง {end}</td>
+        </tr>
       </table>
-      <p style="margin-top:20px; color:#888; font-size:13px;">หากท่านมีข้อสงสัยหรือต้องการจองใหม่ โปรดติดต่อเราได้ทุกเมื่อ</p>
+    </div>
+
+    <div style="padding:20px 30px;">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);
+                  border-radius:10px;padding:14px 16px;font-size:13px;color:#aaa;text-align:center;">
+        หวังว่าเราจะได้มีโอกาสให้บริการท่านอีกครั้งในเร็วๆ นี้
+      </div>
+    </div>
+
+    <div style="padding:20px 30px;border-top:1px solid rgba(255,255,255,0.06);
+                text-align:center;font-size:12px;color:#555;">
+      อีเมลนี้ถูกส่งอัตโนมัติจากระบบจองรถ RODCHAOMAHACHAI<br>
+      ส่งเมื่อ {datetime.now().strftime('%d/%m/%Y %H:%M')} น.
     </div>
   </div>
 </body>
