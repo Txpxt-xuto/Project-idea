@@ -174,9 +174,9 @@ function injectAdminUI(){
       <div class="admin-filter-grid">
         <div class="form-group"><label>🚗 รุ่นรถ</label>
           <input type="text" id="af-car" placeholder="Toyota, Honda..." oninput="debounceAdminFilter()"></div>
-        <div class="form-group"><label>📅 วันเริ่มต้น (ตั้งแต่)</label>
+        <div class="form-group"><label>📅 วันเริ่มต้น</label>
           <input type="date" id="af-from" onchange="debounceAdminFilter()"></div>
-        <div class="form-group"><label>📅 วันเริ่มต้น (ถึง)</label>
+        <div class="form-group"><label>📅 วันเริ่มสิ้นสุด</label>
           <input type="date" id="af-to" onchange="debounceAdminFilter()"></div>
         <div class="form-group"><label>🔖 สถานะ</label>
           <select id="af-status" onchange="debounceAdminFilter()">
