@@ -1,4 +1,5 @@
-/* nav.js — shared hamburger menu logic */
+/* nav.js — shared hamburger menu logic */ 
+/* test add friends*/
 (function() {
   function initNav() {
     const nav = document.querySelector('nav');
