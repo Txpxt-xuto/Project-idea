@@ -188,9 +188,9 @@ function injectAdminUI(){
         <div class="form-group"><label>💳 วิธีชำระ</label>
           <select id="af-method" onchange="debounceAdminFilter()">
             <option value="">ทั้งหมด</option>
-            <option value="บัตรเครดิต">💳 บัตรเครดิต</option>
-            <option value="พร้อมเพย์">📱 พร้อมเพย์</option>
-            <option value="โอนเงิน">🏦 โอนเงิน</option>
+            <option value="credit">💳 บัตรเครดิต</option>
+            <option value="qr">📱 พร้อมเพย์</option>
+            <option value="bank">🏦 โอนเงิน</option>
           </select></div>
         <div class="form-group"><label>📍 สถานที่</label>
           <input type="text" id="af-location" placeholder="BKK, Mahachai..." oninput="debounceAdminFilter()"></div>
@@ -236,7 +236,7 @@ function renderAdminTable(bookings){
 
   const statusLabel = { upcoming:'⏳ รอรับรถ', active:'🟢 กำลังเช่า', past:'✔ เสร็จสิ้น' };
   const statusClass = { upcoming:'badge-upcoming', active:'badge-active', past:'badge-past' };
-  const mIcon = { 'บัตรเครดิต':'💳', 'พร้อมเพย์':'📱', 'โอนเงิน':'🏦' };
+  const mIcon = { 'credit':'💳', 'qr':'📱', 'bank':'🏦' };
 
   list.innerHTML = `
   <div class="admin-table-wrap">
