@@ -18,7 +18,7 @@
 #endif
 
 /* ─── config ─────────────────────────────────────────────── */
-#define PORT        8080
+
 #define BUF         65536
 #define MAX_CARS    20
 #define MAX_DAYS    370
@@ -848,6 +848,11 @@ static void handleAllBookings(int sock, const char *url) {
                         Main server loop
    ══════════════════════════════════════════════════════════════ */
 int main(void){
+int PORT = 8080;
+char* portEnv = getenv("PORT");
+if (portEnv != NULL) {
+    PORT = atoi(portEnv);}
+
 #ifdef _WIN32
     WSADATA wsa; WSAStartup(MAKEWORD(2,2),&wsa);
 #endif
@@ -856,7 +861,7 @@ int main(void){
     if(server<0){ perror("socket"); return 1; }
 
     int opt=1;
-    setsockopt(server,SOL_SOCKET,SO_REUSEADDR, &opt,sizeof(opt));
+    setsockopt(server,SOL_SOCKET,SO_REUSEADDR, (const char*)&opt,sizeof(opt));
 
     struct sockaddr_in addr;
     memset(&addr,0,sizeof(addr));
