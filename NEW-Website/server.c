@@ -29,13 +29,14 @@
 static void shell_escape(const char *src, char *dst, int dstLen) {
     int j = 0;
     for (int i = 0; src[i] && j < dstLen-5; i++) {
-        if (src[i] == '\'') {
-            /* ' → '\'' */
+        if (src[i] == '\'')
+        {
             dst[j++] = '\'';
             dst[j++] = '\\';
             dst[j++] = '\'';
             dst[j++] = '\'';
-        } else {
+        }
+        else {
             dst[j++] = src[i];
         }
     }
@@ -71,17 +72,16 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
 
 static void send_email_cmd(const char* mode, const char* to, const char* ref, const char* fn, const char* ln, const char* car, const char* st, const char* en, const char* tot) {
     char cmd[2048];
-    // เพิ่ม \"%s\" ตัวแรกเพื่อส่ง mode ('book' หรือ 'cancel')
     snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &",mode, to, ref, fn, ln, car, st, en, tot);
     system(cmd);
 }
 
 /* ─── car struct ──────────────────────────────────────────── */
 typedef struct {
-    int  number;   /* ลำดับที่ใน CSV (1-based) */
-    int  id;       /* ราคา/วัน                 */
+    int  number;   
+    int  id;       
     char model[64];
-    int  booked[MAX_DAYS]; /* 0=ว่าง 1=จอง */
+    int  booked[MAX_DAYS];
 } Car;
 
 static Car cars[MAX_CARS];
@@ -165,7 +165,7 @@ static void loadCars(void){
 
 /* ─── save CAR.csv ────────────────────────────────────────── */
 static void saveCars(void){
-    /* อ่าน header เดิมก่อน */
+    /* อ่าน header  */
     FILE *in=fopen(CAR_FILE,"r");
     char header[20000]="";
     if(in){ fgets(header,sizeof(header),in); fclose(in); }
@@ -208,7 +208,8 @@ static void bookCar(int carIdx, int startDay, int endDay){
 /* ─── cancel car ──────────────────────────────────────────── */
 static void cancelCar(int carIdx, int startDay, int endDay){
     Car *c=&cars[carIdx];
-    for(int d=startDay;d<=endDay;d++){
+    for(int d=startDay;d<=endDay;d++)
+    {
         int idx=d-1;
         if(idx>=0&&idx<MAX_DAYS) c->booked[idx]=0;
     }
@@ -236,7 +237,6 @@ static void saveCustomer(
     char today[20];
     strftime(today,sizeof(today),"%Y-%m-%d",t);
 
-    /* ทุก field ห้ามมี comma — sanitize เบื้องต้น */
     #define SAFE(s) ((s)&&(s)[0] ? (s) : "-")
 
     fprintf(fp,"%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n",SAFE(carModel),
@@ -371,12 +371,10 @@ static int getJsonStr(const char *json, const char *key, char *out, int outLen){
     if(*p!='"') return 0;
     p++;
     int i=0;
-    /* copy bytes until closing quote, handling \uXXXX and escaped chars
-       UTF-8 bytes are > 0x7F — copy them as-is (opaque)               */
     while(*p && i<outLen-1){
         unsigned char ch = (unsigned char)*p;
-        if(ch == '"') break;          /* end of string */
-        if(ch == '\\'){               /* escape sequence */
+        if(ch == '"') break;        
+        if(ch == '\\'){      
             p++;
             ch = (unsigned char)*p;
             switch(ch){
@@ -387,20 +385,18 @@ static int getJsonStr(const char *json, const char *key, char *out, int outLen){
                 case 'r':  out[i++]='\r'; break;
                 case 't':  out[i++]='\t'; break;
                 case 'u':{
-                    /* \uXXXX — copy raw bytes for now, JS already sent UTF-8 */
                     out[i++]='?'; p+=4; /* skip 4 hex digits */
                     break;
                 }
                 default: out[i++]=(char)ch; break;
             }
         } else {
-            /* UTF-8: copy all bytes of this character (may be 1-4 bytes) */
             out[i++]=(char)ch;
         }
         p++;
     }
     out[i]=0;
-    return i>0 || *p=='"'; /* return 1 even for empty string */
+    return i>0 || *p=='"'; 
 }
 
 static int getJsonInt(const char *json, const char *key, int *out){
@@ -513,7 +509,6 @@ static void handleBook(int sock, const char *body){
 
     printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s pay=%s total=%s\n",carNumber, startDate, endDate, fname, lname, payMethod, total);
 
-    /* validate */
     if(carNumber<1||!startDate[0]||!endDate[0]||!fname[0]||!lname[0]){
         sendResponse(sock,400,"{\"ok\":false,\"error\":\"missing fields\"}");
         return;
@@ -628,7 +623,8 @@ void handleMyBookings(int client, const char *jsonBody) {
     char line[2048];
     int isHeader = 1;
 
-    while(fgets(line, sizeof(line), f)){
+    while(fgets(line, sizeof(line), f))
+    {
         if(isHeader){ isHeader=0; continue; }
         if(line[0]=='\n'||line[0]=='\r'||line[0]=='\0') continue;
 
@@ -648,7 +644,6 @@ void handleMyBookings(int client, const char *jsonBody) {
 
         if(strcmp(col[1], reqF)!=0 || strcmp(col[2], reqL)!=0) continue;
 
-        /* escape double-quotes in car name */
         char carEsc[128]="";
         int  ei = 0;
         for(int k=0; col[0][k] && ei<126; k++){
@@ -686,7 +681,6 @@ void handleMyBookings(int client, const char *jsonBody) {
 
 static void handleAllBookings(int sock, const char *url) {
 
-    /* ── parse query params ── */
     char qCar[64]="", qFrom[20]="", qTo[20]="", qStatus[16]="", qMethod[32]="", qLoc[80]="";
     getParam(url, "car",      qCar,    64);
     getParam(url, "dateFrom", qFrom,   20);
@@ -695,7 +689,6 @@ static void handleAllBookings(int sock, const char *url) {
     getParam(url, "method",   qMethod, 32);
     getParam(url, "location", qLoc,    80);
 
-    /* URL-decode '+' → space for Thai text (basic) */
     for(char *p=qCar;  *p; p++) if(*p=='+') *p=' ';
     for(char *p=qMethod;*p;p++) if(*p=='+') *p=' ';
     for(char *p=qLoc;  *p; p++) if(*p=='+') *p=' ';
@@ -715,7 +708,6 @@ static void handleAllBookings(int sock, const char *url) {
     #define MAX_ROWS 2000
     #define MAX_COL  16
 
-    /* store lines as flat char arrays */
     typedef struct { char col[MAX_COL][256]; int nc; } Row;
     Row *rows = (Row*)malloc(sizeof(Row) * MAX_ROWS);
     if(!rows){ fclose(f); sendResponse(sock,500,"{\"ok\":false,\"error\":\"OOM\"}"); return; }
@@ -745,13 +737,12 @@ static void handleAllBookings(int sock, const char *url) {
     }
     fclose(f);
 
-    /* ── helper: today string ── */
     time_t nowt = time(NULL);
     struct tm *nowtm = localtime(&nowt);
     char todayStr[20];
     strftime(todayStr, sizeof(todayStr), "%Y-%m-%d", nowtm);
 
-    char *resbuf = (char*)malloc(1024*1024); /* 1MB */
+    char *resbuf = (char*)malloc(1024*1024);
     if(!resbuf){ free(rows); sendResponse(sock,500,"{\"ok\":false,\"error\":\"OOM\"}"); return; }
 
     int pos   = 0;
