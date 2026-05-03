@@ -884,14 +884,14 @@ function confirmMapLocation() {
   closeMapModal();
 }
 /* ═══════════════════════════════════════
-   STAT COUNTER ANIMATION (ease-out)
+    STAT COUNTER ANIMATION (ease-out)
    ═══════════════════════════════════════ */
 (function () {
   const DURATION = 1800; // ms
 
   function easeOut(t) {
     // cubic ease-out: เร็วตอนต้น ช้าตอนท้าย
-    return 1 - Math.pow(1 - t, 3);
+    return 1 - Math.pow(1 - t, 1);
   }
 
   function animateCounter(el) {
