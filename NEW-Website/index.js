@@ -488,7 +488,7 @@ function buildMarquee() {
 }
 
 // FAQ
-const items = document.querySelectorAll(".accordion button");
+const items = document.querySelectorAll(".faq-btn");
 function toggleAccordion() {
   const itemToggle = this.getAttribute('aria-expanded');
   
