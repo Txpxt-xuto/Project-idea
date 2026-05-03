@@ -320,6 +320,89 @@ static int deleteCustomer(const char *fname, const char *lname, int *outCarIdx, 
 }
 
 
+/* ─── delete customer by name + startDate (admin) ─────────── */
+static int deleteCustomerByKey(const char *fname, const char *lname, const char *startDate,
+                                int *outCarIdx, int *outStart, int *outEnd,
+                                char *outEmail, char *outModel) {
+    FILE *fp = fopen(CUST_FILE, "r");
+    if (!fp) return 0;
+
+    char lines[500][512];
+    int count = 0, foundLine = -1;
+    loadCars();
+
+    while (fgets(lines[count], 512, fp) && count < 499) {
+        char tmp[512];
+        strcpy(tmp, lines[count]);
+        char *col[16]; int nc = 0;
+        char *tok = strtok(tmp, ",");
+        while (tok && nc < 16) { tok[strcspn(tok, "\r\n")] = 0; col[nc++] = tok; tok = strtok(NULL, ","); }
+
+        if (nc >= 8) {
+            int fnameMatch = strcmp(col[1], fname) == 0;
+            int lnameMatch = strcmp(col[2], lname) == 0;
+            int dateMatch  = (startDate[0] == '\0') || (strcmp(col[6], startDate) == 0);
+            if (fnameMatch && lnameMatch && dateMatch) {
+                foundLine = count;
+                char tmp2[512]; strcpy(tmp2, lines[count]);
+                char *c[16]; int nc2 = 0;
+                char *t2 = strtok(tmp2, ",");
+                while (t2 && nc2 < 16) { t2[strcspn(t2, "\r\n")] = 0; c[nc2++] = t2; t2 = strtok(NULL, ","); }
+                if (nc2 >= 8) {
+                    c[6][strcspn(c[6], "\r\n")] = 0;
+                    c[7][strcspn(c[7], "\r\n")] = 0;
+                    *outStart = dateToDayIndex(c[6]);
+                    *outEnd   = dateToDayIndex(c[7]);
+                    if (c[0]) strcpy(outModel, c[0]);
+                    if (nc2 > 4 && c[4]) strcpy(outEmail, c[4]);
+                    *outCarIdx = -1;
+                    for (int i = 0; i < numCars; i++) {
+                        if (strcmp(cars[i].model, c[0]) == 0) { *outCarIdx = i; break; }
+                    }
+                }
+            }
+        }
+        count++;
+    }
+    fclose(fp);
+    if (foundLine < 0) return 0;
+
+    FILE *out = fopen(CUST_FILE, "w");
+    if (!out) return 0;
+    for (int i = 0; i < count; i++) {
+        if (i != foundLine) fprintf(out, "%s", lines[i]);
+    }
+    fclose(out);
+    return 1;
+}
+
+static void handleAdminCancel(int sock, const char *body) {
+    char fname[256] = "", lname[256] = "", startDate[20] = "";
+    getJsonStr(body, "firstName", fname, 256);
+    getJsonStr(body, "lastName",  lname, 256);
+    getJsonStr(body, "startDate", startDate, 20);
+
+    if (!fname[0] || !lname[0]) {
+        sendResponse(sock, 400, "{\"ok\":false,\"error\":\"missing fields\"}");
+        return;
+    }
+
+    int carIdx = -1, s = -1, e = -1;
+    char email[128] = "", model[128] = "";
+
+    if (deleteCustomerByKey(fname, lname, startDate, &carIdx, &s, &e, email, model)) {
+        if (carIdx >= 0 && s >= 0 && e >= 0) cancelCar(carIdx, s, e);
+        char sDate[20] = "", eDate[20] = "";
+        if (s >= 0) dayIndexToDate(s, sDate);
+        if (e >= 0) dayIndexToDate(e, eDate);
+        if (email[0]) send_email_cmd("cancel", email, "CANCELLED", fname, lname, model, sDate, eDate, "0");
+        sendResponse(sock, 200, "{\"ok\":true}");
+    } else {
+        printf("[ADMINCANCEL] not found: %s %s start=%s\n", fname, lname, startDate);
+        sendResponse(sock, 200, "{\"ok\":false,\"error\":\"ไม่พบข้อมูลการจอง\"}");
+    }
+}
+
 /* ══════════════════════════════════════════════════════════════
                         HTTP helpers
    ══════════════════════════════════════════════════════════════ */
@@ -906,6 +989,9 @@ if (portEnv != NULL) {
         }
         else if(strcmp(path,"/mybookings")==0 && strcmp(method,"POST")==0){
             handleMyBookings(client, jsonBody);
+        }
+        else if(strcmp(path,"/admincancel")==0 && strcmp(method,"POST")==0){
+            handleAdminCancel(client, jsonBody);
         }
         else if(strncmp(path,"/allbookings",12)==0 && strcmp(method,"GET")==0){
             handleAllBookings(client, path);
