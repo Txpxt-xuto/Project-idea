@@ -25,6 +25,11 @@
 #define CAR_FILE    "CAR.csv"
 #define CUST_FILE   "CUSTOMER.csv"
 
+
+static void sendResponse(int sock, int code, const char *body);
+static int getJsonStr(const char *json, const char *key, char *out, int outLen);
+static void dayIndexToDate(int dayIdx, char *out);
+
 /* ─── send-mail via Python ─────────────────────────────── */
 static void shell_escape(const char *src, char *dst, int dstLen) {
     int j = 0;
