@@ -212,7 +212,7 @@ function updateStatsBanner(bookings){
   const past     = bookings.filter(b=>b.status==='past').length;
   const revenue  = bookings.reduce((s,b)=>s+(parseInt(b.total)||0), 0);
 
-  // --- ส่วนที่เพิ่มใหม่: จัดการรูปแบบการแสดงผลรายได้ ---
+  // --- จัดการรูปแบบการแสดงผลรายได้ ---
   let displayRevenue;
   if (revenue >= 1000000) {
     // ถ้าเกิน 1 ล้าน หารด้วยล้านแล้วเอาทศนิยม 1 ตำแหน่ง (เช่น 1.2M) หรือถ้าอยากได้เลขกลมๆ ก็ใช้ .toFixed(0)
