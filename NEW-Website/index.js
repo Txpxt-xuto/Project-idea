@@ -883,3 +883,66 @@ function confirmMapLocation() {
   }
   closeMapModal();
 }
+/* ═══════════════════════════════════════
+   STAT COUNTER ANIMATION (ease-out)
+   ═══════════════════════════════════════ */
+(function () {
+  const DURATION = 1800; // ms
+
+  function easeOut(t) {
+    // cubic ease-out: เร็วตอนต้น ช้าตอนท้าย
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function animateCounter(el) {
+    const target   = parseFloat(el.dataset.target);
+    const suffix   = el.dataset.suffix  || '';
+    const fmt      = el.dataset.format  || '';       // 'K' → หารด้วย 1000
+    const decimals = parseInt(el.dataset.decimal) || 0;
+    const start    = performance.now();
+
+    function tick(now) {
+      const elapsed  = now - start;
+      const progress = Math.min(elapsed / DURATION, 1);
+      const eased    = easeOut(progress);
+      const current  = target * eased;
+
+      let display;
+      if (fmt === 'K') {
+        // แสดงเป็น K เมื่อถึง 1000
+        display = current >= 1000
+          ? (current / 1000).toFixed(decimals) + 'K'
+          : Math.round(current).toString();
+      } else {
+        display = decimals > 0
+          ? current.toFixed(decimals)
+          : Math.round(current).toString();
+      }
+
+      el.textContent = display + suffix;
+
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  // เริ่ม animate เมื่อ .stats เข้า viewport (IntersectionObserver)
+  const statEls = document.querySelectorAll('.stat-num[data-target]');
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+
+    statEls.forEach(el => observer.observe(el));
+  } else {
+    // fallback: รันทันที
+    statEls.forEach(animateCounter);
+  }
+})();
