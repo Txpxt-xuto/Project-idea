@@ -176,7 +176,7 @@ function injectAdminUI(){
           <input type="text" id="af-car" placeholder="Toyota, Honda..." oninput="debounceAdminFilter()"></div>
         <div class="form-group"><label>📅 วันเริ่มต้น</label>
           <input type="date" id="af-from" onchange="debounceAdminFilter()"></div>
-        <div class="form-group"><label>📅 วันเริ่มสิ้นสุด</label>
+        <div class="form-group"><label>📅 วันสิ้นสุด</label>
           <input type="date" id="af-to" onchange="debounceAdminFilter()"></div>
         <div class="form-group"><label>🔖 สถานะ</label>
           <select id="af-status" onchange="debounceAdminFilter()">
