@@ -266,12 +266,12 @@
   }
 
   .faq-chevron {
-    font-size: 22px;
+    width: 22px;
+    height: 22px;
     color: #7b93b8;
     flex-shrink: 0;
     transition: transform 0.3s ease, color 0.2s;
-    line-height: 1;
-    display: inline-block;
+    display: block;
   }
 
   .faq-btn[aria-expanded='true'] .accordion-title {
