@@ -141,7 +141,7 @@ function renderUserBookings(bookings){
 }
 
 /* ══════════════════════════════════════════════════════════
-   ADMIN DASHBOARD
+    ADMIN DASHBOARD
    ══════════════════════════════════════════════════════════ */
 async function loadAdminDashboard(){
   const list = document.getElementById('mybookings-list');
@@ -211,6 +211,18 @@ function updateStatsBanner(bookings){
   const active   = bookings.filter(b=>b.status==='active').length;
   const past     = bookings.filter(b=>b.status==='past').length;
   const revenue  = bookings.reduce((s,b)=>s+(parseInt(b.total)||0), 0);
+
+  // --- ส่วนที่เพิ่มใหม่: จัดการรูปแบบการแสดงผลรายได้ ---
+  let displayRevenue;
+  if (revenue >= 1000000) {
+    // ถ้าเกิน 1 ล้าน หารด้วยล้านแล้วเอาทศนิยม 1 ตำแหน่ง (เช่น 1.2M) หรือถ้าอยากได้เลขกลมๆ ก็ใช้ .toFixed(0)
+    displayRevenue = (revenue / 1000000).toFixed(1) + 'M';
+  } else {
+    // ถ้าไม่ถึงล้าน แสดงแบบใส่ comma ปกติ
+    displayRevenue = revenue.toLocaleString();
+  }
+  // ------------------------------------------
+
   el.innerHTML = `
     <div class="admin-stat-chip" onclick="applyAdminFilter('status','')">
       <div class="asc-num">${bookings.length}</div><div class="asc-label">รายการทั้งหมด</div></div>
@@ -221,7 +233,7 @@ function updateStatsBanner(bookings){
     <div class="admin-stat-chip chip-past" onclick="applyAdminFilter('status','past')">
       <div class="asc-num">${past}</div><div class="asc-label">✔ เสร็จสิ้น</div></div>
     <div class="admin-stat-chip chip-revenue">
-      <div class="asc-num">${revenue.toLocaleString()}</div><div class="asc-label">฿ รายรับรวม</div></div>`;
+      <div class="asc-num">${displayRevenue}</div><div class="asc-label">฿ รายรับรวม</div></div>`;
 }
 
 function renderAdminTable(bookings){
