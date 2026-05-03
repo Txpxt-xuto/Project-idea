@@ -1,10 +1,9 @@
 /**
  * api.js  —  RODCHAOMAHACHAI Frontend ↔ C Backend Bridge
  *
- * วิธีใช้: ใส่ <script src="api.js"></script> ก่อน <script src="index.js"></script>
  *
  * ฟังก์ชันที่ export (global):
- *   API.checkAvailability(startDate, endDate)  → Promise<{ ok, cars[] }>
+ *   API.checkAvailability(startDate, endDate)   → Promise<{ ok, cars[] }>
  *   API.book(payload)                           → Promise<{ ok, refCode, totalCost }>
  *   API.cancel(firstName, lastName)             → Promise<{ ok, message }>
  *   API.isServerAlive()                         → Promise<boolean>
@@ -78,7 +77,17 @@ const API = (() => {
     return r.json();
   }
 
-  return { isServerAlive, checkAvailability, book, cancel, myBookings, allBookings };
+  /* ─── ยกเลิกการจองโดย admin (ระบุชื่อ + วันเริ่มต้น) ─── */
+  async function adminCancel(firstName, lastName, startDate) {
+    const r = await fetch(`${BASE}/admincancel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName, startDate })
+    });
+    return r.json();
+  }
+
+  return { isServerAlive, checkAvailability, book, cancel, myBookings, allBookings, adminCancel };
 })();
 
 
@@ -86,10 +95,7 @@ const API = (() => {
     ฟังก์ชัน integration กับ index.js ที่มีอยู่แล้ว
    ══════════════════════════════════════════════════════════ */
 
-/**
- * ใช้แทน searchCars() เดิม
- * เรียก C backend แล้วอัปเดต CARS array + render
- */
+/* เรียก C backend แล้วอัปเดต CARS array + render */
 async function searchCarsFromServer() {
   const s = document.getElementById('start-date').value;
   const e = document.getElementById('end-date').value;
@@ -114,7 +120,7 @@ async function searchCarsFromServer() {
   try {
     const alive = await API.isServerAlive();
     if (!alive) {
-      /* Server ออฟไลน์ → ใช้ข้อมูล JS เดิม (offline mode) */
+      /* Server ออฟไลน์ --> ใช้ข้อมูล JS เดิม (offline mode) */
       console.warn('[API] C server offline — using local CARS data');
       renderCars();   /* ฟังก์ชันเดิมใน index.js */
       hideSpinner();
@@ -127,7 +133,7 @@ async function searchCarsFromServer() {
     /* sync สถานะ available จาก server เข้า CARS array */
     data.cars.forEach(serverCar => {
       const local = CARS.find(c => c.id === serverCar.pricePerDay && c.name.includes(serverCar.model.split(' ')[0]));
-      /* match ด้วย number field แม่นกว่า */
+      /* match ด้วย number field */
       const byNum = CARS.find(c => c.serverNumber === serverCar.number);
       const target = byNum || local;
       if (target) target.available = serverCar.available;
@@ -143,10 +149,7 @@ async function searchCarsFromServer() {
   }
 }
 
-/**
- * ใช้แทน confirmPayment() เดิม
- * ส่งข้อมูลไป C backend บันทึก CSV แล้วแสดงหน้า success
- */
+/* ส่งข้อมูลไป C backend บันทึก CSV แล้วแสดงหน้า success */
 async function confirmPaymentToServer() {
   /* ── 1. ข้อมูลผู้เช่า ── */
   const fname  = document.querySelector('#page-payment input[placeholder="ชื่อ"]')?.value.trim()       || '';
