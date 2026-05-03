@@ -245,7 +245,7 @@ function renderAdminTable(bookings){
         <th style="text-align: center;">ลำดับ</th><th style="text-align: center;">รุ่นรถ</th><th style="text-align: center;">ชื่อ-นามสกุล</th><th style="text-align: center;">เลขประจำตัว</th>
         <th style="text-align: center;">เบอร์ / อีเมล</th><th style="text-align: center;">วันเช่า</th><th style="text-align: center;">สถานที่</th><th style="text-align: center;">วันที่จอง</th>
         <th style="text-align: center;">วิธีชำระ</th><th style="text-align: center;">ชื่อบนบัตรหรือชื่อบัญชี</th><th style="text-align: center;">หมายเลขบัตรหรือรหัสอ้างอิง</th>
-        <th style="text-align: center;">เวลาหรือcvv</th><th style="text-align: center;">วันเดือนปีหรือวันหมดอายุ</th><th style="text-align: center;">จำนวนเงิน</th><th style="text-align: center;">สถานะ</th>
+        <th style="text-align: center;">เวลาหรือcvv</th><th style="text-align: center;">วันเดือนปีหรือวันหมดอายุ</th><th style="text-align: center;">จำนวนเงิน</th><th style="text-align: center;">สถานะ</th><th style="text-align: center;">จัดการ</th>
       </tr></thead>
       <tbody>
         ${bookings.map((b,i) => `
@@ -268,6 +268,9 @@ function renderAdminTable(bookings){
           <td style="text-align: center;">${b.exp||'-'}</td>
           <td class="admin-total">${b.total&&b.total!=='-'?parseInt(b.total).toLocaleString()+' ฿':'-'}</td>
           <td><span class="booking-status-badge ${statusClass[b.status]||'badge-past'}">${statusLabel[b.status]||b.status}</span></td>
+          <td><button class="btn-cancel-booking btn-cancel-admin"
+            onclick="openCancelModal('${b.car.replace(/'/g,"\\'")}','${b.startDate}','${b.endDate}','${b.fname.replace(/'/g,"\\'")}','${b.lname.replace(/'/g,"\\'")}')">
+            ✕ ยกเลิก</button></td>
         </tr>`).join('')}
       </tbody>
     </table>
@@ -361,10 +364,14 @@ function resetMyBookings(){
   document.getElementById('mb-lname').value='';
   _mbFname=''; _mbLname='';
 }
-function openCancelModal(car,startDate,endDate){
-  _cancelTarget={car,startDate,endDate};
+function openCancelModal(car, startDate, endDate, targetFname, targetLname){
+  // admin mode: ระบุ fname/lname ของลูกค้า; user mode: ไม่ส่งมา → ใช้ _mbFname/_mbLname
+  const fname = targetFname || _mbFname;
+  const lname = targetLname || _mbLname;
+  _cancelTarget = { car, startDate, endDate, fname, lname };
   document.getElementById('cancel-modal-desc').innerHTML=
     `คุณต้องการยกเลิกการจอง <strong style="font-weight: 500; color: #ff6b35">${car}</strong><br>
+     ของ <strong>${fname} ${lname}</strong><br>
      วันที่ ${fmtDateTH(startDate)} → ${fmtDateTH(endDate)} ใช่หรือไม่?<br>
      <span style="color: #ff3535;font-size:13px;">การยกเลิกไม่สามารถเรียกคืนการจองได้และไม่มีการคืนเงิน</span>`;
   document.getElementById('cancel-modal-overlay').classList.add('open');
@@ -377,9 +384,20 @@ async function confirmCancelBooking(){
   if(!_cancelTarget){closeCancelModal();return;}
   const btn=document.querySelector('#cancel-modal-overlay .btn-primary');
   btn.disabled=true; btn.textContent='⏳ กำลังยกเลิก...';
-  const result=await API.cancel(_mbFname,_mbLname);
+
+  let result;
+  if(_isAdmin){
+    // admin ยกเลิกการจองของลูกค้า → ใช้ adminCancel (ระบุชื่อลูกค้า + startDate)
+    result = await API.adminCancel(_cancelTarget.fname, _cancelTarget.lname, _cancelTarget.startDate);
+  } else {
+    // ลูกค้ายกเลิกของตัวเอง → ใช้ cancel เดิม
+    result = await API.cancel(_mbFname, _mbLname);
+  }
+
   btn.disabled=false; btn.textContent='✔ ยืนยันยกเลิกการจอง';
   closeCancelModal();
-  if(result.ok){ if(_isAdmin) await loadAdminDashboard(); else await lookupBookings(); }
-  else toast('เกิดข้อผิดพลาด: '+(result.error||'unknown'), 'error');
+  if(result.ok){
+    toast('ยกเลิกการจองสำเร็จ', 'success');
+    if(_isAdmin) await loadAdminDashboard(); else await lookupBookings();
+  } else toast('เกิดข้อผิดพลาด: '+(result.error||'unknown'), 'error');
 }
