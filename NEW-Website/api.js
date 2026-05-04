@@ -286,7 +286,20 @@ function _showSuccessCarInfo() {
   if (!selectedCar) return;
   const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('th-TH',
     { day:'numeric', month:'short', year:'numeric' });
+    
+  const firstName = document.getElementById('cust-firstname').value;
+  const lastName = document.getElementById('cust-lastname').value;
+  const phone = document.getElementById('cust-phone').value;
+  const rentPrice = document.getElementById('sum-rent-price').textContent;
+  const deliveryPrice = document.getElementById('sum-delivery-price').textContent;
+  const totalPrice = document.getElementById('sum-total-final').textContent;
 
+  document.getElementById('suc-cust-name').textContent = firstName + " " + lastName;
+  document.getElementById('suc-cust-phone').textContent = phone;
+  document.getElementById('suc-car-name').textContent = selectedCar.name;
+  document.getElementById('suc-rent-price').textContent = rentPrice;
+  document.getElementById('suc-delivery-price').textContent = deliveryPrice;
+  document.getElementById('suc-total-final').textContent = totalPrice;
   const imgEl   = document.getElementById('success-car-img');
   const nameEl  = document.getElementById('success-car-name');
   const dateEl  = document.getElementById('success-car-dates');
