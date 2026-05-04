@@ -1,16 +1,16 @@
 const CARS = [
-  { id:1,  serverNumber:1,  name:'Toyota Fortuner',       type:'SUV',   seats:7,  fuel:'diesel', price:2200, emoji:'🚚', image:'https://img2.pic.in.th/IMG_6890c21ea56e7b207fbb.png', available:true },
-  { id:2,  serverNumber:2,  name:'Honda CR-V',            type:'SUV',   seats:5,  fuel:'95',     price:1800, emoji:'🚓', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
-  { id:3,  serverNumber:3,  name:'Toyota Alphard',        type:'MPV',   seats:13, fuel:'95',     price:3500, emoji:'🚐', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:false, limited:true },
-  { id:4,  serverNumber:4,  name:'Isuzu MU-X',            type:'PPV',   seats:7,  fuel:'diesel', price:1900, emoji:'🚍', image:'https://img1.pic.in.th/images/IMG_6897.png', available:true },
-  { id:5,  serverNumber:5,  name:'Honda Civic',           type:'Sedan', seats:5,  fuel:'95',     price:1100, emoji:'🚗', image:'https://img1.pic.in.th/images/IMG_6901.png', available:true },
-  { id:6,  serverNumber:6,  name:'Toyota Innova',         type:'MPV',   seats:7,  fuel:'diesel', price:1600, emoji:'🚌', image:'https://img2.pic.in.th/IMG_6879.webp', available:true },
-  { id:7,  serverNumber:7,  name:'Mazda CX-5',            type:'SUV',   seats:5,  fuel:'95',     price:2000, emoji:'🏎️', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
-  { id:8,  serverNumber:8,  name:'Ford Everest',          type:'SUV',   seats:7,  fuel:'diesel', price:2400, emoji:'🚙', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:false, limited:true },
-  { id:9,  serverNumber:9,  name:'Nissan Serena',         type:'MPV',   seats:13, fuel:'95',     price:1700, emoji:'🚎', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
-  { id:10, serverNumber:10, name:'Mitsubishi Xpander',    type:'MPV',   seats:13, fuel:'95',     price:1300, emoji:'🚖', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
-  { id:11, serverNumber:11, name:'Toyota Vios',           type:'Sedan', seats:5,  fuel:'95',     price:850,  emoji:'🚕', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', available:true },
-  { id:12, serverNumber:12, name:'Toyota Camry',          type:'Sedan', seats:5,  fuel:'95',     price:900,  emoji:'🚘', image:'https://img1.pic.in.th/images/IMG_6891.png', available:true },
+  { id:1,  serverNumber:1,  name:'Toyota Fortuner',       type:'SUV',   seats:7,  fuel:'diesel', price:2200, emoji:'🚚', image:'https://img2.pic.in.th/IMG_6890c21ea56e7b207fbb.png', images:['https://img2.pic.in.th/IMG_6890c21ea56e7b207fbb.png', 'https://img2.pic.in.th/IMG_6890c21ea56e7b207fbb.png',' https://img2.pic.in.th/IMG_6890c21ea56e7b207fbb.png', 'https://img2.pic.in.th/IMG_6890c21ea56e7b207fbb.png'], available:true },
+  { id:2,  serverNumber:2,  name:'Honda CR-V',            type:'SUV',   seats:5,  fuel:'95',     price:1800, emoji:'🚓', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', images:['https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png'], available:true },
+  { id:3,  serverNumber:3,  name:'Toyota Alphard',        type:'MPV',   seats:13, fuel:'95',     price:3500, emoji:'🚐', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', images:['https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png'], available:false, limited:true },
+  { id:4,  serverNumber:4,  name:'Isuzu MU-X',            type:'PPV',   seats:7,  fuel:'diesel', price:1900, emoji:'🚍', image:'https://img1.pic.in.th/images/IMG_6897.png',          images:['https://img1.pic.in.th/images/IMG_6897.png',          'https://img1.pic.in.th/images/IMG_6897.png',          'https://img1.pic.in.th/images/IMG_6897.png',          'https://img1.pic.in.th/images/IMG_6897.png'],          available:true },
+  { id:5,  serverNumber:5,  name:'Honda Civic',           type:'Sedan', seats:5,  fuel:'95',     price:1100, emoji:'🚗', image:'https://img1.pic.in.th/images/IMG_6901.png',          images:['https://img1.pic.in.th/images/IMG_6901.png',          'https://img1.pic.in.th/images/IMG_6901.png',          'https://img1.pic.in.th/images/IMG_6901.png',          'https://img1.pic.in.th/images/IMG_6901.png'],          available:true },
+  { id:6,  serverNumber:6,  name:'Toyota Innova',         type:'MPV',   seats:7,  fuel:'diesel', price:1600, emoji:'🚌', image:'https://img2.pic.in.th/IMG_6879.webp',                images:['https://img2.pic.in.th/IMG_6879.webp',                'https://img2.pic.in.th/IMG_6879.webp',                'https://img2.pic.in.th/IMG_6879.webp',                'https://img2.pic.in.th/IMG_6879.webp'],                available:true },
+  { id:7,  serverNumber:7,  name:'Mazda CX-5',            type:'SUV',   seats:5,  fuel:'95',     price:2000, emoji:'🏎️', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', images:['https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png'], available:true },
+  { id:8,  serverNumber:8,  name:'Ford Everest',          type:'SUV',   seats:7,  fuel:'diesel', price:2400, emoji:'🚙', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', images:['https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png'], available:false, limited:true },
+  { id:9,  serverNumber:9,  name:'Nissan Serena',         type:'MPV',   seats:13, fuel:'95',     price:1700, emoji:'🚎', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', images:['https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png'], available:true },
+  { id:10, serverNumber:10, name:'Mitsubishi Xpander',    type:'MPV',   seats:13, fuel:'95',     price:1300, emoji:'🚖', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', images:['https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png'], available:true },
+  { id:11, serverNumber:11, name:'Toyota Vios',           type:'Sedan', seats:5,  fuel:'95',     price:850,  emoji:'🚕', image:'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', images:['https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png', 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png'], available:true },
+  { id:12, serverNumber:12, name:'Toyota Camry',          type:'Sedan', seats:5,  fuel:'95',     price:900,  emoji:'🚘', image:'https://img1.pic.in.th/images/IMG_6891.png',          images:['https://img1.pic.in.th/images/IMG_6891.png',          'https://img1.pic.in.th/images/IMG_6891.png',          'https://img1.pic.in.th/images/IMG_6891.png',          'https://img1.pic.in.th/images/IMG_6891.png'],         available:true },
 ];
 
 let filters = { seats: 'all', fuel: 'all', price: 'all' };
@@ -166,6 +166,29 @@ function resetFilters() {
   else showcar();
 }
 
+/* ── Car Gallery ── */
+function renderCarGallery(car) {
+  const imgs = (car.images && car.images.length) ? car.images : [car.image, car.image, car.image, car.image, car.image];
+  const main = document.getElementById('gallery-main-img');
+  const strip = document.getElementById('gallery-thumbs');
+  if (!main || !strip) return;
+
+  main.src = imgs[0];
+  main.alt = car.name;
+
+  strip.innerHTML = imgs.map((src, i) => `
+    <div class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="switchGalleryImg(this, '${src}')">
+      <img src="${src}" alt="${car.name} มุม ${i+1}">
+    </div>
+  `).join('');
+}
+
+function switchGalleryImg(thumbEl, src) {
+  document.getElementById('gallery-main-img').src = src;
+  document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+  thumbEl.classList.add('active');
+}
+
 function selectCar(id) {
   selectedCar = CARS.find(c => c.id === id);
   if (!selectedCar) return;
@@ -192,9 +215,11 @@ function goToPayment() {
   // 2. แสดงรูปภาพและข้อมูลรถ
   const iconEl = document.getElementById('sum-icon');
   if (iconEl) {
-    // ถ้าใช้แท็ก <img> ให้ใช้ .src แต่ถ้าใช้ <div> ให้ใช้ .innerHTML แบบเดิมที่คุณเขียนได้ครับ
     iconEl.innerHTML = `<img src="${selectedCar.image}" alt="${selectedCar.name}" style="width:100px;height:auto;object-fit:contain;border-radius:8px;">`;
   }
+
+  // render gallery
+  renderCarGallery(selectedCar);
   
   document.getElementById('sum-name').textContent = selectedCar.name;
   document.getElementById('sum-type').textContent = selectedCar.type;
