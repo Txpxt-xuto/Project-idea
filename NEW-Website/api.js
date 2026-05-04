@@ -284,22 +284,44 @@ if (methodType === 'credit' || !methodType) {
 /* populate ข้อมูลรถบน success page */
 function _showSuccessCarInfo() {
   if (!selectedCar) return;
-  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('th-TH',
-    { day:'numeric', month:'short', year:'numeric' });
-    
-  const firstName = document.getElementById('cust-firstname').value;
-  const lastName = document.getElementById('cust-lastname').value;
-  const phone = document.getElementById('cust-phone').value;
-  const rentPrice = document.getElementById('sum-rent-price').textContent;
-  const deliveryPrice = document.getElementById('sum-delivery-price').textContent;
-  const totalPrice = document.getElementById('sum-total-final').textContent;
 
-  document.getElementById('suc-cust-name').textContent = firstName + " " + lastName;
-  document.getElementById('suc-cust-phone').textContent = phone;
-  document.getElementById('suc-car-name').textContent = selectedCar.name;
-  document.getElementById('suc-rent-price').textContent = rentPrice;
-  document.getElementById('suc-delivery-price').textContent = deliveryPrice;
-  document.getElementById('suc-total-final').textContent = totalPrice;
+  // ฟอร์แมตวันที่ให้เป็นแบบไทย
+  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('th-TH', { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric' 
+  });
+
+
+  const firstName = document.getElementById('cust-firstname')?.value || '-';
+  const lastName = document.getElementById('cust-lastname')?.value || '-';
+  const phone = document.getElementById('cust-phone')?.value || '-';
+
+
+  const rentPrice = document.getElementById('sum-rent-price')?.textContent || '0 ฿';
+  const deliveryPrice = document.getElementById('sum-delivery-price')?.textContent || '0 ฿';
+  const totalPrice = document.getElementById('sum-total-final')?.textContent || '0 ฿';
+
+
+  if (document.getElementById('suc-cust-name')) {
+    document.getElementById('suc-cust-name').textContent = `${firstName} ${lastName}`;
+  }
+  if (document.getElementById('suc-cust-phone')) {
+    document.getElementById('suc-cust-phone').textContent = phone;
+  }
+  if (document.getElementById('suc-rent-price')) {
+    document.getElementById('suc-rent-price').textContent = rentPrice;
+  }
+  if (document.getElementById('suc-delivery-price')) {
+    document.getElementById('suc-delivery-price').textContent = deliveryPrice;
+  }
+  
+
+  if (document.getElementById('suc-total-final')) {
+    document.getElementById('suc-total-final').textContent = totalPrice;
+  }
+
+
   const imgEl   = document.getElementById('success-car-img');
   const nameEl  = document.getElementById('success-car-name');
   const dateEl  = document.getElementById('success-car-dates');
@@ -307,7 +329,7 @@ function _showSuccessCarInfo() {
 
   if (imgEl)   { imgEl.src = selectedCar.image || ''; imgEl.alt = selectedCar.name; }
   if (nameEl)  nameEl.textContent = selectedCar.name;
-  if (dateEl)  dateEl.textContent = `📅 ${fmt(startDate)} → ${fmt(endDate)}  ( ${numDays} วัน )`;
+  if (dateEl)  dateEl.textContent = `📅 ${fmt(startDate)} → ${fmt(endDate)}  (${totalDays} วัน)`; 
   if (infoBox) infoBox.style.display = 'flex';
 }
 
