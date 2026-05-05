@@ -53,7 +53,7 @@ input::-webkit-calendar-picker-indicator {
   letter-spacing: 3px;
   color: var(--text);
 }
-.hero-text h1 .yellow { color: var(--accent); }
+.hero-text h1 .yellow { color: var(--accent2); }
 .hero-text p {
   margin-top: 20px; color: var(--muted);
   font-size: 16px; line-height: 1.7; max-width: 380px;
