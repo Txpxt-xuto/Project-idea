@@ -624,49 +624,40 @@ input::-webkit-calendar-picker-indicator {
   font-size: 12px; color: #3e9b39;
 }
 
-/* ===== SUCCESS PAGE ===== */
-#page-success {
-  display: flex; align-items: center; justify-content: center;
-  text-align: center; min-height: 100vh; 
-  background: var(--bg); padding: 100px 48px 60px;
-}
-.success-content { max-width: 480; text-align:center;}
-.success-icon {
-  width: 100px; height: 100px; border-radius: 50%;
-  background: rgba(62, 155, 57, 0.1); border: 2px solid rgba(62, 155, 57, 0.3);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 44px; margin: 0 auto 28px;
-  animation: pulse-green 2s ease-in-out infinite;
-}
-@keyframes pulse-green {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(62, 155, 57, 0.3); }
-  50% { box-shadow: 0 0 0 20px rgba(62, 155, 57, 0); }
-}
-.success-content h2 {
-  font-family: 'Mitr', sans-serif;
-  font-size: 52px; letter-spacing: 3px; color: var(--text); font-weight: 600;
-}
-.success-content p { color: var(--muted); font-size: 16px; margin-top: 10px; line-height: 1.7; }
-
-/* ── car info strip ── */
-.success-car-info {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 14px; padding: 14px 18px;
-  margin: 20px 0 4px; text-align: left;
-}
-.success-car-img {
-  width: 88px; height: 62px;
-  object-fit: cover; border-radius: 8px; flex-shrink: 0;
-  background: #1e1e2e;
-}
-.success-car-name {
-  font-size: 16px; font-weight: 600; color: var(--text);
-}
-.success-car-dates {
-  font-size: 13px; color: var(--accent); margin-top: 4px;
-}
-
+ /* ── Success Section (ข้อมูลผู้เช่า + สรุปราคา) ── */
+  .success-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin: 14px 0;
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .success-section-title {
+    font-size: 12px; font-weight: 600;
+    color: var(--accent); letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .success-info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; font-size: 14px;
+  }
+  .success-info-row span { color: var(--muted); font-weight: 300; }
+  .success-info-row strong { color: var(--text); font-weight: 500; }
+  .success-total-row {
+    margin-top: 10px; padding-top: 12px;
+    border-top: 1px solid var(--border); font-size: 15px;
+  }
+  .success-total-row span { color: var(--text) !important; font-weight: 600 !important; }
+  .success-total-amount {
+    color: #4ade80 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+  }
 .booking-ref {
   background: var(--card); border: 1px solid rgba(10, 31, 76, 0.3);
   border-radius: 12px; padding: 16px 24px; margin: 16px 0 20px;
