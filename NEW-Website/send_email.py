@@ -36,7 +36,9 @@ def build_html(to_email, ref, fname, lname, car, start, end, total):
       <h1 style="color:#e8c547;margin:0;font-size:28px;letter-spacing:2px;">
         🎉 BOOKING SUCCESS!
       </h1>
-      <p style="color:#888;margin:8px 0 0;">ขอบคุณที่ไว้วางใจ รถเช่ามหาชัย</p>
+      <p style="color:#888;margin:8px 0 0;">รหัสการจอง</p>
+      <div style="color:#e8c547;font-size:24px;font-weight:700;
+                  letter-spacing:4px;">#{ref}</div>
     </div>
 
     <!-- Ref Code -->
