@@ -56,9 +56,17 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
     shell_escape(car, esc_car, sizeof(esc_car));
     char cmd[2048];
 
-    snprintf(cmd, sizeof(cmd), "python send_email.py \"book\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"", to_email, esc_fname, esc_lname, esc_car, start, end, total);
-    printf("[MAIL DEBUG] Executing command: %s\n", cmd);
-
+    snprintf(cmd, sizeof(cmd), 
+    "python send_email.py \"book\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"", 
+    to_email,     // argv[2]
+    refCode,   // argv[3] -> ต้องเป็นเลขจอง ไม่ใช่ชื่อ!
+    fname,     // argv[4]
+    lname,     // argv[5]
+    car,   // argv[6]
+    start, // argv[7]
+    end,   // argv[8]
+    total // argv[9]
+);
     FILE *fp = popen(cmd, "r");
     if (fp == NULL) {
         perror("[MAIL ERROR] Cannot open pipe to python");
