@@ -19,6 +19,15 @@ let startDate = '', endDate = '', numDays = 1;
 let mode = 0;
 let paymentCompleted = false;  /* guard สำหรับ page-success */
 
+window.addEventListener("load", function() {
+    if (window.location.hash === "#cars") {
+        showcar();     // โหลดข้อมูลรถ
+        showPage('cars'); // สลับหน้าไปที่รถ
+    }
+    if (window.location.hash === "#home") {
+        showPage('home'); // สลับหน้าไปที่หน้าแรก
+    }
+});
 
 window.onload = function() {
   buildMarquee();
