@@ -36,17 +36,17 @@ def build_html(to_email, ref, fname, lname, car, start, end, total):
       <h1 style="color:#e8c547;margin:0;font-size:28px;letter-spacing:2px;">
         🎉 BOOKING SUCCESS!
       </h1>
-      <p style="color:#888;margin:8px 0 0;">รหัสการจอง</p>
-      <div style="color:#e8c547;font-size:24px;font-weight:700;
-                  letter-spacing:4px;">#{ref}</div>
+      <p style="color:#888;margin:8px 0 0;">ขอบคุณที่ไว้วางใจ รถเช่ามหาชัย</p>
     </div>
 
     <!-- Ref Code -->
     <div style="padding:24px 30px 0;">
       <div style="background:#1a1a25;padding:18px 20px;border-radius:12px;
                   border-left:4px solid #e8c547;margin-bottom:20px;">
+        <div style="color:#888;font-size:12px;text-transform:uppercase;
+                    letter-spacing:1px;margin-bottom:6px;">รหัสการจอง</div>
         <div style="color:#e8c547;font-size:26px;font-weight:700;
-                    letter-spacing:4px;">ขอขอบคุณที่ไว้ใจเรา</div>
+                    letter-spacing:4px;">#{ref}</div>
       </div>
 
       <!-- Details -->
@@ -75,12 +75,12 @@ def build_html(to_email, ref, fname, lname, car, start, end, total):
         </tr>
       </table>
     </div>
-
     <!-- Note -->
     <div style="padding:20px 30px;">
       <div style="background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.25);
                   border-radius:10px;padding:14px 16px;font-size:13px;color:#ff6b35;">
-        ⚠️ กรุณาเก็บประวัติการจองไว้เพื่อใช้ตรวจสอบหรือยกเลิกการจอง
+        ⚠️ กรุณาจดรหัสการจอง <strong>#{ref}</strong>
+        ไว้เพื่อใช้ตรวจสอบหรือยกเลิกการจอง
       </div>
     </div>
 
