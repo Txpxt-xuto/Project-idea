@@ -93,7 +93,7 @@ def build_html(to_email, ref, fname, lname, car, start, end, total):
 </html>"""
 
 
-def send(to_email, fname, lname, car, start, end, total):
+def send(to_email, ref, fname, lname, car, start, end, total):
     msg = MIMEMultipart('alternative')
     msg['From']    = f'{FROM_NAME} <{GMAIL_USER}>'
     msg['To']      = to_email
