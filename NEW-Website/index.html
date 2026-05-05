@@ -220,7 +220,7 @@
         <!-- Car Gallery -->
         <div class="payment-form-card car-gallery-card" style="margin-bottom:20px;">
           <div class="section-title">
-            <div class="section-num"><img src="https://cdn-icons-png.flaticon.com/512/3687/3687416.png" style="width: 2em; height: 2em;" width="256" height="256" alt="" title="" class="img-small"></div>รูปภาพรถ <!--https://cdn-icons-png.flaticon.com/512/2956/2956744.png -->          
+            <div class="section-num"><img src="https://cdn-icons-png.flaticon.com/512/3687/3687416.png" style="width: 2em; height: 2em;" width="256" height="256" alt="" title="" class="img-small"></div>รูปภาพรถ <!--https://cdn-icons-png.flaticon.com/512/2956/2956744.png -->                    
           </div>
           <div class="car-gallery">
             <div class="gallery-main">
@@ -420,6 +420,14 @@
     <h2>จองสำเร็จ!</h2>
     <p>ขอบคุณที่ใช้บริการ RODCHAOMAHACHAI<br>เราจะส่งรายละเอียดการจองไปยังอีเมลของคุณ</p>
  
+    <!-- ข้อมูลผู้เช่า -->
+    <div class="success-section">
+      <div class="success-section-title">ข้อมูลผู้เช่า</div>
+      <div class="success-info-row"><span>ชื่อ-นามสกุล</span><strong id="success-fullname">—</strong></div>
+      <div class="success-info-row"><span>เบอร์โทรศัพท์</span><strong id="success-phone">—</strong></div>
+      <div class="success-info-row"><span>อีเมล</span><strong id="success-email">—</strong></div>
+    </div>
+
     <!-- ข้อมูลรถที่จอง -->
     <div class="success-car-info" id="success-car-info" style="display:none;">
       <img id="success-car-img" src="" alt="" class="success-car-img">
@@ -432,6 +440,18 @@
     <div class="booking-ref">
       <div class="ref-label">หมายเลขการจอง — กรุณาจดไว้ก่อนปิดหน้านี้</div>
       <div class="ref-num" id="booking-ref-num">RM-000000</div>
+    </div>
+
+    <!-- สรุปราคา -->
+    <div class="success-section">
+      <div class="success-section-title">สรุปค่าใช้จ่าย</div>
+      <div class="success-info-row"><span>ค่าเช่ารถ</span><strong id="success-rent-cost">—</strong></div>
+      <div class="success-info-row"><span>ค่าบริการนอกสถานที่</span><strong id="success-delivery-cost">—</strong></div>
+      <div class="success-info-row"><span>ประกันภัย</span><strong>3,000 ฿</strong></div>
+      <div class="success-info-row success-total-row">
+        <span>รวมทั้งหมด</span>
+        <strong id="success-total-cost" class="success-total-amount">—</strong>
+      </div>
     </div>
  
     <button class="btn-home" onclick="goBackHome()">กลับสู่หน้าหลัก</button>
