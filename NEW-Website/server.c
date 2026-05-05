@@ -77,7 +77,7 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
 
 static void send_email_cmd(const char* mode, const char* to, const char* ref, const char* fn, const char* ln, const char* car, const char* st, const char* en, const char* tot) {
     char cmd[2048];
-    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &",mode, to, ref, fn, ln, car, st, en, tot);
+    snprintf(cmd, sizeof(cmd), "python send_email.py \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &",mode, to, ref, fn, ln, car, st, en, tot);    
     system(cmd);
 }
 
