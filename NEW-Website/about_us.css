@@ -1,10 +1,10 @@
 :root {
-  --bg: #0a0a0f;
-  --card: #1a1a25;
-  --accent: #e8c547;
-  --text: #f0f0f0;
-  --muted: #888;
-  --border: rgba(232,197,71,0.2);
+  --bg: #F7FAFF;       
+  --card: #ffffff;   
+  --accent: #1e6fd9;   
+  --text: #0d2461;     
+  --muted: #5a7199;    
+  --border: #c8d9f5;   
 }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,7 +17,7 @@
     overflow-x: hidden;
   }
 
-  /* Nav styles อยู่ใน nav.css */
+  
 
 /* ===== PAGES ===== */
   .page { display: none; min-height: 100vh; padding-top: 80px; }
@@ -75,11 +75,13 @@ h1 {
 .card:hover {
   transform: translateY(-5px);
   border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(30,111,217,0.1);
 }
 
 .cardcontect:hover {
   transform: translateY(-5px);
   border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(30,111,217,0.1);
 }
 
 
@@ -88,16 +90,18 @@ h1 {
   align-items: center;
   gap: 10px;
   font-size: 18px;
-  color: var(--accent);
+  color: var(--text); 
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .icon {
   font-size: 26px;
+  color: var(--accent); 
 }
 
 .card p {
-  color: #ccc;
+  color: var(--muted); 
   font-size: 15px;
   line-height: 1.6;
 }
@@ -106,9 +110,9 @@ h1 {
   margin-top: 40px;
   padding: 16px;
   border-radius: 12px;
-  background: rgba(251, 47, 36, 0.164);
-  border: 1px solid rgba(251, 82, 36, 0.3);
-  color: #f33e35;
+  background: rgba(186, 9, 0, 0.08);
+  border: 1px solid rgba(186, 9, 0, 0.2);
+  color: #ba0900; /* สีแดง CI */
   text-align: center;
 }
 
@@ -116,24 +120,26 @@ h1 {
   display: block;
   margin: 40px auto 0;
   padding: 12px 30px;
-  background: var(--accent);
+  background: var(--text); 
+  color: #ffffff; 
   border: none;
   border-radius: 10px;
   cursor: pointer;
   font-size: 15px;
-  transition: all 0.2s ease; /* 🔥 เพิ่ม */
+  transition: all 0.2s ease;
   font-family: 'Mitr', sans-serif;
   font-weight: 500; 
   letter-spacing: 0.5px;
 }
 
-/* 🔥 Hover effect */
+
 .back-btn:hover {
-  transform: translateY(-2px); /* ลอยขึ้น */
-  box-shadow: 0 8px 20px rgba(232,197,71,0.3); /* เงา */
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 20px rgba(13,36,97,0.25); 
+  background: #1a3a7a;
 }
 
-/* 🔥 ตอนกด */
+
 .back-btn:active {
   transform: translateY(0);
   box-shadow: none;
@@ -161,27 +167,26 @@ h1 {
   transition: all 0.25s ease;
 }
 
-/* 🔥 hover */
 .pdf-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(232,197,71,0.25);
+  box-shadow: 0 8px 20px rgba(30,111,217,0.15); 
 }
 
-/* 🔥 ตอนกด */
+
 .pdf-btn:active {
   transform: translateY(0);
   box-shadow: none;
 }
 
-/* 🔥 ไอคอน */
+
 .pdf-btn::before {
   content: '📄';
   font-size: 18px;
 }
 
-/* Mobile */
+
 @media (max-width: 700px) {
   .grid {
     grid-template-columns: 1fr;
@@ -221,13 +226,14 @@ h1 {
 
 .contact-item:hover {
   transform: translateX(5px);
+  color: var(--accent);
 }
 
 
 .contact-list {
   display: flex;
-  justify-content: center; /* จัดกลาง */
-  gap: 10%;               /* ระยะห่าง */
+  justify-content: center; 
+  gap: 10%;              
 }
 /* ═══════════════════════════════════════════════════════════
    RESPONSIVE — about_us.css
