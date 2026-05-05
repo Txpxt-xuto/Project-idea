@@ -1,9 +1,10 @@
 /**
  * api.js  —  RODCHAOMAHACHAI Frontend ↔ C Backend Bridge
  *
+ * วิธีใช้: ใส่ <script src="api.js"></script> ก่อน <script src="index.js"></script>
  *
  * ฟังก์ชันที่ export (global):
- *   API.checkAvailability(startDate, endDate)   → Promise<{ ok, cars[] }>
+ *   API.checkAvailability(startDate, endDate)  → Promise<{ ok, cars[] }>
  *   API.book(payload)                           → Promise<{ ok, refCode, totalCost }>
  *   API.cancel(firstName, lastName)             → Promise<{ ok, message }>
  *   API.isServerAlive()                         → Promise<boolean>
@@ -95,7 +96,10 @@ const API = (() => {
     ฟังก์ชัน integration กับ index.js ที่มีอยู่แล้ว
    ══════════════════════════════════════════════════════════ */
 
-/* เรียก C backend แล้วอัปเดต CARS array + render */
+/**
+ * ใช้แทน searchCars() เดิม
+ * เรียก C backend แล้วอัปเดต CARS array + render
+ */
 async function searchCarsFromServer() {
   const s = document.getElementById('start-date').value;
   const e = document.getElementById('end-date').value;
@@ -120,7 +124,7 @@ async function searchCarsFromServer() {
   try {
     const alive = await API.isServerAlive();
     if (!alive) {
-      /* Server ออฟไลน์ --> ใช้ข้อมูล JS เดิม (offline mode) */
+      /* Server ออฟไลน์ → ใช้ข้อมูล JS เดิม (offline mode) */
       console.warn('[API] C server offline — using local CARS data');
       renderCars();   /* ฟังก์ชันเดิมใน index.js */
       hideSpinner();
@@ -133,7 +137,7 @@ async function searchCarsFromServer() {
     /* sync สถานะ available จาก server เข้า CARS array */
     data.cars.forEach(serverCar => {
       const local = CARS.find(c => c.id === serverCar.pricePerDay && c.name.includes(serverCar.model.split(' ')[0]));
-      /* match ด้วย number field */
+      /* match ด้วย number field แม่นกว่า */
       const byNum = CARS.find(c => c.serverNumber === serverCar.number);
       const target = byNum || local;
       if (target) target.available = serverCar.available;
@@ -149,7 +153,10 @@ async function searchCarsFromServer() {
   }
 }
 
-/* ส่งข้อมูลไป C backend บันทึก CSV แล้วแสดงหน้า success */
+/**
+ * ใช้แทน confirmPayment() เดิม
+ * ส่งข้อมูลไป C backend บันทึก CSV แล้วแสดงหน้า success
+ */
 async function confirmPaymentToServer() {
   /* ── 1. ข้อมูลผู้เช่า ── */
   const fname  = document.querySelector('#page-payment input[placeholder="ชื่อ"]')?.value.trim()       || '';
@@ -221,8 +228,11 @@ if (methodType === 'credit' || !methodType) {
 }
 
   /* ── 4. ยอดรวม ── */
-  const totalText  = document.getElementById('sum-total')?.textContent || '';
-  const total      = totalText.replace(/,/g,'').replace(/฿/g,'').trim();
+  const totalText       = document.getElementById('sum-total')?.textContent || '';
+  const total           = totalText.replace(/,/g,'').replace(/฿/g,'').trim();
+  const deliveryCostNum = parseInt((document.getElementById('sum-delivery')?.textContent || '0').replace(/,/g,'')) || 0;
+  const totalNum        = parseInt(total) || 0;
+  const rentCostNum     = totalNum - deliveryCostNum - 3000;
 
   /* ── 5. ส่งไป server ── */
   const btn = document.querySelector('#page-payment .btn-primary:last-of-type');
@@ -235,7 +245,7 @@ if (methodType === 'credit' || !methodType) {
       console.warn('[API] C server offline — local confirm only');
       const ref = 'RM-' + Math.floor(100000 + Math.random() * 900000);
       document.getElementById('booking-ref-num').textContent = ref;
-      _showSuccessCarInfo();
+      _showSuccessCarInfo({ fname, lname, phone, email, rentCost: rentCostNum, deliveryCost: deliveryCostNum, total: totalNum });
       paymentCompleted = true;
       showPage('success');
       hideSpinner();
@@ -268,7 +278,7 @@ if (methodType === 'credit' || !methodType) {
     }
 
     document.getElementById('booking-ref-num').textContent = result.refCode;
-    _showSuccessCarInfo();
+    _showSuccessCarInfo({ fname, lname, phone, email, rentCost: rentCostNum, deliveryCost: deliveryCostNum, total: totalNum });
     paymentCompleted = true;
     hideSpinner();
     showPage('success');
@@ -282,45 +292,10 @@ if (methodType === 'credit' || !methodType) {
 }
 
 /* populate ข้อมูลรถบน success page */
-function _showSuccessCarInfo() {
+function _showSuccessCarInfo({ fname='', lname='', phone='', email='', rentCost=0, deliveryCost=0, total=0 } = {}) {
   if (!selectedCar) return;
-
-  // ฟอร์แมตวันที่ให้เป็นแบบไทย
-  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('th-TH', { 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric' 
-  });
-
-
-  const firstName = document.getElementById('cust-firstname')?.value || '-';
-  const lastName = document.getElementById('cust-lastname')?.value || '-';
-  const phone = document.getElementById('cust-phone')?.value || '-';
-
-
-  const rentPrice = document.getElementById('sum-rent-price')?.textContent || '0 ฿';
-  const deliveryPrice = document.getElementById('sum-delivery-price')?.textContent || '0 ฿';
-  const totalPrice = document.getElementById('sum-total-final')?.textContent || '0 ฿';
-
-
-  if (document.getElementById('suc-cust-name')) {
-    document.getElementById('suc-cust-name').textContent = `${firstName} ${lastName}`;
-  }
-  if (document.getElementById('suc-cust-phone')) {
-    document.getElementById('suc-cust-phone').textContent = phone;
-  }
-  if (document.getElementById('suc-rent-price')) {
-    document.getElementById('suc-rent-price').textContent = rentPrice;
-  }
-  if (document.getElementById('suc-delivery-price')) {
-    document.getElementById('suc-delivery-price').textContent = deliveryPrice;
-  }
-  
-
-  if (document.getElementById('suc-total-final')) {
-    document.getElementById('suc-total-final').textContent = totalPrice;
-  }
-
+  const fmt = d => new Date(d + 'T00:00:00').toLocaleDateString('th-TH',
+    { day:'numeric', month:'short', year:'numeric' });
 
   const imgEl   = document.getElementById('success-car-img');
   const nameEl  = document.getElementById('success-car-name');
@@ -329,8 +304,24 @@ function _showSuccessCarInfo() {
 
   if (imgEl)   { imgEl.src = selectedCar.image || ''; imgEl.alt = selectedCar.name; }
   if (nameEl)  nameEl.textContent = selectedCar.name;
-  if (dateEl)  dateEl.textContent = `📅 ${fmt(startDate)} → ${fmt(endDate)}  (${totalDays} วัน)`; 
+  if (dateEl)  dateEl.textContent = `📅 ${fmt(startDate)} → ${fmt(endDate)}  ( ${numDays} วัน )`;
   if (infoBox) infoBox.style.display = 'flex';
+
+  // ข้อมูลผู้เช่า
+  const fullnameEl = document.getElementById('success-fullname');
+  const phoneEl    = document.getElementById('success-phone');
+  const emailEl    = document.getElementById('success-email');
+  if (fullnameEl) fullnameEl.textContent = `${fname} ${lname}`;
+  if (phoneEl)    phoneEl.textContent    = phone;
+  if (emailEl)    emailEl.textContent    = email;
+
+  // สรุปราคา
+  const rentEl     = document.getElementById('success-rent-cost');
+  const deliverEl  = document.getElementById('success-delivery-cost');
+  const totalEl    = document.getElementById('success-total-cost');
+  if (rentEl)    rentEl.textContent    = rentCost.toLocaleString() + ' ฿';
+  if (deliverEl) deliverEl.textContent = deliveryCost.toLocaleString() + ' ฿';
+  if (totalEl)   totalEl.textContent   = total.toLocaleString() + ' ฿';
 }
 
 /* แสดง banner แจ้งสถานะ server เมื่อโหลดหน้า */
