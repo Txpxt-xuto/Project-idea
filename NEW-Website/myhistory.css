@@ -1,13 +1,20 @@
 :root {
-  --bg: #0a0a0f;
-  --surface: #13131a;
-  --card: #1a1a25;
-  --accent: #e8c547;
-  --accent2: #ff6b35;
-  --text: #f0f0f0;
-  --muted: #888;
-  --border: rgba(232,197,71,0.15);
+  
+  --bg: #0A1F4C;           
+  --surface: #242424;     
+  --card: #ffffff;       
+  --accent: #2e4c8a;     
+  --accent2: #ff6d12;      
+  --text: #F7FAFF;         
+  --text-dark: #242424;   
+  --muted: #969696;        
+  --border: #bababa;       
   --radius: 12px;
+  
+
+  --success: #3e9b39;
+  --danger: #ba0900;
+  --info-blue: #9abaff;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -20,10 +27,8 @@ body {
 }
 
 input::-webkit-calendar-picker-indicator {
-  filter: invert(100%); /* Turns a dark icon white */
+  filter: invert(100%); 
 }
-
-/* Nav styles → nav.css */
 
 /* ===== PAGE CONTROL ===== */
 .page { display: none; min-height: 100vh; padding-top: 100px; }
@@ -38,456 +43,101 @@ input::-webkit-calendar-picker-indicator {
 }
 .form-group input, .form-group select  {
   width: 100%; padding: 12px 16px;
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.05); 
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text); font-family: 'Mitr', sans-serif;  
   outline: none;
 }
-.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
-.form-group select option { background: var(--surface); color: var(--text);}
-.btn-modal-cancel {
-  display: block;
-  margin: 10px auto 0;
-  padding: 12px 30px;
-  background: var(--accent);
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: all 0.2s ease; /* 🔥 เพิ่ม */
-  font-family: 'Mitr', sans-serif;
-  font-weight: 500; 
-  letter-spacing: 0.5px;
-}
+.form-group input:focus, .form-group select:focus { border-color: var(--info-blue); }
 
-/* 🔥 Hover effect */
-.btn-modal-cancel:hover {
-  transform: translateY(-2px); /* ลอยขึ้น */
-  box-shadow: 0 8px 20px rgba(232,197,71,0.3); /* เงา */
-}
-
-/* 🔥 ตอนกด */
-.btn-modal-cancel:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
 
 .btn-primary {
   width: 100%; padding: 14px;
-  background: var(--accent);
-  color: #0a0a0f; font-family: 'Mitr', sans-serif;  
+  background: var(--info-blue);
+  color: var(--bg); 
+  font-family: 'Mitr', sans-serif;   
   font-size: 18px; font-weight: 600;
   border: none; border-radius: var(--radius);
   cursor: pointer; transition: all 0.2s;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,197,71,0.3); }
-
-.btn-csv {
-  width: 100%; margin-top: 3%; height: 60px;
-  background: var(--accent);
-  color: #0a0a0f; font-family: 'Mitr', sans-serif;  
-  font-size: 14px; font-weight: 600;
-  border: none; border-radius: var(--radius);
-  cursor: pointer; transition: all 0.2s;
-}
-.btn-csv:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,197,71,0.3); }
-
-.btn-reset {
-  padding: 8px 16px; background: transparent; 
-  margin-top: 3%; margin-bottom: 3%;
-  border: 1px solid var(--border); color: var(--muted);
-  cursor: pointer; border-radius: 8px; font-family: 'Mitr', sans-serif;
+.btn-primary:hover { 
+  background: var(--accent); 
+  color: white;
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2); 
 }
 
-.btn-reset:hover {
-  padding: 8px 16px; background: transparent; 
-  margin-top: 3%;
-  border: 1px solid var(--border); color: var(--accent); background: rgba(232,197,71,0.3);
-  cursor: pointer; border-radius: 8px; font-family: 'Mitr', sans-serif; transition: all 0.15s;
+.btn-modal-cancel {
+  background: var(--danger); 
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Mitr', sans-serif;
 }
 
 .btn-cancel-booking {
-  display: block; margin-top: 10px; padding: 7px 16px;
-  background: transparent; border: 1px solid rgba(255,107,53,0.4);
-  color: var(--accent2); font-family: 'Mitr', sans-serif;
-  font-size: 13px; border-radius: 8px;
-  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  background: transparent; 
+  border: 1px solid var(--danger);
+  color: var(--danger); 
+  padding: 7px 16px;
+  border-radius: 8px;
+  cursor: pointer; transition: all 0.15s;
 }
 .btn-cancel-booking:hover {
-  background: rgba(255,107,53,0.1);
-  border-color: var(--accent2);
+  background: var(--danger);
+  color: white;
 }
 
 /* ===== MY BOOKINGS PAGE ===== */
-
-#page-mybookings { padding: 120px 24px 60px; }
-.mybookings-wrapper { max-width: 760px; margin: 0 auto; }
-.mybookings-hero { margin-bottom: 28px; }
-.mybookings-title { font-family: 'Mitr', sans-serif; font-size: 48px; color: var(--text); font-weight: 500; }
-.mybookings-sub { color: var(--muted); margin-top: 6px; }
-
 .mybookings-form-card {
-  background: var(--card); border: 1px solid var(--border);
+  background: var(--card); 
+  border: 1px solid var(--border);
   border-radius: 20px; padding: 28px; position: relative;
+  color: var(--text-dark); 
 }
 
 .mybookings-form-card::before {
   content: '';
   position: absolute; top: 0; left: 0; right: 0; height: 5px;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  background: linear-gradient(90deg, var(--bg), var(--accent));
   border-radius: 20px 20px 0 0;
 }
 
-.mybookings-form-card label{
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.mybookings-empty {
-  margin-top: 5%;
-  text-align: center;
-}
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 10px; }
+.mybookings-title { color: var(--text); } 
 
 /* Booking Card Results */
 .booking-card {
-  background: var(--card); border: 1px solid var(--border);
+  background: var(--card); 
+  border: 1px solid var(--border);
   border-radius: 16px; padding: 20px; margin-top: 16px;
   display: flex; align-items: center; gap: 20px;
+  color: var(--text-dark);
 }
-.booking-card-icon { font-size: 40px; }
-.booking-card-info { flex: 1; }
-.booking-card-carname { font-size: 18px; font-weight: 600; color: var(--text); }
-.booking-card-dates { color: var(--accent); font-size: 14px; margin-top: 4px; }
-
-.booking-status-badge {
-  display: block; padding: 7px 16px; 
-  position: relative; text-align: center;
-  border-radius: 20px; font-size: 13px; font-weight: 500;
-  letter-spacing: 0.5px; 
-}
+.booking-card-carname { color: var(--bg); }
+.booking-card-dates { color: var(--accent); font-weight: 500; }
 
 /* Status Badges */
-.booking-status-badge {
-  padding: 4px 12px; border-radius: 20px; font-size: 12px;
-}
-.badge-upcoming { background: rgba(232,197,71,0.1); color: var(--accent); border: 1px solid var(--accent); }
-
-/* ===== MODAL ===== */
-
-/* 1. ฉากหลัง: คลุมทั้งหน้าจอและทำพื้นหลังให้เบลอ */
-.modal-overlay {
-  display: none; /* ปิดไว้ก่อน จะเปิดด้วยคลาส .open ผ่าน JavaScript */
-  position: fixed; 
-  inset: 0; 
-  z-index: 999;
-  background: rgba(0, 0, 0, 0.8); /* สีดำโปร่งแสง 80% */
-  backdrop-filter: blur(5px);    /* ทำหน้าจอหลัง Modal ให้เบลอ (ดูทันสมัย) */
-  align-items: center; 
-  justify-content: center;
-  padding: 20px;
+.badge-upcoming { 
+    background: rgba(46, 76, 138, 0.1); 
+    color: var(--accent); 
+    border: 1px solid var(--accent); 
 }
 
-/* เมื่อสั่งเปิดผ่าน JS ให้แสดงผลแบบ Flex */
-.modal-overlay.open {
-  display: flex;
-  animation: modal-fade-in 0.3s ease;
-}
+/* ===== ADMIN STATS ===== */
+.asc-num { color: var(--bg); } 
+.chip-revenue .asc-num { color: var(--accent2); } 
 
-/* 2. กล่องข้อความ: ปรับแต่งให้เข้ากับธีมเหลือง-ดำ */
-.modal-box {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 32px;
-  width: 100%; 
-  max-width: 400px;
-  position: relative;
-  text-align: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-}
-
-/* แถบสีด้านบนกล่องเพื่อให้ดูเด่น */
-.modal-box::before {
-  content: '';
-  position: absolute; 
-  top: 0; left: 0; right: 0; 
-  height: 4px;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  border-radius: 20px 20px 0 0;
-}
-
-/* 3. ปุ่มปิด (X) มุมขวาบน */
-.modal-close {
-  position: absolute; top: 10px; right: 10px;
-  background: none; border: none;
-  color: var(--muted); font-size: 18px; cursor: pointer;
-  width: 32px; height: 32px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s, color 0.15s;
-}
-.modal-close:hover {
-  background: rgba(255,255,255,0.08); color: var(--accent2); /* เปลี่ยนเป็นสีส้มเมื่อชี้ */
-}
-
-/* 4. ข้อความภายใน Modal */
-.modal-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 12px;
-}
-
-.modal-sub {
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.6;
-  margin-bottom: 24px;
-}
-
-/* Animation ตอนเปิดให้ค่อยๆ ชัดขึ้น */
-@keyframes modal-fade-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-/* ===== ADMIN STATS BAR ===== */
-.section-title {
-    font-size: 16px; font-weight: 500;
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 22px; color: var(--text);
-  }
-  .section-num {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--accent); color: #0a0a0f;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 500;
-  }
-.admin-stats-bar {
-  display: flex; flex-wrap: wrap; gap: 12px;
-  margin-bottom: 16px;
-}
-.admin-stat-chip {
-  flex: 1; min-width: 120px;
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 12px; padding: 14px 18px;
-  cursor: pointer; transition: all 0.15s; text-align: center;
-}
-.admin-stat-chip:hover { border-color: rgba(232,197,71,0.5); transform: translateY(-2px); }
-.asc-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px; letter-spacing: 1px; color: var(--accent);
-}
-.asc-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.chip-upcoming .asc-num { color: #fbbf24; }
-.chip-active   .asc-num { color: #4ade80; }
-.chip-past     .asc-num { color: var(--muted); }
-.chip-revenue  .asc-num { color: var(--accent2); font-size: 32px; }
-.chip-revenue { border-color: rgba(255,107,53,0.25); }
- 
-/* ===== ADMIN FILTER BAR ===== */
-.admin-filter-bar {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 16px; padding: 20px 24px;
-  margin-bottom: 20px;
-  position: relative; overflow: hidden;
-}
-.admin-filter-bar::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:3px;
-  background: linear-gradient(90deg, var(--accent2), var(--accent));
-}
-.admin-filter-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-.admin-filter-actions {
-  display: flex; gap: 10px; margin-top: 14px; justify-content: flex-end;
-}
- 
-/* ===== ADMIN TABLE ===== */
-.container {
-    max-width: 1400px; /* เพิ่มจากเดิม (เช่น 1000px) เป็น 1400px หรือ 95% */
-    margin: 0 auto;
-    padding: 0 20px;
-}
+/* Table Adjustments */
 .admin-table-wrap {
-    width: 100%;
-    overflow-x: auto; /* เปิดการเลื่อนแนวนอน */
     background: var(--card);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    margin-top: 20px;
-}
-.admin-table {
-    width: 100%;
-    min-width: 1200px; /* บังคับความกว้างขั้นต่ำเพื่อให้ข้อมูลไม่เบียดกัน */
-    border-collapse: collapse;
-    font-size: 13px; /* ลดขนาดฟอนต์ลงเล็กน้อยเพื่อให้ใส่ข้อมูลได้ครบ */
-}
-.admin-table thead tr {
-  background: rgba(232,197,71,0.06);
-  border-bottom: 2px solid var(--border);
+    color: var(--text-dark);
 }
 .admin-table th {
-    background: rgba(232, 197, 71, 0.05);
-    color: var(--accent);
-    text-align: left;
-    font-weight: 500;
-    padding: 14px 10px;
-    border-bottom: 2px solid var(--border);
-    white-space: nowrap; /* ห้ามตัดบรรทัดหัวตาราง */
+    background: var(--bg);
+    color: var(--text);
 }
-.admin-row {
-  border-bottom: 1px solid var(--border);
-  transition: background 0.15s;
-  animation: card-slide-in 0.2s ease both;
-}
-.admin-row:last-child { border-bottom: none; }
-.admin-row:hover { background: rgba(255,255,255,0.03); }
-.admin-row.upcoming { border-left: 3px solid #fbbf24; }
-.admin-row.active   { border-left: 3px solid #4ade80; }
-.admin-row.past     { border-left: 3px solid transparent; }
-.admin-table td {
-    padding: 12px 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    white-space: nowrap; /* ห้ามตัดบรรทัดข้อมูลเพื่อให้ตารางยืดออกไปด้านข้าง */
-}
-.admin-row-num {
-  font-size: 11px; color: var(--muted);
-  font-weight: 700; text-align: center;
-}
-.admin-car { font-weight: 500; color: var(--text); white-space: nowrap; }
-.admin-customer-name { font-weight: 500; color: var(--text); }
-.admin-contact { white-space: nowrap; }
-.admin-total {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 16px; color: var(--accent);
-  letter-spacing: 0.5px; white-space: nowrap;
-}
-code {
-    background: rgba(255,255,255,0.1);
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-family: monospace;
-}
-
-@media (max-width: 900px) {
-  .admin-filter-grid { grid-template-columns: 1fr 1fr; }
-  .admin-stats-bar { gap: 8px; }
-  .admin-stat-chip { min-width: 90px; padding: 10px 12px; }
-  .asc-num { font-size: 24px; }
-}
-@media (max-width: 600px) {
-  .admin-filter-grid { grid-template-columns: 1fr; }
-}
-/* ═══════════════════════════════════════════════════════════
-   RESPONSIVE — myhistory.css
-   ═══════════════════════════════════════════════════════════ */
-
-@media (max-width: 767px) {
-  /* Mobile nav height */
-  #page-mybookings { padding: 72px 16px 48px; }
-}
-
-/* ══ TABLET  600–899 ══ */
-@media (max-width: 899px) {
-  #page-mybookings { padding: 90px 20px 48px; }
-  .mybookings-wrapper { max-width: 100%; }
-  .mybookings-title { font-size: 36px; }
-
-  /* Results header */
-  .mybookings-results-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-
-  /* Booking card */
-  .booking-card { flex-wrap: wrap; gap: 12px; padding: 16px; }
-  .booking-card-actions { width: 100%; display: flex; justify-content: space-between; align-items: center; }
-
-  /* Admin */
-  .admin-filter-grid { grid-template-columns: 1fr 1fr; }
-  .admin-filter-actions { justify-content: stretch; }
-  .admin-filter-actions button { flex: 1; }
-  .admin-stats-bar { gap: 8px; }
-  .admin-stat-chip { min-width: 80px; padding: 10px 10px; }
-  .asc-num { font-size: 26px; }
-  .asc-label { font-size: 11px; }
-}
-
-/* ══ PHONE  < 600 ══ */
-@media (max-width: 599px) {
-  #page-mybookings { padding: 68px 14px 40px; }
-  .mybookings-title { font-size: 28px; }
-  .mybookings-sub { font-size: 13px; }
-  .mybookings-form-card { padding: 20px 14px; }
-  .mybookings-form-card label { font-size: 14px; }
-  .form-row { grid-template-columns: 1fr; gap: 12px; }
-
-  /* Booking card */
-  .booking-card { flex-direction: column; align-items: flex-start; gap: 12px; padding: 14px; }
-  .booking-card-icon { font-size: 32px; }
-  .booking-card-carname { font-size: 15px; }
-  .booking-card-actions {
-    width: 100%; display: flex; justify-content: space-between;
-    align-items: center; flex-wrap: wrap; gap: 8px;
-  }
-  .btn-cancel-booking { width: 100%; text-align: center; }
-
-  /* Admin filters */
-  .admin-filter-grid { grid-template-columns: 1fr; gap: 10px; }
-  .admin-stats-bar { grid-template-columns: repeat(3,1fr); display: grid; gap: 8px; }
-  .admin-stat-chip { min-width: unset; }
-  .chip-revenue { grid-column: 1 / -1; }
-  .asc-num { font-size: 22px; }
-
-  /* Admin table — horizontal scroll */
-  .admin-table-wrap { font-size: 12px; }
-  .admin-table th, .admin-table td { padding: 8px 10px; }
-  .admin-table th { font-size: 10px; }
-  .admin-total { font-size: 14px; }
-
-  /* Modal */
-  .modal-box { padding: 20px 14px; }
-  .modal-title { font-size: 18px; }
-
-  /* Btn row */
-  .admin-filter-actions { flex-direction: column; gap: 8px; }
-  .admin-filter-actions button { width: 100%; }
-}
-
-/* ══ TINY  < 380 ══ */
-@media (max-width: 379px) {
-  .mybookings-title { font-size: 24px; }
-  .admin-stats-bar { grid-template-columns: repeat(2,1fr); }
-  .chip-revenue { grid-column: 1 / -1; }
-}
-
-/* ===== CAR IMAGES (booking card + admin table) ===== */
-.booking-card-icon {
-  width: 100px; height: 72px;
-  flex-shrink: 0; border-radius: 10px;
-  overflow: hidden; background: #1e1e2e;
-}
-.booking-car-img {
-  width: 100%; height: 100%;
-  object-fit: cover; border-radius: 10px;
-  transition: transform 0.3s;
-}
-.booking-card:hover .booking-car-img { transform: scale(1.05); }
-
-.admin-car {
-  display: flex; align-items: center; gap: 8px;
-}
-.admin-car-img {
-  width: 64px; height: 44px;
-  object-fit: cover; border-radius: 6px;
-  flex-shrink: 0;
-}
-
-/* marquee car image */
-.marquee-car-img {
-  width: 72px; height: 52px;
-  object-fit: cover; border-radius: 8px;
-  transition: transform 0.3s;
-}
-.marquee-card:hover .marquee-car-img { transform: scale(1.06); }
+.admin-row:hover { background: #f7faff; }
