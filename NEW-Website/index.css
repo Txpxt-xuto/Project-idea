@@ -200,7 +200,7 @@ input::-webkit-calendar-picker-indicator {
 
 /* ===== Question And Answer ===== */
 #FAQ {
-  padding: 80px 24px 100px;
+  padding: 80px 24px 10px;
   max-width: 860px;
   margin: 0 auto;
 }
@@ -341,12 +341,11 @@ input::-webkit-calendar-picker-indicator {
     letter-spacing: 1px;
   }
   .standards-list { display: flex; flex-direction: column; gap: 28px; }
-  .standard-item {}
   .standard-tag {
     display: inline-block;
-    background: rgba(232,197,71,0.12);
-    border: 1px solid rgba(232,197,71,0.3);
-    color: var(--accent);
+    background: #2e4c8a;
+    border: 1px solid var(--card);
+    color: mintcream;
     font-size: 13px; font-weight: 600;
     letter-spacing: 1px;
     padding: 6px 16px;
@@ -402,13 +401,13 @@ input::-webkit-calendar-picker-indicator {
   }
   .condition-card:hover {
     transform: translateY(-6px);
-    border-color: rgba(232,197,71,0.35);
+    border-color: #3572EF;
     box-shadow: 0 16px 40px rgba(0,0,0,0.3);
   }
   .condition-icon {
     width: 80px; height: 80px;
-    background: rgba(232,197,71,0.1);
-    border: 1px solid rgba(232,197,71,0.2);
+    background: #AEDEFC;
+    border: 1px solid #AEDEFC;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
@@ -457,8 +456,8 @@ input::-webkit-calendar-picker-indicator {
   }
   .about-quote {
     display: inline-block;
-    background: rgba(232,197,71,0.1);
-    border: 1px solid rgba(232,197,71,0.25);
+    background: #EAEFEF;
+    border: 1px solid #EAEFEF;
     border-left: 3px solid var(--accent);
     color: var(--accent);
     font-size: 14px; font-weight: 500;
@@ -487,23 +486,39 @@ input::-webkit-calendar-picker-indicator {
     transition: border-color 0.2s, transform 0.2s;
   }
   .about-step:hover {
-    border-color: rgba(232,197,71,0.4);
+    border-color: #3572EF;
     transform: translateX(4px);
   }
-  .about-step-num {
+  .about-step-num-1,.about-step-num-2,.about-step-num-3,.about-step-num-4,.about-step-num-5{
     width: 40px; height: 40px; border-radius: 50%;
-    background: var(--accent); color: #0a0a0f;
+    color: #ffffff;
     font-family: 'Bebas Neue', sans-serif;
+    padding-left: 1px; padding-top: 2px;
     font-size: 20px; letter-spacing: 1px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+  }
+  .about-step-num-1{
+    background: #AEDEFC;
+  }
+  .about-step-num-2{
+    background: #3ABEF9;
+  }
+  .about-step-num-3{
+    background: #3572EF;
+  }
+  .about-step-num-4{
+    background: #050C9C;
+  }
+  .about-step-num-5{
+    background: #0D1A63;
   }
   .about-step-title { font-size: 15px; font-weight: 600; color: var(--text); }
   .about-step-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .about-connector {
     width: 2px; height: 16px;
     background: var(--border);
-    margin-left: 39px;
+    margin-left: 45px;
   }
 
 /* ===== CARS LIST PAGE ===== */
@@ -738,7 +753,7 @@ input::-webkit-calendar-picker-indicator {
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 22px; color: var(--text);
 }
- 
+
 .section-num {
   width: 28px; height: 28px; border-radius: 50%;
   background: var(--accent); color: #FFFFFF;
