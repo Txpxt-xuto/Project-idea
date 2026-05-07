@@ -21,10 +21,10 @@ function carImageFromName(name){
   // fallback — เปลี่ยน URL ตรงนี้ตามแต่ละคัน
   const map = {
     'fortuner':'https://img2.pic.in.th/IMG_6890c21ea56e7b207fbb.png',
-    'cr-v':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
-    'alphard': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
+    'cr-v':    'https://www.checkraka.com/uploaded/logo/34/34258e5044f5fe143e25052aa396c968.webp',
+    'alphard': 'https://www.toyota.co.th/media/product/series/colors/v/alphard/27/a60e2b909e696f0a308c327b5a6204df6e61bf6422bf48a858f6320436f399d4.webp',
     'mu-x':    'https://img1.pic.in.th/images/IMG_6897.png',
-    'civic':   'https://img1.pic.in.th/images/IMG_6901.png',
+    'civic':   'https://www.thaipr.net/wp-content/uploads/2022/03/unnamed-2-e1648093875325.png',
     'innova':  'https://img2.pic.in.th/IMG_6879.webp',
     'cx-5':    'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
     'everest': 'https://img2.pic.in.th/IMG_6877c91e15254a1c9056.png',
