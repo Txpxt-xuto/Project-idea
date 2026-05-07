@@ -99,33 +99,32 @@ function openDeliveryMap() {
 }
 
 function showPage(name) {
-  /* Guard 1: success เปิดได้เฉพาะหลังชำระเงิน */
+  /* Guard 1 & 2 ของคุณ (คงเดิมไว้) */
   if (name === 'success' && !paymentCompleted) return;
-
-  /* Guard 2: ถ้า success แสดงอยู่ ห้าม navigate ออก
-     จะออกได้เฉพาะ goBackHome() ที่ reset paymentCompleted=false ก่อน */
   if (paymentCompleted && name !== 'success') return;
 
-  /* ซ่อนทุกหน้า — ข้าม page-success ไม่แตะเลย */
-  document.querySelectorAll('.page').forEach(p => {
-    if (p.id === 'page-success') return;
-    p.classList.remove('active');
-    p.style.display = 'none';
+  /* 1. ซ่อนทุกหน้าหลัก */
+  const pages = document.querySelectorAll('.page');
+  pages.forEach(p => {
+      p.classList.remove('active');
+      p.style.display = 'none';
   });
 
+  /* 2. จัดการแสดงผลตามเงื่อนไข name */
   if (name === 'success') {
-    /* ลบ inline attribute ที่ HTML ตั้งไว้ แล้วค่อย display */
-    const el = document.getElementById('page-success');
-    if (el) {
-      el.removeAttribute('style');
-      el.style.display = 'flex';
-      el.classList.add('active');
-    }
+      const el = document.getElementById('page-success');
+      if (el) {
+          el.removeAttribute('style');
+          el.style.display = 'flex'; // สำหรับหน้า success ที่ต้องการจัดกึ่งกลาง
+          el.classList.add('active');
+      }
   } else {
-    const target = document.getElementById('page-' + name);
-    if (!target) return;
-    target.style.display = 'block';
-    target.classList.add('active');
+      // ใช้ตัวแปร name แทน pageId ที่ไม่ได้ประกาศไว้
+      const target = document.getElementById('page-' + name); 
+      if (target) {
+          target.style.display = 'block';
+          target.classList.add('active');
+      }
   }
 
   window.scrollTo(0, 0);
