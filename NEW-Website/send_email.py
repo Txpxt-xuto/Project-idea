@@ -102,11 +102,11 @@ def send(to_email, ref, fname, lname, car, start, end, total):
     msg['Subject'] = Header(f'ยืนยันการจองรถหมายเลข #{ref} — รถเช่ามหาชัย', 'utf-8')
 
     # plain text fallback
-    plain = (f"ยืนยันการจอง #{ref}\n"
-             f"ชื่อ: {fname} {lname}\n"
-             f"รถ: {car}\n"
-             f"วันเช่า: {start} ถึง {end}\n"
-             f"ยอด: {total} บาท")
+    plain =  (f"ยืนยันการจอง #{ref}\n"
+              f"ชื่อ: {fname} {lname}\n"
+              f"รถ: {car}\n"
+              f"วันเช่า: {start} ถึง {end}\n"
+              f"ยอด: {total} บาท")
 
     msg.attach(MIMEText(plain, 'plain', 'utf-8'))
     msg.attach(MIMEText(build_html(to_email, ref, fname, lname, car, start, end, total),
