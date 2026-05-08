@@ -33,7 +33,8 @@ static void dayIndexToDate(int dayIdx, char *out);
 /* ─── send-mail via Python ─────────────────────────────── */
 static void shell_escape(const char *src, char *dst, int dstLen) {
     int j = 0;
-    for (int i = 0; src[i] && j < dstLen-5; i++) {
+    for (int i = 0; src[i] && j < dstLen-5; i++)
+    {
         if (src[i] == '\'')
         {
             dst[j++] = '\'';
@@ -68,15 +69,15 @@ void send_confirmation_email(const char* to_email, const char* refCode, const ch
     total // argv[9]
 );
     FILE *fp = popen(cmd, "r");
-    if (fp == NULL) {
+    if (fp == NULL)
+    {
         perror("[MAIL ERROR] Cannot open pipe to python");
         return;
     }
 
     char buffer[512];
-    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
-        printf("[PYTHON LOG]: %s", buffer);
-    }
+    while (fgets(buffer, sizeof(buffer), fp) != NULL) printf("[PYTHON LOG]: %s", buffer);
+    
 
     int status = pclose(fp);
     if (status == 0) printf("[MAIL SUCCESS] Email process finished.\n");
@@ -120,7 +121,8 @@ static int dateToDayIndex(const char *s){
     tmp[strcspn(tmp, "\r\n")] = 0;
 
     int y,m,d;
-    if(sscanf(tmp,"%d-%d-%d",&y,&m,&d)!=3){
+    if(sscanf(tmp,"%d-%d-%d",&y,&m,&d)!=3)
+    {
         printf("PARSE FAIL: [%s]\n", tmp);
         return -1;
     }
@@ -129,9 +131,7 @@ static int dateToDayIndex(const char *s){
     for(int i=1;i<m;i++) idx+=daysInMonth(i,y);
 
     int base=2026;
-    for(int i=base;i<y;i++){
-        idx+=isLeap(i)?366:365;
-    }
+    for(int i=base;i<y;i++) idx+=isLeap(i)?366:365;
 
     return idx;
 }
@@ -145,7 +145,8 @@ static void loadCars(void){
     int row=0;
     numCars=0;
 
-    while(fgets(line,sizeof(line),fp)){
+    while(fgets(line,sizeof(line),fp))
+    {
         row++;
         if(row==1) continue; /* skip header */
         if(numCars>=MAX_CARS) break;
@@ -162,7 +163,8 @@ static void loadCars(void){
             if(col==0)      c->number=atoi(tok);
             else if(col==1) c->id    =atoi(tok);
             else if(col==2) strncpy(c->model,tok,63);
-            else {
+            else
+            {
                 /* col 3 = day:1, col 4 = day:2, … */
                 if(dayIdx<MAX_DAYS)
                     c->booked[dayIdx]=atoi(tok);
@@ -189,7 +191,8 @@ static void saveCars(void){
     /* เขียน header */
     fprintf(fp,"%s",header);
 
-    for(int i=0;i<numCars;i++){
+    for(int i=0;i<numCars;i++)
+    {
         Car *c=&cars[i];
         fprintf(fp,"%d,%d,%s",c->number,c->id,c->model);
         for(int d=0;d<MAX_DAYS;d++) fprintf(fp,",%d",c->booked[d]);
@@ -201,7 +204,8 @@ static void saveCars(void){
 /* ─── check availability (returns 1=available, 0=not) ─────── */
 static int isAvailable(int carIdx, int startDay, int endDay){
     Car *c=&cars[carIdx];
-    for(int d=startDay;d<=endDay;d++){
+    for(int d=startDay;d<=endDay;d++)
+    {
         int idx=d-1; /* 0-based array */
         if(idx>=0 && idx<MAX_DAYS && c->booked[idx]!=0) return 0;
     }
@@ -211,7 +215,8 @@ static int isAvailable(int carIdx, int startDay, int endDay){
 /* ─── book car ────────────────────────────────────────────── */
 static void bookCar(int carIdx, int startDay, int endDay){
     Car *c=&cars[carIdx];
-    for(int d=startDay;d<=endDay;d++){
+    for(int d=startDay;d<=endDay;d++)
+    {
         int idx=d-1;
         if(idx>=0&&idx<MAX_DAYS) c->booked[idx]=1;
     }
@@ -277,17 +282,20 @@ static int deleteCustomer(const char *fname, const char *lname, int *outCarIdx, 
     int count=0;
     int foundLine=-1;
     loadCars();
-    while(fgets(lines[count],512,fp) && count<499){
+    while(fgets(lines[count],512,fp) && count<499)
+    {
         char tmp[512];
         strcpy(tmp,lines[count]);
         char *model=strtok(tmp,",");
         char *fn   =strtok(NULL,",");
         char *ln   =strtok(NULL,",");
         
-        if(fn&&ln){
+        if(fn&&ln)
+        {
             fn[strcspn(fn,"\n")]=0;
             ln[strcspn(ln,"\n")]=0;
-            if(strcmp(fn,fname)==0&&strcmp(ln,lname)==0){
+            if(strcmp(fn,fname)==0&&strcmp(ln,lname)==0)
+            {
                 foundLine=count;
                 /* หา carIdx, start, end */
                 char tmp2[512]; strcpy(tmp2,lines[count]);
@@ -299,7 +307,8 @@ static int deleteCustomer(const char *fname, const char *lname, int *outCarIdx, 
                 char *idcard  =strtok(NULL,",");
                 char *sd   =strtok(NULL,",");
                 char *ed   =strtok(NULL,",");
-                if(sd&&ed){
+                if(sd&&ed)
+                {
                     sd[strcspn(sd,"\n")]=0;
                     ed[strcspn(ed,"\n")]=0;
                     *outStart=dateToDayIndex(sd);
@@ -309,8 +318,10 @@ static int deleteCustomer(const char *fname, const char *lname, int *outCarIdx, 
                 if (em2) strcpy(outEmail, em2);
                 /* หา car index จาก model name */
                 *outCarIdx = -1;
-                for (int i = 0; i < numCars; i++) {
-                    if (strcmp(cars[i].model, m2) == 0) {
+                for (int i = 0; i < numCars; i++)
+                {
+                    if (strcmp(cars[i].model, m2) == 0) 
+                    {
                         *outCarIdx = i;
                         break;
                     }
@@ -344,24 +355,28 @@ static int deleteCustomerByKey(const char *fname, const char *lname, const char 
     int count = 0, foundLine = -1;
     loadCars();
 
-    while (fgets(lines[count], 512, fp) && count < 499) {
+    while (fgets(lines[count], 512, fp) && count < 499)
+    {
         char tmp[512];
         strcpy(tmp, lines[count]);
         char *col[16]; int nc = 0;
         char *tok = strtok(tmp, ",");
         while (tok && nc < 16) { tok[strcspn(tok, "\r\n")] = 0; col[nc++] = tok; tok = strtok(NULL, ","); }
 
-        if (nc >= 8) {
+        if (nc >= 8)
+        {
             int fnameMatch = strcmp(col[1], fname) == 0;
             int lnameMatch = strcmp(col[2], lname) == 0;
             int dateMatch  = (startDate[0] == '\0') || (strcmp(col[6], startDate) == 0);
-            if (fnameMatch && lnameMatch && dateMatch) {
+            if (fnameMatch && lnameMatch && dateMatch)
+            {
                 foundLine = count;
                 char tmp2[512]; strcpy(tmp2, lines[count]);
                 char *c[16]; int nc2 = 0;
                 char *t2 = strtok(tmp2, ",");
                 while (t2 && nc2 < 16) { t2[strcspn(t2, "\r\n")] = 0; c[nc2++] = t2; t2 = strtok(NULL, ","); }
-                if (nc2 >= 8) {
+                if (nc2 >= 8)
+                {
                     c[6][strcspn(c[6], "\r\n")] = 0;
                     c[7][strcspn(c[7], "\r\n")] = 0;
                     *outStart = dateToDayIndex(c[6]);
@@ -462,7 +477,6 @@ static int getJsonStr(const char *json, const char *key, char *out, int outLen){
     const char *p=strstr(json,search);
     if(!p) return 0;
     p+=strlen(search);
-    /* skip whitespace and colon */
     while(*p && (*p==':'||*p==' '||*p=='\t')) p++;
     if(*p!='"') return 0;
     p++;
@@ -510,8 +524,7 @@ static int getJsonInt(const char *json, const char *key, int *out){
     return 1;
 }
 
-/* แปลง day index กลับเป็น YYYY-MM-DD (base year 2026) */
-static void dayIndexToDate(int dayIdx, char *out){
+static void dayIndexToDate(int dayIdx, char *out){      /* แปลง day index กลับเป็น YYYY-MM-DD (base year 2026) */
     int year=2026;
     int remaining=dayIdx;
     int daysInYear;
@@ -639,7 +652,6 @@ static void handleBook(int sock, const char *body){
     char refCode[16];
     snprintf(refCode,sizeof(refCode),"RM-%06d",100000+(rand()%900000));
 
-    /* บันทึก customer พร้อม fields ใหม่ทั้งหมด */
     saveCustomer(cars[carIdx].model, fname, lname, phone, email, idCard, startDate, endDate, location, payMethod, cardName, cardNumber, timeOrCvv, expiry, total);
 
     printf("[MAIL] sendto: %s\n", email);
@@ -930,22 +942,24 @@ static void handleAllBookings(int sock, const char *url) {
     #undef MAX_COL
 }
 
-
 /* ══════════════════════════════════════════════════════════════
                         Main server loop
    ══════════════════════════════════════════════════════════════ */
 int main(void){
 int PORT = 8080;
 char* portEnv = getenv("PORT");
-if (portEnv != NULL) {
-    PORT = atoi(portEnv);}
+if (portEnv != NULL) {PORT = atoi(portEnv);}
 
 #ifdef _WIN32
     WSADATA wsa; WSAStartup(MAKEWORD(2,2),&wsa);
 #endif
 
     int server=socket(AF_INET,SOCK_STREAM,0);
-    if(server<0){ perror("socket"); return 1; }
+    if(server<0)
+    {
+        perror("socket");
+        return 1; 
+    }
 
     int opt=1;
     setsockopt(server,SOL_SOCKET,SO_REUSEADDR, (const char*)&opt,sizeof(opt));
@@ -956,15 +970,19 @@ if (portEnv != NULL) {
     addr.sin_addr.s_addr=INADDR_ANY;
     addr.sin_port       =htons(PORT);
 
-    if(bind(server,(struct sockaddr*)&addr,sizeof(addr))<0){
-        perror("bind"); return 1;
+    if(bind(server,(struct sockaddr*)&addr,sizeof(addr))<0)
+    {
+        perror("bind");
+        return 1;
     }
+
     listen(server,10);
     printf("[INFO] RODCHAOMAHACHAI backend running on http://localhost:%d\n",PORT);
     printf("[INFO] Place CAR.csv and CUSTOMER.csv in the same directory.\n");
     printf("[INFO] Press Ctrl+C to stop.\n");
 
-    while(1){
+    while(1)
+    {
         struct sockaddr_in caddr;
         socklen_t clen=sizeof(caddr);
         int client=accept(server,(struct sockaddr*)&caddr,&clen);
@@ -982,7 +1000,8 @@ if (portEnv != NULL) {
         printf("[REQ] %s %s\n",method,path);
 
         /* OPTIONS preflight (CORS) */
-        if(strcmp(method,"OPTIONS")==0){
+        if(strcmp(method,"OPTIONS")==0)
+        {
             sendResponse(client,200,"{}");
             close(client); continue;
         }
@@ -991,34 +1010,17 @@ if (portEnv != NULL) {
         const char *bodyStart=strstr(req,"\r\n\r\n");
         const char *jsonBody = bodyStart ? bodyStart+4 : "";
 
-        if(strncmp(path,"/availability",13)==0){
-            handleAvailability(client, path);
-        }
-        else if(strcmp(path,"/book")==0 && strcmp(method,"POST")==0){
-            handleBook(client, jsonBody);
-        }
-        else if(strcmp(path,"/cancel")==0 && strcmp(method,"POST")==0){
-            handleCancel(client, jsonBody);
-        }
-        else if(strcmp(path,"/mybookings")==0 && strcmp(method,"POST")==0){
-            handleMyBookings(client, jsonBody);
-        }
-        else if(strcmp(path,"/admincancel")==0 && strcmp(method,"POST")==0){
-            handleAdminCancel(client, jsonBody);
-        }
-        else if(strncmp(path,"/allbookings",12)==0 && strcmp(method,"GET")==0){
-            handleAllBookings(client, path);
-        }
-        else if(strcmp(path,"/status")==0){
-            sendResponse(client,200,"{\"ok\":true,\"service\":\"RODCHAOMAHACHAI\"}");
-        }
-        else{
-            sendResponse(client,404,"{\"ok\":false,\"error\":\"not found\"}");
-        }
-
+        if(strncmp(path,"/availability",13)==0) handleAvailability(client, path);
+        else if(strcmp(path,"/book")==0 && strcmp(method,"POST")==0) handleBook(client, jsonBody);
+        else if(strcmp(path,"/cancel")==0 && strcmp(method,"POST")==0) handleCancel(client, jsonBody);
+        else if(strcmp(path,"/mybookings")==0 && strcmp(method,"POST")==0) handleMyBookings(client, jsonBody);
+        else if(strcmp(path,"/admincancel")==0 && strcmp(method,"POST")==0) handleAdminCancel(client, jsonBody);
+        else if(strncmp(path,"/allbookings",12)==0 && strcmp(method,"GET")==0) handleAllBookings(client, path);
+        else if(strcmp(path,"/status")==0) sendResponse(client,200,"{\"ok\":true,\"service\":\"RODCHAOMAHACHAI\"}");
+        else sendResponse(client,404,"{\"ok\":false,\"error\":\"not found\"}");
+        
         close(client);
     }
-
 #ifdef _WIN32
     WSACleanup();
 #endif
