@@ -564,6 +564,7 @@ static void handleBook(int sock, const char *body){
     char idCard[32]="",     location[80]="", payMethod[20]="";
     char cardName[128]="",  cardNumber[32]="";
     char timeOrCvv[16]="",  expiry[12]="",   total[20]="";
+    
     if(!getJsonInt(body,"carNumber",&carNumber)) getJsonInt(body,"carId",&carNumber);
     getJsonStr(body,"startDate",   startDate,  20);
     getJsonStr(body,"endDate",     endDate,    20);
@@ -581,24 +582,31 @@ static void handleBook(int sock, const char *body){
     getJsonStr(body,"total",       total,      20);
 
     printf("[BOOK] carNumber=%d start=%s end=%s fname=%s lname=%s pay=%s total=%s\n",carNumber, startDate, endDate, fname, lname, payMethod, total);
+
     if(carNumber<1||!startDate[0]||!endDate[0]||!fname[0]||!lname[0]){sendResponse(sock,400,"{\"ok\":false,\"error\":\"missing fields\"}");return;}
     loadCars();
     int carIdx=-1;
+
     for(int i=0;i<numCars;i++) if(cars[i].number==carNumber){ carIdx=i; break; }
+
     if(carIdx<0){sendResponse(sock,400,"{\"ok\":false,\"error\":\"car not found\"}");return;}
     int s=dateToDayIndex(startDate),e=dateToDayIndex(endDate);
     if(s<0||e<0||e<s){sendResponse(sock,400,"{\"ok\":false,\"error\":\"invalid dates\"}");return;}
     if(!isAvailable(carIdx,s,e)){sendResponse(sock,200,"{\"ok\":false,\"error\":\"car not available on selected dates\"}");return;}
+
     bookCar(carIdx,s,e);
     srand((unsigned)time(NULL));
     char refCode[16];
+
     snprintf(refCode,sizeof(refCode),"RM-%06d",100000+(rand()%900000));
     saveCustomer(cars[carIdx].model, fname, lname, phone, email, idCard, startDate, endDate, location, payMethod, cardName, cardNumber, timeOrCvv, expiry, total);
     printf("[MAIL] sendto: %s\n", email);
     send_confirmation_email(email,refCode,fname,lname,cars[carIdx].model,startDate,endDate,total);
+
     int numDays=(e-s)+1;
     if(numDays<1) numDays=1;
     char resp[256];
+
     snprintf(resp,sizeof(resp),"{\"ok\":true,\"refCode\":\"%s\",\"numDays\":%d}",refCode, numDays);
     sendResponse(sock,200,resp);
 }
