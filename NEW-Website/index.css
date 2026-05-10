@@ -94,6 +94,11 @@ input::-webkit-calendar-picker-indicator {
   transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
 }
+
+input[type="date"] {
+    color-scheme: dark;
+}
+
 .form-group input:focus, .form-group select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(10, 31, 76, 0.1);
