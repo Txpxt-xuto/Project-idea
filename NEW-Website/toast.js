@@ -43,7 +43,7 @@
       font-family: 'Mitr', 'Sarabun', sans-serif;
       font-size: 14px;
       line-height: 1.5;
-      color: #f0f0f0;
+      color: #000000;
 
       /* entrance animation */
       animation: toast-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
