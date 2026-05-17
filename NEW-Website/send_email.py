@@ -215,6 +215,6 @@ if __name__ == "__main__":
             server.starttls()
             server.login(GMAIL_USER, GMAIL_PASS)
             server.sendmail(GMAIL_USER, [to_email], msg.as_string())
-        print("Email sent successfully")
+        print("[MAIL SUCCESS] Email sent successfully")
     except Exception as e:
         print(f"Error: {e}")
